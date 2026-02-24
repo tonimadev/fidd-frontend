@@ -2,7 +2,27 @@
 
 Frontend application for the FIDD platform built with Next.js and TypeScript.
 
-## Project Overview
+## Quick Start
+
+### In WebStorm
+
+The easiest way to run the project in WebStorm:
+
+1. **Open the NPM panel** - View > Tool Windows > NPM
+2. **Double-click `dev`** under the scripts list
+3. The server starts automatically at `http://localhost:3000`
+
+Or use the Run button in the toolbar and select the `dev` configuration.
+
+For detailed WebStorm setup instructions, see [WEBSTORM_SETUP.md](./WEBSTORM_SETUP.md)
+
+### In Terminal
+
+```bash
+npm run dev
+```
+
+
 
 FIDD Frontend is a modern web application that provides a complete authentication system with support for login, signup, CNPJ and CPF validation. The application is built with the latest web technologies and follows best practices for security and user experience.
 
