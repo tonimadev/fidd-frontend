@@ -16,6 +16,7 @@ export interface AuthContext {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAccountPendingDeletion: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (tradeName: string, taxId: string, email: string, password: string) => Promise<void>;
   logout: () => void;

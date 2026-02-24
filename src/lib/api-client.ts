@@ -5,14 +5,13 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from '@/types/auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
 /**
  * Cria instância do axios com configurações padrão
  */
 export const createApiClient = (): AxiosInstance => {
+  // Usar URLs relativas para funcionar com o proxy do Next.js
   const client = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: '/',
     headers: {
       'Content-Type': 'application/json',
     },

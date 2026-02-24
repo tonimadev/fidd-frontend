@@ -9,15 +9,19 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/validations';
 import { useAuth } from '@/context/auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
+import { ReactivateAccountModal } from '@/components/account/ReactivateAccountModal';
+import { accountService } from '@/lib/account-service';
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showReactivateModal, setShowReactivateModal] = useState(false);
 
   const {
     register,
@@ -34,6 +38,19 @@ export const LoginForm: React.FC = () => {
       setIsSubmitting(true);
       setErrorMessage('');
       await login(data.email, data.password);
+
+      // Verifica se a conta está marcada para deleção
+      try {
+        const deleteStatus = await accountService.getDeleteStatus();
+        if (deleteStatus.status === 'PENDING_DELETION') {
+          setShowReactivateModal(true);
+          return;
+        }
+      } catch (error) {
+        // Ignora erro ao verificar status de deleção
+        console.log('Status de deleção não disponível');
+      }
+
       reset();
       router.push('/dashboard');
     } catch (error) {
@@ -43,6 +60,17 @@ export const LoginForm: React.FC = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleReactivateSuccess = () => {
+    setShowReactivateModal(false);
+    reset();
+    router.push('/dashboard');
+  };
+
+  const handleReactivateCancel = () => {
+    setShowReactivateModal(false);
+    router.push('/login');
   };
 
   return (
@@ -104,6 +132,14 @@ export const LoginForm: React.FC = () => {
           Criar conta
         </Link>
       </p>
+
+      {/* Modal de Reativação */}
+      {showReactivateModal && (
+        <ReactivateAccountModal
+          onSuccess={handleReactivateSuccess}
+          onCancel={handleReactivateCancel}
+        />
+      )}
     </form>
   );
 };

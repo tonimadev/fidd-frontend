@@ -49,6 +49,48 @@ export const registerSchema = z.object({
   path: ['taxId'],
 });
 
+export const createCampaignSchema = z.object({
+  name: z.string()
+    .min(3, 'Nome da campanha deve ter pelo menos 3 caracteres')
+    .max(100, 'Nome da campanha não pode exceder 100 caracteres'),
+  pointsRequired: z.coerce.number()
+    .int('Deve ser um número inteiro')
+    .min(1, 'Pontos requeridos deve ser maior que 0')
+    .max(10000, 'Pontos requeridos não pode exceder 10000'),
+  expirationDate: z.string()
+    .refine((date) => {
+      const selectedDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return selectedDate >= today;
+    }, 'Data de expiração não pode ser no passado'),
+});
+
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1, 'Senha é obrigatória'),
+  confirmDeletion: z.boolean().refine((val) => val === true, {
+    message: 'Você deve confirmar a deleção da conta',
+  }),
+});
+
+export const generateInvitationsSchema = z.object({
+  quantity: z.coerce.number()
+    .int('Deve ser um número inteiro')
+    .min(1, 'Quantidade mínima é 1 convite')
+    .max(1000, 'Quantidade máxima é 1000 convites'),
+  pointsPerInvitation: z.coerce.number()
+    .int('Deve ser um número inteiro')
+    .min(1, 'Pontos mínimos é 1')
+    .max(10000, 'Pontos máximos é 10000'),
+  expirationMinutes: z.coerce.number()
+    .int('Deve ser um número inteiro')
+    .min(5, 'Expiração mínima é 5 minutos')
+    .max(10080, 'Expiração máxima é 7 dias (10080 minutos)'),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type CreateCampaignFormData = z.infer<typeof createCampaignSchema>;
+export type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;
+export type GenerateInvitationsFormData = z.infer<typeof generateInvitationsSchema>;
 

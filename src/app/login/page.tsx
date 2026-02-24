@@ -2,14 +2,29 @@
  * Página de login
  */
 
+'use client';
+
 import React from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const isAccountDeleted = searchParams.get('deleted') === 'true';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Mensagem de sucesso de deleção */}
+        {isAccountDeleted && (
+          <div className="mb-4 rounded-lg bg-green-50 border border-green-200 p-4">
+            <p className="text-sm text-green-700">
+              Sua conta foi marcada para deleção. Você tem 30 dias para reativar sua conta ao fazer login.
+            </p>
+          </div>
+        )}
+
         {/* Card de login */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {/* Header */}

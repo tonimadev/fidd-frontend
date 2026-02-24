@@ -16,6 +16,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAccountPendingDeletion, setIsAccountPendingDeletion] = useState(false);
 
   /**
    * Inicializa contexto ao carregar a página
@@ -120,6 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null);
     setToken(null);
     setIsAuthenticated(false);
+    setIsAccountPendingDeletion(false);
   };
 
   const value: AuthContextType = {
@@ -127,6 +129,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     token,
     isLoading,
     isAuthenticated,
+    isAccountPendingDeletion,
     login,
     register,
     logout,
