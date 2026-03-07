@@ -18,14 +18,32 @@ export const createApiClient = (): AxiosInstance => {
   });
 
   /**
-   * Interceptador de requisição para adicionar token
+   * Interceptador de requisição para adicionar token e idioma
    */
   client.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
+      // Adicionar token de autenticação
       const token = localStorage.getItem('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // Adicionar header Accept-Language para i18n
+      // Prioridade: localStorage > navegador > padrão pt-BR
+      const savedLanguage = typeof window !== 'undefined' ? localStorage.getItem('language') : null;
+      const browserLanguage = typeof window !== 'undefined' ? window.navigator.language : null;
+      
+      let language = savedLanguage || browserLanguage || 'pt-BR';
+      
+      // Normalizar para pt-BR ou en-US conforme solicitado pelo backend
+      if (language.startsWith('en')) {
+        language = 'en-US';
+      } else {
+        language = 'pt-BR';
+      }
+
+      config.headers['Accept-Language'] = language;
+      
       return config;
     },
     (error) => Promise.reject(error)
