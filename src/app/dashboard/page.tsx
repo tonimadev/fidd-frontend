@@ -10,14 +10,18 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { CampaignsList } from '@/components/campaigns/CampaignsList';
 import { AccountSettings } from '@/components/account/AccountSettings';
 import { DashboardMetricsCard } from '@/components/dashboard/DashboardMetricsCard';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { SubscriptionPlans } from '@/components/subscriptions/SubscriptionPlans';
 
-type DashboardTab = 'home' | 'campaigns' | 'settings';
+type DashboardTab = 'home' | 'campaigns' | 'settings' | 'subscriptions';
 
 function DashboardContent() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<DashboardTab>('home');
+
+  const subscriptionStatus = searchParams.get('subscription');
 
   const handleLogout = () => {
     logout();
@@ -70,12 +74,42 @@ function DashboardContent() {
             >
               Campanhas
             </button>
+            <button
+              onClick={() => setActiveTab('subscriptions')}
+              className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === 'subscriptions'
+                  ? 'border-blue-600 text-blue-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Assinaturas
+            </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {subscriptionStatus === 'success' && (
+          <div className="mb-8 p-4 bg-green-50 text-green-700 rounded-xl border border-green-200 flex items-center gap-3 shadow-sm">
+            <span className="text-xl">✅</span> 
+            <div>
+              <p className="font-bold">Assinatura realizada!</p>
+              <p className="text-sm">Seu plano Pro já está ativo. Aproveite todos os benefícios.</p>
+            </div>
+          </div>
+        )}
+
+        {subscriptionStatus === 'cancel' && (
+          <div className="mb-8 p-4 bg-yellow-50 text-yellow-700 rounded-xl border border-yellow-200 flex items-center gap-3 shadow-sm">
+            <span className="text-xl">ℹ️</span>
+            <div>
+              <p className="font-bold">Checkout cancelado</p>
+              <p className="text-sm">A sessão de pagamento foi encerrada. Nenhuma cobrança foi realizada.</p>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'home' && (
           <>
             {/* Métricas do Dashboard */}
@@ -116,6 +150,7 @@ function DashboardContent() {
 
         {activeTab === 'campaigns' && <CampaignsList />}
         {activeTab === 'settings' && <AccountSettings />}
+        {activeTab === 'subscriptions' && <SubscriptionPlans />}
       </main>
     </div>
   );
