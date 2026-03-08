@@ -148,5 +148,63 @@ describe('campaignService', () => {
       );
     });
   });
+
+  describe('toggleCampaignStatus', () => {
+    it('deve alternar o status de uma campanha ativa para pausada usando PUT', async () => {
+      const campaign = {
+        id: 1,
+        name: 'Test Campaign',
+        pointsRequired: 10,
+        isActive: true,
+        expirationDate: '2026-12-31',
+        storeId: 1,
+        description: 'Test description',
+        benefitType: 'Recompensa'
+      } as any;
+
+      const mockUpdatedCampaign = { ...campaign, isActive: false };
+
+      (apiClient.put as jest.Mock).mockResolvedValue({
+        data: mockUpdatedCampaign,
+      });
+
+      const result = await campaignService.toggleCampaignStatus(campaign);
+
+      expect(result.isActive).toBe(false);
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/api/web/v1/campaigns/1',
+        expect.objectContaining({
+          isActive: false
+        })
+      );
+    });
+
+    it('deve alternar o status de uma campanha pausada para ativa usando PUT', async () => {
+      const campaign = {
+        id: 1,
+        name: 'Test Campaign',
+        pointsRequired: 10,
+        isActive: false,
+        expirationDate: '2026-12-31',
+        storeId: 1
+      } as any;
+
+      const mockUpdatedCampaign = { ...campaign, isActive: true };
+
+      (apiClient.put as jest.Mock).mockResolvedValue({
+        data: mockUpdatedCampaign,
+      });
+
+      const result = await campaignService.toggleCampaignStatus(campaign);
+
+      expect(result.isActive).toBe(true);
+      expect(apiClient.put).toHaveBeenCalledWith(
+        '/api/web/v1/campaigns/1',
+        expect.objectContaining({
+          isActive: true
+        })
+      );
+    });
+  });
 });
 

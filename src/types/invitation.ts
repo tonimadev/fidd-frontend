@@ -3,9 +3,13 @@
  */
 
 export interface Invitation {
-  token: string;
-  pointsValue: number;
+  id: number;
+  inviteToken: string;
+  campaignName: string;
+  points: number;
   expiresAt: string;
+  inviteUrl: string;
+  message: string;
 }
 
 export interface GenerateInvitationsRequest {
@@ -17,9 +21,9 @@ export interface GenerateInvitationsRequest {
 
 export interface GenerateInvitationsResponse {
   campaignId: number;
+  campaignName: string;
   totalGenerated: number;
-  pointsPerInvitation: number;
-  expirationMinutes: number;
   invitations: Invitation[];
+  message: string;
 }
 

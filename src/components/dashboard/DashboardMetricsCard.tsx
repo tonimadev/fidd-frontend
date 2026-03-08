@@ -7,14 +7,19 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardMetrics } from '@/types/dashboard';
 import { dashboardService } from '@/lib/dashboard-service';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 
 export const DashboardMetricsCard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const isLoaded = React.useRef(false);
   useEffect(() => {
-    loadMetrics();
+    if (!isLoaded.current) {
+      loadMetrics();
+      isLoaded.current = true;
+    }
   }, []);
 
   const loadMetrics = async () => {
@@ -33,77 +38,107 @@ export const DashboardMetricsCard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg shadow p-8 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-lg p-6 animate-pulse">
-              <div className="h-8 bg-gray-300 rounded w-12 mb-3"></div>
-              <div className="h-4 bg-gray-300 rounded w-24"></div>
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i} className="animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="h-4 bg-muted rounded w-24"></div>
+              <div className="h-4 w-4 bg-muted rounded-full"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-8 bg-muted rounded w-16 mb-1"></div>
+              <div className="h-3 bg-muted rounded w-32"></div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
   if (errorMessage) {
     return (
-      <div className="bg-white rounded-lg shadow p-8 mb-8">
-        <div className="rounded-lg bg-red-50 p-4">
-          <p className="text-sm text-red-700">{errorMessage}</p>
+      <Card className="mb-8 border-red-200 bg-red-50">
+        <CardContent className="pt-6">
+          <p className="text-sm text-red-700 font-medium">{errorMessage}</p>
           <button
             onClick={loadMetrics}
-            className="mt-3 text-sm text-red-600 hover:text-red-700 font-medium underline"
+            className="mt-2 text-xs text-red-600 hover:underline font-bold"
           >
             Tentar novamente
           </button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
-  if (!metrics) {
-    return null;
-  }
+  if (!metrics) return null;
+
+  const metricCards = [
+    {
+      title: 'Campanhas Ativas',
+      value: metrics.activeCampaigns,
+      description: 'Campanhas em andamento',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-primary">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Total de Clientes',
+      value: metrics.totalCustomers,
+      description: 'Clientes fidelizados',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-emerald-500">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Pontos Distribuídos',
+      value: metrics.pointsDistributed.toLocaleString(),
+      description: 'Acúmulo total',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-amber-500">
+          <circle cx="12" cy="12" r="8" />
+          <line x1="12" y1="8" x2="12" y2="16" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Taxa de Engajamento',
+      value: `${metrics.engagementRate.toFixed(1)}%`,
+      description: 'Últimos 30 dias',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-indigo-500">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+      ),
+    },
+  ];
 
   return (
-    <div className="bg-white rounded-lg shadow p-8 mb-8">
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-900">Bem-vindo ao FIDD!</h2>
-        <p className="text-gray-600 mt-2">
-          Gerenciamento completo de campanhas de fidelização para sua loja
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {/* Campanhas Ativas */}
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
-          <div className="text-3xl font-bold text-blue-600">{metrics.activeCampaigns}</div>
-          <p className="text-gray-700 text-sm font-medium mt-2">Campanhas Ativas</p>
-          <p className="text-gray-600 text-xs mt-1">Campanhas em andamento</p>
-        </div>
-
-        {/* Total de Clientes */}
-        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
-          <div className="text-3xl font-bold text-green-600">{metrics.totalCustomers}</div>
-          <p className="text-gray-700 text-sm font-medium mt-2">Total de Clientes</p>
-          <p className="text-gray-600 text-xs mt-1">Clientes em programa</p>
-        </div>
-
-        {/* Pontos Distribuídos */}
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
-          <div className="text-3xl font-bold text-purple-600">{metrics.pointsDistributed}</div>
-          <p className="text-gray-700 text-sm font-medium mt-2">Pontos Distribuídos</p>
-          <p className="text-gray-600 text-xs mt-1">Total acumulado</p>
-        </div>
-
-        {/* Taxa de Engajamento */}
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
-          <div className="text-3xl font-bold text-orange-600">{metrics.engagementRate.toFixed(2)}%</div>
-          <p className="text-gray-700 text-sm font-medium mt-2">Taxa de Engajamento</p>
-          <p className="text-gray-600 text-xs mt-1">Últimos 30 dias</p>
-        </div>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {metricCards.map((card, i) => (
+        <Card key={i} className="transition-all hover:shadow-md border-muted/60">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              {card.title}
+            </CardTitle>
+            {card.icon}
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold tracking-tight">{card.value}</div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {card.description}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };

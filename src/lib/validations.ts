@@ -64,6 +64,10 @@ export const createCampaignSchema = z.object({
       today.setHours(0, 0, 0, 0);
       return selectedDate >= today;
     }, 'Data de expiração não pode ser no passado'),
+  description: z.string()
+    .max(1000, 'A descrição não pode exceder 1000 caracteres')
+    .optional()
+    .or(z.literal('')),
 });
 
 export const deleteAccountSchema = z.object({

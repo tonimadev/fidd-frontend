@@ -9,12 +9,15 @@ export interface Campaign {
   isActive: boolean;
   expirationDate: string; // YYYY-MM-DD
   storeId: number;
+  description?: string;
+  benefitType?: string;
 }
 
 export interface CreateCampaignRequest {
   name: string;
   pointsRequired: number;
   expirationDate: string; // YYYY-MM-DD
+  description?: string;
 }
 
 export interface UpdateCampaignRequest {
@@ -22,5 +25,7 @@ export interface UpdateCampaignRequest {
   pointsRequired: number;
   expirationDate: string; // YYYY-MM-DD
   isActive: boolean;
+  description?: string;
+  benefitType?: string;
 }
 

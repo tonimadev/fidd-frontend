@@ -19,8 +19,8 @@ describe('SubscriptionPlans', () => {
 
     expect(screen.getByText('Plano Gratuito')).toBeInTheDocument();
     expect(screen.getByText('Plano Pro')).toBeInTheDocument();
-    expect(screen.getByText('R$ 0,00')).toBeInTheDocument();
-    expect(screen.getByText('R$ 50,00')).toBeInTheDocument();
+    expect(screen.getByText('R$ 0')).toBeInTheDocument();
+    expect(screen.getByText('R$ 50')).toBeInTheDocument();
   });
 
   it('deve chamar createCheckoutSession ao clicar em Assinar Plano Pro', async () => {

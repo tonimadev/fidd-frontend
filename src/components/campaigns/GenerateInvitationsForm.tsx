@@ -34,13 +34,13 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<GenerateInvitationsFormData>({
+  } = useForm({
     resolver: zodResolver(generateInvitationsSchema),
     mode: 'onBlur',
     defaultValues: {
       quantity: 10,
       pointsPerInvitation: 5,
-      expirationMinutes: 60,
+      expirationMinutes: 1440,
     },
   });
 
@@ -67,19 +67,19 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     }
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, label: string = 'Link') => {
     navigator.clipboard.writeText(text);
-    alert('Token copiado para a área de transferência!');
+    alert(`${label} copiado para a área de transferência!`);
   };
 
   const downloadInvitations = () => {
     if (!invitationsResult) return;
 
     const csv = invitationsResult.invitations
-      .map((inv, index) => `${index + 1},${inv.token},${inv.pointsValue},${inv.expiresAt}`)
+      .map((inv, index) => `${index + 1},${inv.inviteToken},${inv.points},${inv.expiresAt},${inv.inviteUrl}`)
       .join('\n');
 
-    const header = 'ID,Token,Pontos,Expira em\n';
+    const header = 'ID,Token,Pontos,Expira em,URL do Convite\n';
     const content = header + csv;
 
     const blob = new Blob([content], { type: 'text/csv' });
@@ -100,37 +100,55 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
         <div className="rounded-lg bg-green-50 border border-green-200 p-6">
           <h3 className="text-lg font-semibold text-green-900">Convites Gerados com Sucesso!</h3>
           <p className="mt-2 text-sm text-green-700">
-            Total de <strong>{invitationsResult.totalGenerated}</strong> convites gerados para a campanha{' '}
-            <strong>{campaignName}</strong>
+            {invitationsResult.message}
           </p>
           <p className="mt-1 text-sm text-green-700">
-            Cada convite vale <strong>{invitationsResult.pointsPerInvitation} pontos</strong> e expira em{' '}
-            <strong>{invitationsResult.expirationMinutes} minutos</strong>
+            Total de <strong>{invitationsResult.totalGenerated}</strong> convites gerados para a campanha{' '}
+            <strong>{campaignName}</strong>
           </p>
         </div>
 
         {/* Lista de Convites */}
         <div className="space-y-3">
-          <h4 className="font-semibold text-gray-900">Tokens dos Convites:</h4>
-          <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+          <h4 className="font-semibold text-gray-900">Seus Convites:</h4>
+          <div className="max-h-80 overflow-y-auto border border-gray-200 rounded-lg divide-y divide-gray-100">
             {invitationsResult.invitations.map((invitation, index) => (
               <div
-                key={index}
-                className="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 last:border-b-0"
+                key={invitation.id || index}
+                className="p-4 hover:bg-gray-50 transition-colors"
               >
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500">Convite #{index + 1}</p>
-                  <p className="text-sm font-mono text-gray-700 break-all">{invitation.token}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {invitation.pointsValue} pontos | Expira: {new Date(invitation.expiresAt).toLocaleString('pt-BR')}
-                  </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wider">
+                        {invitation.points} pontos
+                      </span>
+                      <span className="text-[10px] text-gray-400">
+                        Expira: {new Date(invitation.expiresAt).toLocaleString('pt-BR')}
+                      </span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900 truncate mb-1">
+                      {invitation.inviteUrl}
+                    </p>
+                    <div className="bg-gray-100 p-2 rounded text-xs text-gray-600 italic mt-2 border-l-2 border-gray-300">
+                      "{invitation.message}"
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 shrink-0">
+                    <button
+                      onClick={() => copyToClipboard(invitation.inviteUrl, 'Link')}
+                      className="px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors border border-blue-200"
+                    >
+                      Copiar Link
+                    </button>
+                    <button
+                      onClick={() => copyToClipboard(invitation.message, 'Mensagem')}
+                      className="px-3 py-1.5 text-xs font-semibold text-gray-700 bg-white hover:bg-gray-100 rounded-md transition-colors border border-gray-200"
+                    >
+                      Copiar Texto
+                    </button>
+                  </div>
                 </div>
-                <button
-                  onClick={() => copyToClipboard(invitation.token)}
-                  className="ml-2 px-3 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                >
-                  Copiar
-                </button>
               </div>
             ))}
           </div>

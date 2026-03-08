@@ -33,6 +33,22 @@ export const campaignService = {
   },
 
   /**
+   * Ativa ou pausa uma campanha
+   */
+  async toggleCampaignStatus(campaign: Campaign): Promise<Campaign> {
+    const data: UpdateCampaignRequest = {
+      name: campaign.name,
+      pointsRequired: campaign.pointsRequired,
+      expirationDate: campaign.expirationDate,
+      description: campaign.description,
+      benefitType: campaign.benefitType,
+      isActive: !campaign.isActive,
+    };
+    const response = await apiClient.put<Campaign>(`${CAMPAIGNS_BASE_URL}/${campaign.id}`, data);
+    return response.data;
+  },
+
+  /**
    * Deleta uma campanha
    */
   async deleteCampaign(id: number): Promise<void> {
