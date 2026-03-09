@@ -16,8 +16,9 @@ import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { HelpCenter } from '@/components/dashboard/HelpCenter';
+import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
 
-type DashboardTab = 'home' | 'campaigns' | 'settings' | 'subscriptions';
+type DashboardTab = 'home' | 'campaigns' | 'redemptions' | 'settings' | 'subscriptions';
 
 function DashboardContent() {
   const { user, logout } = useAuth();
@@ -75,6 +76,11 @@ function DashboardContent() {
     setActiveTab('campaigns');
   };
 
+  const handleQuickActionRedeem = () => {
+    router.push('/dashboard?tab=redemptions');
+    setActiveTab('redemptions');
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
@@ -128,6 +134,22 @@ function DashboardContent() {
                       <div className="text-xs text-muted-foreground font-normal">Atraia novos clientes</div>
                     </div>
                   </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2 items-start border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+                    onClick={handleQuickActionRedeem}
+                  >
+                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <div className="font-bold">Resgatar Prêmio</div>
+                      <div className="text-xs text-muted-foreground font-normal">Valide um código</div>
+                    </div>
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -156,6 +178,18 @@ function DashboardContent() {
         );
       case 'campaigns':
         return <CampaignsList onOpenHelp={openHelp} />;
+      case 'redemptions':
+        return (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">Resgate de Prêmios</h2>
+              <p className="text-muted-foreground">
+                Valide os códigos de resgate apresentados pelos seus clientes.
+              </p>
+            </div>
+            <RedemptionForm />
+          </div>
+        );
       case 'settings':
         return <AccountSettings />;
       case 'subscriptions':

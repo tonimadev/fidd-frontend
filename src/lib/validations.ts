@@ -92,9 +92,16 @@ export const generateInvitationsSchema = z.object({
     .max(10080, 'Expiração máxima é 7 dias (10080 minutos)'),
 });
 
+export const redemptionSchema = z.object({
+  code: z.string()
+    .length(6, 'O código deve ter exatamente 6 caracteres')
+    .toUpperCase(),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type CreateCampaignFormData = z.infer<typeof createCampaignSchema>;
 export type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;
 export type GenerateInvitationsFormData = z.infer<typeof generateInvitationsSchema>;
+export type RedemptionFormData = z.infer<typeof redemptionSchema>;
 
