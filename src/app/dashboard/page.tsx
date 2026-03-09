@@ -11,6 +11,7 @@ import { CampaignsList } from '@/components/campaigns/CampaignsList';
 import { AccountSettings } from '@/components/account/AccountSettings';
 import { DashboardMetricsCard } from '@/components/dashboard/DashboardMetricsCard';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { SubscriptionPlans } from '@/components/subscriptions/SubscriptionPlans';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Button } from '@/components/ui/Button';
@@ -27,6 +28,7 @@ function DashboardContent() {
   const initialTab = searchParams.get('tab') as DashboardTab;
   const [activeTab, setActiveTab] = useState<DashboardTab>(initialTab || 'home');
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [initialHelpTutorialId, setInitialHelpTutorialId] = useState<string | null>(null);
 
   const openHelp = (tutorialId: string | null = null) => {
@@ -52,6 +54,7 @@ function DashboardContent() {
 
   const handleTabChange = (tab: DashboardTab) => {
     setActiveTab(tab);
+    setIsSidebarOpen(false); // Fecha o sidebar ao trocar de aba no mobile
     // Atualizar a URL para manter sincronizado e permitir navegação de volta/frente
     const params = new URLSearchParams(searchParams.toString());
     if (tab === 'home') {
@@ -200,15 +203,44 @@ function DashboardContent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen bg-background text-foreground relative">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={handleTabChange}
         onLogout={handleLogout}
-        onHelpClick={() => setIsHelpOpen(true)}
+        onHelpClick={() => {
+          setIsHelpOpen(true);
+          setIsSidebarOpen(false);
+        }}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
-      <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
+      {/* Overlay para mobile quando o sidebar está aberto */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="lg:hidden flex items-center h-16 px-4 border-b border-border bg-white sticky top-0 z-20">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-2 ml-4">
+            <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} />
+            <span className="text-xl font-black tracking-tighter text-primary">FIDD</span>
+          </div>
+        </header>
+
+        <main className="flex-1 p-6 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {subscriptionStatus === 'success' && (
             <div className="mb-8 p-4 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200 flex items-center gap-3 shadow-sm">
@@ -227,6 +259,7 @@ function DashboardContent() {
           {renderContent()}
         </div>
       </main>
+    </div>
 
       <HelpCenter 
         isOpen={isHelpOpen} 

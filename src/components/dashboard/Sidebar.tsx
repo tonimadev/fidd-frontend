@@ -8,9 +8,18 @@ interface SidebarProps {
   setActiveTab: (tab: any) => void;
   onLogout: () => void;
   onHelpClick: (tutorialId?: string | null) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLogout, onHelpClick }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ 
+  activeTab, 
+  setActiveTab, 
+  onLogout, 
+  onHelpClick,
+  isOpen = false,
+  onClose
+}) => {
   const { user } = useAuth();
 
   const menuItems = [
@@ -43,14 +52,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLog
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-border h-screen sticky top-0 flex flex-col transition-all">
-      <div className="p-6">
+    <aside className={`
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'} 
+      lg:translate-x-0 
+      fixed lg:sticky 
+      top-0 left-0 z-40 
+      w-64 bg-white border-r border-border h-screen 
+      flex flex-col transition-transform duration-300 ease-in-out
+    `}>
+      <div className="p-6 flex items-center justify-between">
         <button 
-          onClick={() => setActiveTab('home')}
+          onClick={() => {
+            setActiveTab('home');
+            onClose?.();
+          }}
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
           <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} />
           <span className="text-2xl font-black tracking-tighter text-primary">FIDD</span>
+        </button>
+
+        <button
+          onClick={onClose}
+          className="lg:hidden p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
         </button>
       </div>
       
