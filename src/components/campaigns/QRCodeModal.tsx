@@ -113,7 +113,7 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
             </div>
           ) : (
             <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-indigo-500/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-70" />
+              <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-secondary/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-70" />
               <div className="relative bg-white p-6 rounded-2xl shadow-inner border border-gray-100">
                 {qrData && (
                   <QRCodeSVG 
@@ -122,7 +122,7 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
                     level="H"
                     includeMargin={false}
                     imageSettings={{
-                      src: "/favicon.ico", // Opcional: logo no centro
+                      src: "/fidd.png", // Opcional: logo no centro
                       x: undefined,
                       y: undefined,
                       height: 40,

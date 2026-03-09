@@ -1,23 +1,27 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-secondary/10 via-white to-primary/10">
       {/* Navigation */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">FIDD</h1>
+          <div className="flex items-center gap-2">
+            <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} />
+            <span className="text-2xl font-bold text-primary">FIDD</span>
+          </div>
           <div className="flex gap-4">
             <Link
               href="/login"
-              className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              className="px-4 py-2 text-primary hover:text-primary/80 font-medium transition-colors"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
             >
               Criar Conta
             </Link>
@@ -37,13 +41,13 @@ export default function HomePage() {
           <div className="flex gap-4 justify-center">
             <Link
               href="/register"
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg"
+              className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-lg"
             >
               Começar Agora
             </Link>
             <Link
               href="#features"
-              className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold text-lg"
+              className="px-8 py-3 border-2 border-primary text-primary rounded-lg hover:bg-primary/5 transition-colors font-semibold text-lg"
             >
               Saiba Mais
             </Link>
@@ -127,14 +131,14 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-indigo-600 py-16">
+      <section className="bg-gradient-to-r from-primary to-accent py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-4xl font-bold text-white mb-8">
             Pronto para aumentar a fidelidade de seus clientes?
           </h3>
           <Link
             href="/register"
-            className="inline-block px-10 py-4 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg"
+            className="inline-block px-10 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg"
           >
             Criar Conta Gratuitamente
           </Link>
@@ -146,7 +150,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h5 className="text-white font-bold mb-4">FIDD</h5>
+              <div className="flex items-center gap-2 mb-4">
+                <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} className="brightness-0 invert" />
+                <h5 className="text-white font-bold">FIDD</h5>
+              </div>
               <p className="text-sm">Cartões de Fidelidade Virtuais para seu negócio.</p>
             </div>
             <div>

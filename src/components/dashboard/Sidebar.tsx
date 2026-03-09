@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/Button';
+import Image from 'next/image';
 
 interface SidebarProps {
   activeTab: string;
@@ -46,9 +47,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLog
       <div className="p-6">
         <button 
           onClick={() => setActiveTab('home')}
-          className="text-2xl font-black tracking-tighter text-primary hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          FIDD
+          <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} />
+          <span className="text-2xl font-black tracking-tighter text-primary">FIDD</span>
         </button>
       </div>
       

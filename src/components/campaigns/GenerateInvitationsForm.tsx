@@ -115,7 +115,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
         {/* Lista de Convites */}
         <div className="space-y-4">
           <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
             Seus Convites:
@@ -129,7 +129,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="flex-1 space-y-3">
                     <div className="flex items-center gap-3">
-                      <div className="bg-blue-600 text-white text-lg font-mono font-bold px-4 py-1.5 rounded-lg tracking-wider shadow-sm">
+                      <div className="bg-primary text-white text-lg font-mono font-bold px-4 py-1.5 rounded-lg tracking-wider shadow-sm">
                         {invitation.inviteToken}
                       </div>
                       <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full uppercase tracking-wide border border-green-100">
@@ -154,7 +154,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
                   </div>
 
                   <div className="flex items-center gap-4 shrink-0">
-                    <div className="hidden sm:block p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:border-blue-100 transition-colors">
+                    <div className="hidden sm:block p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:border-primary/30 transition-colors">
                       {invitation.qrCodeUrl ? (
                         <img 
                           src={invitation.qrCodeUrl} 
@@ -183,7 +183,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
                         variant="ghost"
                         size="sm"
                         onClick={() => copyToClipboard(invitation.inviteUrl, 'Link')}
-                        className="h-8 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 justify-start md:justify-center"
+                        className="h-8 text-xs font-semibold text-primary hover:text-primary/80 hover:bg-primary/5 justify-start md:justify-center"
                       >
                         Copiar Link
                       </Button>
@@ -236,8 +236,8 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
       )}
 
       {/* Informações da Campanha */}
-      <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-        <p className="text-sm text-blue-900">
+      <div className="rounded-lg bg-primary/5 border border-primary/20 p-4">
+        <p className="text-sm text-primary/90">
           Gerando convites para a campanha: <strong>{campaignName}</strong>
         </p>
       </div>
@@ -254,7 +254,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
           placeholder="10"
           min="1"
           max="1000"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.quantity && (
           <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>
@@ -276,7 +276,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
           placeholder="5"
           min="1"
           max="10000"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.pointsPerInvitation && (
           <p className="mt-1 text-sm text-red-600">{errors.pointsPerInvitation.message}</p>
@@ -298,7 +298,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
           placeholder="60"
           min="5"
           max="10080"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.expirationMinutes && (
           <p className="mt-1 text-sm text-red-600">{errors.expirationMinutes.message}</p>

@@ -7,6 +7,7 @@
 import React, { Suspense } from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 
@@ -42,7 +43,8 @@ export default function LoginPage() {
       {/* Coluna da Esquerda: Formulário */}
       <div className="flex items-center justify-center p-8 bg-background">
         <div className="w-full max-w-md space-y-8">
-          <div className="lg:hidden text-center mb-8">
+          <div className="lg:hidden flex flex-col items-center mb-8">
+            <Image src="/fidd.png" alt="FIDD Logo" width={64} height={64} className="mb-2" />
             <h1 className="text-4xl font-black tracking-tighter text-primary">FIDD</h1>
           </div>
 
@@ -71,7 +73,8 @@ export default function LoginPage() {
           </svg>
         </div>
         
-        <div className="relative z-10 text-center text-primary-foreground max-w-lg">
+        <div className="relative z-10 text-center text-primary-foreground max-w-lg flex flex-col items-center">
+          <Image src="/fidd.png" alt="FIDD Logo" width={100} height={100} className="mb-6 brightness-0 invert" />
           <h1 className="text-6xl font-black tracking-tighter mb-6">FIDD</h1>
           <h2 className="text-3xl font-bold mb-4">Fidelize seus clientes com simplicidade.</h2>
           <p className="text-lg text-primary-foreground/80 leading-relaxed">

@@ -247,7 +247,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
               {/* Visual de Cartão Real */}
               <div className={`h-32 p-6 flex flex-col justify-between relative overflow-hidden ${
                 Boolean(campaign.isActive) && !isExpired(campaign.expirationDate)
-                  ? 'bg-gradient-to-br from-primary to-indigo-700 text-white'
+                  ? 'bg-gradient-to-br from-primary to-accent text-white'
                   : 'bg-muted text-muted-foreground'
               }`}>
                 <div className="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />

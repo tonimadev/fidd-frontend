@@ -73,7 +73,7 @@ src/
 │   ├── layout.tsx               # Root layout
 │   ├── page.tsx                 # Home page
 │   ├── globals.css              # Global styles
-│   └── favicon.ico
+│   └── icon.png (fidd.png)
 ├── components/                   # React components
 │   ├── auth/                    # Authentication components
 │   │   ├── LoginForm.tsx
@@ -239,7 +239,7 @@ src/
 │   ├── layout.tsx        # Root layout
 │   ├── page.tsx          # Home page
 │   ├── globals.css       # Global styles
-│   └── favicon.ico       # Favicon
+│   └── icon.png          # Favicon (fidd.png)
 ├── components/           # React components
 │   └── auth/            # Authentication components
 │       ├── LoginForm.tsx

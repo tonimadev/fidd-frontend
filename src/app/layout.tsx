@@ -16,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "FIDD - Cartões de Fidelidade Virtuais",
   description: "Plataforma de gerenciamento de campanhas de fidelização para lojas",
+  icons: {
+    icon: "/fidd.png",
+    apple: "/fidd.png",
+  },
 };
 
 export default function RootLayout({

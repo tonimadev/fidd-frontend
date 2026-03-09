@@ -66,7 +66,7 @@ export const RegisterForm: React.FC = () => {
 
     if (score <= 2) return { strength: 'Fraca', color: 'text-red-600' };
     if (score <= 3) return { strength: 'Média', color: 'text-yellow-600' };
-    if (score <= 4) return { strength: 'Forte', color: 'text-blue-600' };
+    if (score <= 4) return { strength: 'Forte', color: 'text-primary' };
     return { strength: 'Muito Forte', color: 'text-green-600' };
   };
 
@@ -96,7 +96,7 @@ export const RegisterForm: React.FC = () => {
           type="text"
           id="tradeName"
           placeholder="Padaria do João"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.tradeName && (
           <p className="mt-1 text-sm text-red-600">{errors.tradeName.message}</p>
@@ -114,7 +114,7 @@ export const RegisterForm: React.FC = () => {
               {...register('taxIdType')}
               type="radio"
               value="CNPJ"
-              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
             />
             <span className="text-sm text-gray-700">CNPJ (Loja/Empresa)</span>
           </label>
@@ -123,7 +123,7 @@ export const RegisterForm: React.FC = () => {
               {...register('taxIdType')}
               type="radio"
               value="CPF"
-              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+              className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
             />
             <span className="text-sm text-gray-700">CPF (Pessoa Física)</span>
           </label>
@@ -144,7 +144,7 @@ export const RegisterForm: React.FC = () => {
           id="taxId"
           placeholder={getDocumentPlaceholder()}
           maxLength={getDocumentMaxLength()}
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {taxId && (
           <p className="mt-1 text-xs text-gray-500">
@@ -166,7 +166,7 @@ export const RegisterForm: React.FC = () => {
           type="email"
           id="email"
           placeholder="seu@email.com"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -184,7 +184,7 @@ export const RegisterForm: React.FC = () => {
             type={showPassword ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <button
             type="button"
@@ -235,7 +235,7 @@ export const RegisterForm: React.FC = () => {
           type="password"
           id="confirmPassword"
           placeholder="••••••••"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.confirmPassword && (
           <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
@@ -253,7 +253,7 @@ export const RegisterForm: React.FC = () => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full rounded-lg bg-primary px-4 py-2 font-semibold text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isSubmitting ? 'Criando conta...' : 'Criar Conta'}
       </button>
@@ -261,7 +261,7 @@ export const RegisterForm: React.FC = () => {
       {/* Link para login */}
       <p className="text-center text-sm text-gray-600">
         Já tem uma conta?{' '}
-        <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+        <Link href="/login" className="text-primary hover:text-primary/80 font-medium">
           Fazer login
         </Link>
       </p>
