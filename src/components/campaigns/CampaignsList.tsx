@@ -14,7 +14,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/Button';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export const CampaignsList: React.FC = () => {
+interface CampaignsListProps {
+  onOpenHelp?: (tutorialId?: string | null) => void;
+}
+
+export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -225,9 +229,16 @@ export const CampaignsList: React.FC = () => {
           <CardDescription className="mb-6 max-w-xs">
             Você ainda não criou nenhuma campanha de fidelidade. Comece agora!
           </CardDescription>
-          <Button onClick={() => setShowCreateForm(true)}>
-            Criar Minha Primeira Campanha
-          </Button>
+          <div className="flex flex-col gap-3 w-full max-w-xs">
+            <Button onClick={() => setShowCreateForm(true)}>
+              Criar Minha Primeira Campanha
+            </Button>
+            {onOpenHelp && (
+              <Button variant="ghost" size="sm" onClick={() => onOpenHelp('campaign_management')}>
+                Ver guia de como criar campanhas
+              </Button>
+            )}
+          </div>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -15,6 +15,7 @@ import { SubscriptionPlans } from '@/components/subscriptions/SubscriptionPlans'
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { HelpCenter } from '@/components/dashboard/HelpCenter';
 
 type DashboardTab = 'home' | 'campaigns' | 'settings' | 'subscriptions';
 
@@ -24,11 +25,19 @@ function DashboardContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') as DashboardTab;
   const [activeTab, setActiveTab] = useState<DashboardTab>(initialTab || 'home');
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [initialHelpTutorialId, setInitialHelpTutorialId] = useState<string | null>(null);
+
+  const openHelp = (tutorialId: string | null = null) => {
+    setInitialHelpTutorialId(tutorialId);
+    setIsHelpOpen(true);
+  };
 
   // Sincronizar aba com parâmetro da URL
   useEffect(() => {
-    const tab = searchParams.get('tab') as DashboardTab;
-    if (tab && tab !== activeTab) {
+    const tabFromUrl = searchParams.get('tab') as DashboardTab;
+    const tab = tabFromUrl || 'home';
+    if (tab !== activeTab) {
       setActiveTab(tab);
     }
   }, [searchParams, activeTab]);
@@ -38,6 +47,22 @@ function DashboardContent() {
   const handleLogout = () => {
     logout();
     router.push('/login');
+  };
+
+  const handleTabChange = (tab: DashboardTab) => {
+    setActiveTab(tab);
+    // Atualizar a URL para manter sincronizado e permitir navegação de volta/frente
+    const params = new URLSearchParams(searchParams.toString());
+    if (tab === 'home') {
+      params.delete('tab');
+    } else {
+      params.set('tab', tab);
+    }
+    // Sempre limpar o parâmetro de ação ao trocar de aba via menu
+    params.delete('action');
+    
+    const query = params.toString();
+    router.push(query ? `/dashboard?${query}` : '/dashboard');
   };
 
   const handleQuickActionCreate = () => {
@@ -117,7 +142,11 @@ function DashboardContent() {
                       "Lojistas que oferecem um benefício intermediário após 5 selos têm uma taxa de retorno 40% maior do que os que oferecem apenas no final."
                     </p>
                   </div>
-                  <Button variant="link" className="mt-4 p-0 h-auto text-primary">
+                  <Button 
+                    variant="link" 
+                    className="mt-4 p-0 h-auto text-primary"
+                    onClick={() => openHelp()}
+                  >
                     Ver mais dicas estratégicas →
                   </Button>
                 </CardContent>
@@ -126,7 +155,7 @@ function DashboardContent() {
           </div>
         );
       case 'campaigns':
-        return <CampaignsList />;
+        return <CampaignsList onOpenHelp={openHelp} />;
       case 'settings':
         return <AccountSettings />;
       case 'subscriptions':
@@ -140,8 +169,9 @@ function DashboardContent() {
     <div className="flex min-h-screen bg-background text-foreground">
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         onLogout={handleLogout}
+        onHelpClick={() => setIsHelpOpen(true)}
       />
 
       <main className="flex-1 p-8 lg:p-12 overflow-y-auto">
@@ -163,6 +193,16 @@ function DashboardContent() {
           {renderContent()}
         </div>
       </main>
+
+      <HelpCenter 
+        isOpen={isHelpOpen} 
+        onClose={() => {
+          setIsHelpOpen(false);
+          setInitialHelpTutorialId(null);
+        }} 
+        activeTab={activeTab}
+        initialTutorialId={initialHelpTutorialId}
+      />
     </div>
   );
 }

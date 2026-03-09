@@ -6,9 +6,10 @@ interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: any) => void;
   onLogout: () => void;
+  onHelpClick: (tutorialId?: string | null) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLogout }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLogout, onHelpClick }) => {
   const { user } = useAuth();
 
   const menuItems = [
@@ -38,7 +39,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLog
   return (
     <aside className="w-64 bg-white border-r border-border h-screen sticky top-0 flex flex-col transition-all">
       <div className="p-6">
-        <h1 className="text-2xl font-black tracking-tighter text-primary">FIDD</h1>
+        <button 
+          onClick={() => setActiveTab('home')}
+          className="text-2xl font-black tracking-tighter text-primary hover:opacity-80 transition-opacity"
+        >
+          FIDD
+        </button>
       </div>
       
       <nav className="flex-1 px-4 space-y-1">
@@ -56,6 +62,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onLog
             {item.label}
           </button>
         ))}
+        
+        <button
+          onClick={onHelpClick}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-primary/5 hover:text-primary transition-all border border-transparent hover:border-primary/10 mt-4"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Central de Ajuda
+          <span className="ml-auto bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded font-bold">NOVO</span>
+        </button>
       </nav>
 
       <div className="p-4 border-t border-border space-y-4">
