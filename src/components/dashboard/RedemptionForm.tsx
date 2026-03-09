@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { redemptionSchema, RedemptionFormData } from '@/lib/validations';
 import { redemptionService } from '@/lib/redemption-service';
 import { RedemptionResponse } from '@/types/redemption';
-import { AxiosError } from 'axios';
+import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -48,9 +48,7 @@ export const RedemptionForm: React.FC = () => {
       setSuccessData(response);
       reset();
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
-      const message = axiosError.response?.data?.message || 'Erro ao validar código. Tente novamente.';
-      setErrorMessage(message);
+      setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao validar código. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }

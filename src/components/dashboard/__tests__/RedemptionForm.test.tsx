@@ -52,6 +52,7 @@ describe('RedemptionForm', () => {
   it('deve mostrar erro quando o código for inválido', async () => {
     const errorMessage = 'Este código já foi utilizado em 2026-03-09T10:15:00';
     (redemptionService.validateRedemption as jest.Mock).mockRejectedValue({
+      isAxiosError: true,
       response: {
         data: {
           success: false,

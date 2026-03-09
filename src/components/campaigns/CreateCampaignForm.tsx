@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createCampaignSchema, CreateCampaignFormData } from '@/lib/validations';
 import { campaignService } from '@/lib/campaign-service';
-import { AxiosError } from 'axios';
+import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
@@ -65,9 +65,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
       reset();
       onSuccess?.();
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
-      const message = axiosError.response?.data?.message || 'Erro ao criar campanha. Tente novamente.';
-      setErrorMessage(message);
+      setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar campanha. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -88,6 +86,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
         label="Nome da Campanha"
         placeholder="Ex: Promoção de Verão"
         error={errors.name?.message}
+        maxLength={100}
         {...register('name')}
       />
 

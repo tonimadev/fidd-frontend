@@ -11,6 +11,7 @@ import { loginSchema, LoginFormData } from '@/lib/validations';
 import { useAuth } from '@/context/auth-context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AxiosError } from 'axios';
+import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import Link from 'next/link';
 import { ReactivateAccountModal } from '@/components/account/ReactivateAccountModal';
 import { accountService } from '@/lib/account-service';
@@ -56,9 +57,7 @@ export const LoginForm: React.FC = () => {
       reset();
       router.push('/dashboard');
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
-      const message = axiosError.response?.data?.message || 'Erro ao fazer login. Tente novamente.';
-      setErrorMessage(message);
+      setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao fazer login. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -82,6 +81,7 @@ export const LoginForm: React.FC = () => {
         type="email"
         placeholder="seu@email.com"
         error={errors.email?.message}
+        maxLength={255}
         {...register('email')}
       />
 
@@ -90,6 +90,7 @@ export const LoginForm: React.FC = () => {
         type="password"
         placeholder="••••••••"
         error={errors.password?.message}
+        maxLength={100}
         {...register('password')}
       />
 

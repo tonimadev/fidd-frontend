@@ -238,5 +238,58 @@ describe('Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
   });
+
+  describe('Sanitization and Length Limits', () => {
+    it('deve remover espaços em branco extras (trim)', () => {
+      const data = {
+        name: '  Summer Promo  ',
+        pointsRequired: 10,
+        expirationDate: '2026-12-31',
+      };
+      const result = createCampaignSchema.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.name).toBe('Summer Promo');
+      }
+    });
+
+    it('deve remover caracteres de controle não imprimíveis', () => {
+      const data = {
+        tradeName: 'Store\u0000Name\u001F',
+        taxIdType: 'CNPJ',
+        taxId: '12345678000195',
+        email: 'test@example.com',
+        password: 'Password123!@',
+        confirmPassword: 'Password123!@',
+      };
+      const result = registerSchema.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        // tradeName deve ser sanitizado, mas taxId e email apenas trim
+        expect(result.data.tradeName).toBe('StoreName');
+      }
+    });
+
+    it('deve rejeitar strings que excedem o limite máximo de caracteres', () => {
+      const longName = 'a'.repeat(101); // Máximo é 100
+      const data = {
+        name: longName,
+        pointsRequired: 10,
+        expirationDate: '2026-12-31',
+      };
+      const result = createCampaignSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+
+    it('deve rejeitar email muito longo', () => {
+      const longEmail = 'a'.repeat(250) + '@example.com'; // Excede 255
+      const data = {
+        email: longEmail,
+        password: 'password123',
+      };
+      const result = loginSchema.safeParse(data);
+      expect(result.success).toBe(false);
+    });
+  });
 });
 

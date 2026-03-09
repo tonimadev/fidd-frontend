@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, RegisterFormData } from '@/lib/validations';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
-import { AxiosError } from 'axios';
+import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import Link from 'next/link';
 
 export const RegisterForm: React.FC = () => {
@@ -46,9 +46,7 @@ export const RegisterForm: React.FC = () => {
       reset();
       router.push('/dashboard');
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
-      const message = axiosError.response?.data?.message || 'Erro ao criar conta. Tente novamente.';
-      setErrorMessage(message);
+      setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar conta. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -96,6 +94,7 @@ export const RegisterForm: React.FC = () => {
           type="text"
           id="tradeName"
           placeholder="Padaria do João"
+          maxLength={100}
           className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.tradeName && (
@@ -166,6 +165,7 @@ export const RegisterForm: React.FC = () => {
           type="email"
           id="email"
           placeholder="seu@email.com"
+          maxLength={255}
           className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.email && (
@@ -184,6 +184,7 @@ export const RegisterForm: React.FC = () => {
             type={showPassword ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
+            maxLength={100}
             className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <button
@@ -235,6 +236,7 @@ export const RegisterForm: React.FC = () => {
           type="password"
           id="confirmPassword"
           placeholder="••••••••"
+          maxLength={100}
           className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.confirmPassword && (

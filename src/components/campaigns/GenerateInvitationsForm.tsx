@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { generateInvitationsSchema, GenerateInvitationsFormData } from '@/lib/validations';
 import { invitationService } from '@/lib/invitation-service';
 import { GenerateInvitationsResponse, Invitation } from '@/types/invitation';
-import { AxiosError } from 'axios';
+import { getFriendlyErrorMessage } from '@/lib/error-handler';
 
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -62,10 +62,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
 
       setInvitationsResult(result);
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
-      const message =
-        axiosError.response?.data?.message || 'Erro ao gerar convites. Tente novamente.';
-      setErrorMessage(message);
+      setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao gerar convites. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }
