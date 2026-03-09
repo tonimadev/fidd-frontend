@@ -4,7 +4,7 @@
 
 export interface QRCodeResponse {
   token: string;
-  campaignId: string;
+  campaignId: number;
   campaignName: string;
   expiresIn: string; // Ex: "60 seconds"
   message: string;

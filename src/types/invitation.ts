@@ -9,6 +9,7 @@ export interface Invitation {
   points: number;
   expiresAt: string;
   inviteUrl: string;
+  qrCodeUrl: string;
   message: string;
 }
 
