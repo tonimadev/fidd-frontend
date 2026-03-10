@@ -19,8 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { HelpCenter } from '@/components/dashboard/HelpCenter';
 import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
 import { CustomersList } from '@/components/dashboard/CustomersList';
+import { DashboardTab } from '@/types/dashboard';
 
-type DashboardTab = 'home' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions';
 
 function DashboardContent() {
   const { logout } = useAuth();

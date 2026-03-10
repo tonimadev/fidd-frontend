@@ -30,7 +30,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
     reset,
     setValue,
     watch,
-  } = useForm<CreateCampaignFormData>({
+  } = useForm({
     resolver: zodResolver(createCampaignSchema),
     mode: 'onBlur',
     defaultValues: {

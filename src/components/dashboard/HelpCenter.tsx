@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Tutorial } from '@/types/tutorial';
 import { tutorialService } from '@/lib/tutorial-service';
 import { Button } from '@/components/ui/Button';
+import { DashboardTab } from '@/types/dashboard';
 
 interface HelpCenterProps {
   isOpen: boolean;
   onClose: () => void;
-  activeTab?: string;
+  activeTab?: DashboardTab;
   initialTutorialId?: string | null;
 }
 
