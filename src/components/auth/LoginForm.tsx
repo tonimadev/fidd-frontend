@@ -16,6 +16,8 @@ import { ReactivateAccountModal } from '@/components/account/ReactivateAccountMo
 import { accountService } from '@/lib/account-service';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import axios from 'axios';
+import { LoginRequest } from '@/types/auth';
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
@@ -23,6 +25,7 @@ export const LoginForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReactivateModal, setShowReactivateModal] = useState(false);
+  const [loginCredentials, setLoginCredentials] = useState<LoginRequest | undefined>();
 
   const {
     register,
@@ -40,10 +43,11 @@ export const LoginForm: React.FC = () => {
       setErrorMessage('');
       await login(data.email, data.password);
 
-      // Verifica se a conta está marcada para deleção
+      // Verifica se a conta está marcada para deleção (Cenário onde o login ainda funciona)
       try {
         const deleteStatus = await accountService.getDeleteStatus();
         if (deleteStatus.status === 'PENDING_DELETION') {
+          setLoginCredentials({ email: data.email, password: data.password });
           setShowReactivateModal(true);
           return;
         }
@@ -55,16 +59,39 @@ export const LoginForm: React.FC = () => {
       reset();
       router.push('/dashboard');
     } catch (error) {
+      // Cenário B: API retorna 400 se a conta estiver em processo de exclusão
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        const apiMessage = error.response.data?.message || '';
+        if (apiMessage.toLowerCase().includes('exclusão')) {
+          setLoginCredentials({ email: data.email, password: data.password });
+          setShowReactivateModal(true);
+          return;
+        }
+      }
+      
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao fazer login. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleReactivateSuccess = () => {
+  const handleReactivateSuccess = async () => {
     setShowReactivateModal(false);
-    reset();
-    router.push('/dashboard');
+    
+    // Após reativar, precisamos logar novamente se ainda não estivermos logados
+    // ou simplesmente redirecionar se já tivermos o token
+    try {
+      if (loginCredentials) {
+        setIsSubmitting(true);
+        await login(loginCredentials.email, loginCredentials.password);
+      }
+      reset();
+      router.push('/dashboard');
+    } catch (error) {
+      setErrorMessage('Conta reativada, mas erro ao fazer login automático. Por favor, entre manualmente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReactivateCancel = () => {
@@ -121,6 +148,7 @@ export const LoginForm: React.FC = () => {
         <ReactivateAccountModal
           onSuccess={handleReactivateSuccess}
           onCancel={handleReactivateCancel}
+          credentials={loginCredentials}
         />
       )}
     </form>

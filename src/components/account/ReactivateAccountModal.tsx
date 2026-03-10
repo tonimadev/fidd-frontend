@@ -7,15 +7,18 @@
 import React, { useState } from 'react';
 import { accountService } from '@/lib/account-service';
 import { AxiosError } from 'axios';
+import { LoginRequest } from '@/types/auth';
 
 interface ReactivateAccountModalProps {
   onSuccess?: () => void;
   onCancel?: () => void;
+  credentials?: LoginRequest;
 }
 
 export const ReactivateAccountModal: React.FC<ReactivateAccountModalProps> = ({
   onSuccess,
   onCancel,
+  credentials,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -27,8 +30,13 @@ export const ReactivateAccountModal: React.FC<ReactivateAccountModalProps> = ({
       setErrorMessage('');
       setSuccessMessage('');
 
-      // Usar cancelAccountDeletion para reativar a conta
-      await accountService.cancelAccountDeletion();
+      if (credentials) {
+        // Usar endpoint público com credenciais
+        await accountService.cancelDeletionWithCredentials(credentials);
+      } else {
+        // Usar endpoint autenticado
+        await accountService.cancelAccountDeletion();
+      }
 
       setSuccessMessage('Sua conta foi reativada com sucesso! Redirecionando...');
 
@@ -50,11 +58,11 @@ export const ReactivateAccountModal: React.FC<ReactivateAccountModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="text-lg font-bold text-gray-900">Sua Conta Está Marcada para Deleção</h3>
+        <h3 className="text-lg font-bold text-gray-900">Conta em Processo de Exclusão</h3>
 
         <p className="mt-3 text-sm text-gray-600">
-          Detectamos que sua conta está marcada para deleção permanente. Você pode reativar sua conta
-          clicando no botão abaixo. Você terá 30 dias a partir de agora para mudar de ideia novamente.
+          Sua conta está em processo de exclusão. Deseja cancelar a solicitação e reativar sua conta?
+          Isso restaurará o acesso imediato ao seu dashboard e campanhas.
         </p>
 
         {errorMessage && (
@@ -82,7 +90,7 @@ export const ReactivateAccountModal: React.FC<ReactivateAccountModalProps> = ({
             disabled={isLoading}
             className="flex-1 rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:bg-gray-400"
           >
-            {isLoading ? 'Reativando...' : 'Reativar Conta'}
+            {isLoading ? 'Recuperando...' : 'Recuperar Conta'}
           </button>
         </div>
       </div>

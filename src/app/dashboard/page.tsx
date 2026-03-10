@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { HelpCenter } from '@/components/dashboard/HelpCenter';
 import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
 import { CustomersList } from '@/components/dashboard/CustomersList';
+import { DeletionBanner } from '@/components/dashboard/DeletionBanner';
 import { DashboardTab } from '@/types/dashboard';
 
 
@@ -228,6 +229,7 @@ function DashboardContent() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
+        <DeletionBanner />
         <header className="lg:hidden flex items-center h-16 px-4 border-b border-border bg-white sticky top-0 z-20">
           <button
             onClick={() => setIsSidebarOpen(true)}
