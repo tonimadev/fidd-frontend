@@ -23,6 +23,22 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Senha é obrigatória').max(100, 'Senha muito longa'),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().uuid('Token inválido'),
+  newPassword: z.string()
+    .min(8, 'Senha deve ter pelo menos 8 caracteres')
+    .max(100, 'Senha muito longa')
+    .regex(passwordRegex, 'Senha deve conter maiúscula, minúscula, número e caractere especial (@$!%*?&)'),
+  confirmPassword: z.string().max(100, 'Senha muito longa'),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: 'As senhas não coincidem',
+  path: ['confirmPassword'],
+});
+
 export const registerSchema = z.object({
   tradeName: z.string()
     .transform(sanitizeString)
@@ -118,6 +134,8 @@ export const redemptionSchema = z.object({
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type CreateCampaignFormData = z.infer<typeof createCampaignSchema>;
 export type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;

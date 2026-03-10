@@ -122,6 +122,15 @@ export const LoginForm: React.FC = () => {
         {...register('password')}
       />
 
+      <div className="flex justify-end">
+        <Link 
+          href="/forgot-password" 
+          className="text-sm font-medium text-primary hover:underline transition-colors"
+        >
+          Esqueceu sua senha?
+        </Link>
+      </div>
+
       {/* Mensagem de erro */}
       {errorMessage && (
         <div className="rounded-lg bg-red-50 p-3 border border-red-200">

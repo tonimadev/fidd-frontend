@@ -34,6 +34,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}
+
 export interface RegisterRequest {
   tradeName: string;
   taxId: string; // CNPJ ou CPF (14 ou 11 dígitos)

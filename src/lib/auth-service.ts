@@ -3,7 +3,7 @@
  */
 
 import { apiClient } from './api-client';
-import { AuthResponse, LoginRequest, RegisterRequest } from '@/types/auth';
+import { AuthResponse, LoginRequest, RegisterRequest, ForgotPasswordRequest, ResetPasswordRequest } from '@/types/auth';
 
 const AUTH_BASE_URL = '/api/web/v1/auth';
 
@@ -17,6 +17,20 @@ export const authService = {
       data
     );
     return response.data;
+  },
+
+  /**
+   * Solicita recuperação de senha
+   */
+  async forgotPassword(data: ForgotPasswordRequest): Promise<void> {
+    await apiClient.post(`${AUTH_BASE_URL}/forgot-password`, data);
+  },
+
+  /**
+   * Redefine a senha utilizando um token
+   */
+  async resetPassword(data: ResetPasswordRequest): Promise<void> {
+    await apiClient.post(`${AUTH_BASE_URL}/reset-password`, data);
   },
 
   /**
