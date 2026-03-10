@@ -7,7 +7,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { authService } from '@/lib/auth-service';
 import { AuthContext as AuthContextType, User } from '@/types/auth';
-import { AxiosError } from 'axios';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

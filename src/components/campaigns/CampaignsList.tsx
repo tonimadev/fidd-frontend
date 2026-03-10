@@ -4,7 +4,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Campaign } from '@/types/campaign';
 import { campaignService } from '@/lib/campaign-service';
 import { CreateCampaignForm } from './CreateCampaignForm';
@@ -30,29 +30,26 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Carrega as campanhas ao montar o componente
-  const isLoaded = React.useRef(false);
-  useEffect(() => {
-    if (!isLoaded.current) {
-      loadCampaigns();
-      isLoaded.current = true;
-    }
+  const isExpired = useCallback((expirationDate: string) => {
+    if (!expirationDate) return false;
+    
+    // Extrair componentes da data para evitar problemas de fuso horário
+    // Formato esperado: YYYY-MM-DD
+    const parts = expirationDate.split('-');
+    if (parts.length !== 3) return false;
+    
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Mês no JS é 0-11
+    const day = parseInt(parts[2], 10);
+    
+    const expDate = new Date(year, month, day, 23, 59, 59, 999);
+    return expDate < new Date();
   }, []);
 
-  // Processar ações via URL
-  useEffect(() => {
-    const action = searchParams.get('action');
-    if (action === 'create') {
-      setShowCreateForm(true);
-      // Limpar URL após processar para evitar re-processamento
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete('action');
-      const newUrl = params.toString() ? `/dashboard?${params.toString()}` : '/dashboard';
-      router.replace(newUrl);
-    }
-  }, [searchParams, router]);
+  // Carrega as campanhas ao montar o componente
+  const isLoaded = useRef(false);
 
-  const loadCampaigns = async () => {
+  const loadCampaigns = useCallback(async () => {
     try {
       setIsLoading(true);
       setErrorMessage('');
@@ -80,7 +77,28 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchParams, router, isExpired]);
+
+  useEffect(() => {
+    if (!isLoaded.current) {
+      loadCampaigns();
+      isLoaded.current = true;
+    }
+  }, [loadCampaigns]);
+
+  // Processar ações via URL
+  useEffect(() => {
+    const action = searchParams.get('action');
+    if (action === 'create') {
+      setShowCreateForm(true);
+      // Limpar URL após processar para evitar re-processamento
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('action');
+      const newUrl = params.toString() ? `/dashboard?${params.toString()}` : '/dashboard';
+      router.replace(newUrl);
+    }
+  }, [searchParams, router]);
+
 
   const handleCreateSuccess = () => {
     setShowCreateForm(false);
@@ -121,22 +139,6 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
-  };
-
-  const isExpired = (expirationDate: string) => {
-    if (!expirationDate) return false;
-    
-    // Extrair componentes da data para evitar problemas de fuso horário
-    // Formato esperado: YYYY-MM-DD
-    const parts = expirationDate.split('-');
-    if (parts.length !== 3) return false;
-    
-    const year = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1; // Mês no JS é 0-11
-    const day = parseInt(parts[2], 10);
-    
-    const expDate = new Date(year, month, day, 23, 59, 59, 999);
-    return expDate < new Date();
   };
 
   if (showCreateForm) {
@@ -281,7 +283,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
               <CardContent className="pt-6 flex-1">
                 {campaign.description && (
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-2 italic">
-                    "{campaign.description}"
+                    &quot;{campaign.description}&quot;
                   </p>
                 )}
                 <div className="space-y-4">

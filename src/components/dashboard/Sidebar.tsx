@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 interface SidebarProps {
   activeTab: string;
-  setActiveTab: (tab: any) => void;
+  setActiveTab: (tab: string) => void;
   onLogout: () => void;
   onHelpClick: (tutorialId?: string | null) => void;
   isOpen?: boolean;

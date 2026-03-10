@@ -18,7 +18,7 @@ interface DeleteAccountModalProps {
   onCancel?: () => void;
 }
 
-export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onSuccess, onCancel }) => {
+export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onCancel }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { logout } = useAuth();
@@ -46,7 +46,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onSucces
       // Redireciona para página de login com mensagem
       router.push('/login?deleted=true');
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<{ message?: string }>;
       const message = axiosError.response?.data?.message || 'Erro ao deletar conta. Verifique sua senha.';
       setErrorMessage(message);
     } finally {

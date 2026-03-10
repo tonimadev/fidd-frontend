@@ -31,6 +31,7 @@ describe('SubscriptionPlans', () => {
 
     // Mock window.location.href
     const originalLocation = window.location;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (window as any).location;
     window.location = { ...originalLocation, href: '' };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Tutorial } from '@/types/tutorial';
 import { tutorialService } from '@/lib/tutorial-service';
 import { Button } from '@/components/ui/Button';
@@ -16,25 +16,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
   const [error, setError] = useState<string | null>(null);
   const [selectedTutorial, setSelectedTutorial] = useState<Tutorial | null>(null);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadTutorials();
-    } else {
-      setSelectedTutorial(null);
-    }
-  }, [isOpen]);
-
-  // Se um tutorial inicial for passado ao abrir, selecione-o
-  useEffect(() => {
-    if (isOpen && initialTutorialId && tutorials.length > 0) {
-      const tutorial = tutorials.find(t => t.id === initialTutorialId);
-      if (tutorial) {
-        setSelectedTutorial(tutorial);
-      }
-    }
-  }, [isOpen, initialTutorialId, tutorials]);
-
-  const loadTutorials = async () => {
+  const loadTutorials = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -56,7 +38,25 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadTutorials();
+    } else {
+      setSelectedTutorial(null);
+    }
+  }, [isOpen, loadTutorials]);
+
+  // Se um tutorial inicial for passado ao abrir, selecione-o
+  useEffect(() => {
+    if (isOpen && initialTutorialId && tutorials.length > 0) {
+      const tutorial = tutorials.find(t => t.id === initialTutorialId);
+      if (tutorial) {
+        setSelectedTutorial(tutorial);
+      }
+    }
+  }, [isOpen, initialTutorialId, tutorials]);
 
   if (!isOpen) return null;
 

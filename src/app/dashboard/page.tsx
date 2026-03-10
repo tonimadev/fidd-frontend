@@ -23,7 +23,7 @@ import { CustomersList } from '@/components/dashboard/CustomersList';
 type DashboardTab = 'home' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions';
 
 function DashboardContent() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') as DashboardTab;
@@ -165,7 +165,7 @@ function DashboardContent() {
                 <CardContent>
                   <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
                     <p className="text-sm leading-relaxed italic text-foreground">
-                      "Lojistas que oferecem um benefício intermediário após 5 selos têm uma taxa de retorno 40% maior do que os que oferecem apenas no final."
+                      &quot;Lojistas que oferecem um benefício intermediário após 5 selos têm uma taxa de retorno 40% maior do que os que oferecem apenas no final.&quot;
                     </p>
                   </div>
                   <Button 

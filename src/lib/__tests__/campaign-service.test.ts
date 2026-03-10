@@ -4,6 +4,7 @@
 
 import { campaignService } from '@/lib/campaign-service';
 import { apiClient } from '@/lib/api-client';
+import { Campaign } from '@/types/campaign';
 
 jest.mock('@/lib/api-client');
 
@@ -151,7 +152,7 @@ describe('campaignService', () => {
 
   describe('toggleCampaignStatus', () => {
     it('deve alternar o status de uma campanha ativa para pausada usando PUT', async () => {
-      const campaign = {
+      const campaign: Campaign = {
         id: 1,
         name: 'Test Campaign',
         pointsRequired: 10,
@@ -160,7 +161,7 @@ describe('campaignService', () => {
         storeId: 1,
         description: 'Test description',
         benefitType: 'Recompensa'
-      } as any;
+      };
 
       const mockUpdatedCampaign = { ...campaign, isActive: false };
 
@@ -180,14 +181,14 @@ describe('campaignService', () => {
     });
 
     it('deve alternar o status de uma campanha pausada para ativa usando PUT', async () => {
-      const campaign = {
+      const campaign: Campaign = {
         id: 1,
         name: 'Test Campaign',
         pointsRequired: 10,
         isActive: false,
         expirationDate: '2026-12-31',
         storeId: 1
-      } as any;
+      };
 
       const mockUpdatedCampaign = { ...campaign, isActive: true };
 

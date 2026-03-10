@@ -28,7 +28,7 @@ export const ReactivateAccountModal: React.FC<ReactivateAccountModalProps> = ({
       setSuccessMessage('');
 
       // Usar cancelAccountDeletion para reativar a conta
-      const status = await accountService.cancelAccountDeletion();
+      await accountService.cancelAccountDeletion();
 
       setSuccessMessage('Sua conta foi reativada com sucesso! Redirecionando...');
 
@@ -37,7 +37,7 @@ export const ReactivateAccountModal: React.FC<ReactivateAccountModalProps> = ({
         onSuccess?.();
       }, 2000);
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<{ message?: string }>;
       const message =
         axiosError.response?.data?.message ||
         'Erro ao reativar conta. Tente novamente.';

@@ -9,8 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/validations';
 import { useAuth } from '@/context/auth-context';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import Link from 'next/link';
 import { ReactivateAccountModal } from '@/components/account/ReactivateAccountModal';
@@ -20,7 +19,6 @@ import { Input } from '@/components/ui/Input';
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { login } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,7 +47,7 @@ export const LoginForm: React.FC = () => {
           setShowReactivateModal(true);
           return;
         }
-      } catch (error) {
+      } catch {
         // Ignora erro ao verificar status de deleção
         console.log('Status de deleção não disponível');
       }

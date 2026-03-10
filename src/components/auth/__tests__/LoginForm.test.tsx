@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@/test-utils';
+import { render, screen } from '@/test-utils';
 import { LoginForm } from '@/components/auth/LoginForm';
 
 jest.mock('next/navigation', () => ({

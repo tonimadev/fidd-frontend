@@ -9,11 +9,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateInvitationsSchema, GenerateInvitationsFormData } from '@/lib/validations';
 import { invitationService } from '@/lib/invitation-service';
-import { GenerateInvitationsResponse, Invitation } from '@/types/invitation';
+import { GenerateInvitationsResponse } from '@/types/invitation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
 import { QRCodeSVG } from 'qrcode.react';
 
 interface GenerateInvitationsFormProps {

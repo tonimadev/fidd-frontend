@@ -30,7 +30,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
     reset,
     setValue,
     watch,
-  } = useForm({
+  } = useForm<CreateCampaignFormData>({
     resolver: zodResolver(createCampaignSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -50,7 +50,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
     setValue('expirationDate', formattedDate);
   };
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateCampaignFormData) => {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
