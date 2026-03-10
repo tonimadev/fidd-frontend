@@ -80,7 +80,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "rm -rf ~/fidd-frontend-new.tar.gz"
           
           echo "Uploading tarball to VM..."
-          scp -o StrictHostKeyChecking=no ./artifacts/fidd-frontend-tar/fidd-frontend.tar.gz ${SSH_USER}@${SSH_HOST}:~/fidd-frontend-new.tar.gz
+          scp -o StrictHostKeyChecking=no ./artifacts/fidd-frontend.tar.gz ${SSH_USER}@${SSH_HOST}:~/fidd-frontend-new.tar.gz
 
       - name: Deploy Frontend
         env:
