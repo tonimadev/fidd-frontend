@@ -74,7 +74,7 @@ export const DeveloperGuide: React.FC = () => {
           <h4 className="font-bold text-gray-800 mb-4">Exemplo de Implementação (JavaScript)</h4>
           <pre className="bg-gray-900 rounded-lg p-4 text-xs overflow-x-auto text-gray-300 leading-relaxed">
 {`async function adicionarPonto(email, campanhaId) {
-    const response = await fetch('https://api.fidd.tonima.digital/api/external/v1/punches', {
+    const response = await fetch('https://fidd.com.br/api/external/v1/punches', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
