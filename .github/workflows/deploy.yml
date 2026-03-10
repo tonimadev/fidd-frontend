@@ -114,14 +114,21 @@ jobs:
           cd "$WORK_DIR"
 
           echo "Stopping old frontend..."
+          # Tenta matar pelo PID gravado
           if [ -f app.pid ]; then
             PID=$(cat app.pid)
             if kill -0 "$PID" 2>/dev/null; then
               echo "Killing process $PID..."
-              kill -9 "$PID" || true
+              kill -15 "$PID" || kill -9 "$PID"
               sleep 2
             fi
             rm -f app.pid
+          fi
+          # Garante que a porta 3000 está livre (caso o PID tenha sido perdido)
+          if command -v fuser >/dev/null 2>&1; then
+            fuser -k 3000/tcp || true
+          elif command -v lsof >/dev/null 2>&1; then
+            lsof -t -i:3000 | xargs kill -9 2>/dev/null || true
           fi
 
           echo "Extracting new deployment..."
@@ -136,8 +143,10 @@ jobs:
           export NEXT_PUBLIC_API_URL="${API_URL}"
 
           echo "Executing: nohup node server.js > app.log 2>&1 &"
+          # Inicia com nohup, desvia output para log e usa disown para desvincular do shell
           nohup node server.js > app.log 2>&1 &
           APP_PID=$!
+          disown $APP_PID 2>/dev/null || true
           echo $APP_PID > app.pid
           echo "Frontend started with PID: $APP_PID on port 3000"
 
@@ -167,6 +176,22 @@ jobs:
         env:
           SSH_HOST: ${{ secrets.VM_IP }}
           SSH_USER: ${{ secrets.SSH_USER }}
+          FRONTEND_DIR: ${{ secrets.FRONTEND_DIR || 'fidd-frontend' }}
         run: |
           echo "Verifying deployment..."
-          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "curl -I http://127.0.0.1:3000"
+          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "
+            if [[ '$FRONTEND_DIR' != /* ]]; then
+              WORK_DIR='${HOME}/${FRONTEND_DIR}'
+            else
+              WORK_DIR='${FRONTEND_DIR}'
+            fi
+            
+            echo 'Checking if process exists on port 3000...'
+            ss -tulpn | grep :3000 || netstat -tulpn | grep :3000 || echo 'No process found on port 3000'
+            
+            echo 'Checking Node processes...'
+            ps aux | grep node | grep server.js || echo 'No node server.js process found'
+            
+            echo 'Checking health via curl...'
+            curl -I http://127.0.0.1:3000 || { echo 'ERROR: Application not responding on port 3000. Last logs:'; tail -n 20 \$WORK_DIR/app.log; exit 1; }
+          "
