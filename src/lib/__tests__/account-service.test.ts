@@ -92,5 +92,35 @@ describe('accountService', () => {
       expect(apiClient.delete).toHaveBeenCalledWith('/api/web/v1/account/delete');
     });
   });
+
+  describe('API Keys', () => {
+    it('deve listar chaves de API', async () => {
+      const mockKeys = [{ id: 1, name: 'Test Key' }];
+      (apiClient.get as jest.Mock).mockResolvedValue({ data: mockKeys });
+
+      const result = await accountService.listApiKeys();
+
+      expect(result).toEqual(mockKeys);
+      expect(apiClient.get).toHaveBeenCalledWith('/api/web/v1/api-keys');
+    });
+
+    it('deve criar chave de API', async () => {
+      const mockKey = { id: 1, name: 'New Key' };
+      (apiClient.post as jest.Mock).mockResolvedValue({ data: mockKey });
+
+      const result = await accountService.createApiKey({ name: 'New Key' });
+
+      expect(result).toEqual(mockKey);
+      expect(apiClient.post).toHaveBeenCalledWith('/api/web/v1/api-keys', { name: 'New Key' });
+    });
+
+    it('deve revogar chave de API', async () => {
+      (apiClient.delete as jest.Mock).mockResolvedValue({});
+
+      await accountService.revokeApiKey(1);
+
+      expect(apiClient.delete).toHaveBeenCalledWith('/api/web/v1/api-keys/1');
+    });
+  });
 });
 
