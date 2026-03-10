@@ -105,6 +105,10 @@ jobs:
 
           TAR_PATH="${HOME}/fidd-frontend-new.tar.gz"
 
+          # Diagnóstico básico
+          echo "Checking Node.js version..."
+          node -v || echo "Node.js not found in PATH"
+
           echo "Creating frontend directory..."
           mkdir -p "$WORK_DIR"
           cd "$WORK_DIR"
@@ -114,9 +118,10 @@ jobs:
             PID=$(cat app.pid)
             if kill -0 "$PID" 2>/dev/null; then
               echo "Killing process $PID..."
-              kill -9 "$PID"
+              kill -9 "$PID" || true
               sleep 2
             fi
+            rm -f app.pid
           fi
 
           echo "Extracting new deployment..."
@@ -124,15 +129,13 @@ jobs:
           find . -maxdepth 1 ! -name 'app.log' ! -name 'app.pid' ! -name '.' -exec rm -rf {} +
           tar -xzf "$TAR_PATH" -C .
           
-          echo "Setting up environment..."
-          cat > .env << ENV
-          PORT=3000
-          HOSTNAME=0.0.0.0
-          NEXT_PUBLIC_API_URL=${API_URL}
-          ENV
-
           echo "Starting frontend..."
-          # Note: In standalone mode, we use server.js
+          # Injected environment variables for Next.js standalone
+          export PORT=3000
+          export HOSTNAME=0.0.0.0
+          export NEXT_PUBLIC_API_URL="${API_URL}"
+
+          echo "Executing: nohup node server.js > app.log 2>&1 &"
           nohup node server.js > app.log 2>&1 &
           APP_PID=$!
           echo $APP_PID > app.pid
@@ -142,17 +145,22 @@ jobs:
           sleep 5
 
           echo "Running health check..."
-          for i in {1..15}; do
+          HEALTHY=false
+          for i in {1..20}; do
             if curl -sf http://127.0.0.1:3000 > /dev/null 2>&1; then
               echo "SUCCESS: Frontend is healthy."
-              exit 0
+              HEALTHY=true
+              break
             fi
-            echo "Attempt $i/15 - waiting..."
+            echo "Attempt $i/20 - waiting..."
             sleep 2
           done
           
-          echo "WARNING: Health check failed, but process is running."
-          tail -20 app.log
+          if [ "$HEALTHY" = false ]; then
+            echo "ERROR: Health check failed. Last 50 lines of app.log:"
+            tail -n 50 app.log
+            exit 1
+          fi
           SCRIPT
 
       - name: Verify Deployment
