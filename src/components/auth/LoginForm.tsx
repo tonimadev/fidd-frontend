@@ -62,7 +62,10 @@ export const LoginForm: React.FC = () => {
       // Cenário B: API retorna 400 se a conta estiver em processo de exclusão
       if (axios.isAxiosError(error) && error.response?.status === 400) {
         const apiMessage = error.response.data?.message || '';
-        if (apiMessage.toLowerCase().includes('exclusão')) {
+        if (
+          apiMessage === 'account.deletion.pending.login' || 
+          apiMessage.toLowerCase().includes('exclusão')
+        ) {
           setLoginCredentials({ email: data.email, password: data.password });
           setShowReactivateModal(true);
           return;
