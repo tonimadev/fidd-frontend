@@ -1,0 +1,159 @@
+name: Frontend CI/CD Pipeline
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Lint
+        run: npm run lint
+      - name: Run Tests
+        run: npm test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build application
+        run: npm run build
+      - name: Prepare Standalone Build
+        run: |
+          # Copy public and static assets to standalone folder as per Next.js documentation
+          cp -r public .next/standalone/public
+          cp -r .next/static .next/standalone/.next/static
+          
+          # Create tarball artifact
+          cd .next/standalone
+          tar -czf ../../fidd-frontend.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fidd-frontend-tar
+          path: fidd-frontend.tar.gz
+          retention-days: 5
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: fidd-frontend-tar
+          path: ./artifacts
+
+      - name: Setup SSH Key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.VM_IP }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Upload Artifact
+        env:
+          SSH_HOST: ${{ secrets.VM_IP }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "Cleaning up old artifact on remote VM..."
+          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "rm -rf ~/fidd-frontend-new.tar.gz"
+          
+          echo "Uploading tarball to VM..."
+          scp -o StrictHostKeyChecking=no ./artifacts/fidd-frontend-tar/fidd-frontend.tar.gz ${SSH_USER}@${SSH_HOST}:~/fidd-frontend-new.tar.gz
+
+      - name: Deploy Frontend
+        env:
+          SSH_HOST: ${{ secrets.VM_IP }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          FRONTEND_DIR: ${{ secrets.FRONTEND_DIR || '/home/deploy/fidd-frontend' }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8080' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} bash -s -- "$FRONTEND_DIR" "$NEXT_PUBLIC_API_URL" << 'SCRIPT'
+          #!/bin/bash
+          set -euo pipefail
+
+          FRONTEND_DIR="$1"
+          API_URL="$2"
+          
+          USER_HOME=$(eval echo ~${USER})
+          TAR_PATH="${USER_HOME}/fidd-frontend-new.tar.gz"
+          WORK_DIR="${FRONTEND_DIR}"
+
+          echo "Creating frontend directory..."
+          mkdir -p "$WORK_DIR"
+          cd "$WORK_DIR"
+
+          echo "Stopping old frontend..."
+          if [ -f app.pid ]; then
+            PID=$(cat app.pid)
+            if kill -0 "$PID" 2>/dev/null; then
+              echo "Killing process $PID..."
+              kill -9 "$PID"
+              sleep 2
+            fi
+          fi
+
+          echo "Extracting new deployment..."
+          # Clean up old files (except logs and pid) before extracting
+          find . -maxdepth 1 ! -name 'app.log' ! -name 'app.pid' ! -name '.' -exec rm -rf {} +
+          tar -xzf "$TAR_PATH" -C .
+          
+          echo "Setting up environment..."
+          cat > .env << ENV
+          PORT=3000
+          HOSTNAME=0.0.0.0
+          NEXT_PUBLIC_API_URL=${API_URL}
+          ENV
+
+          echo "Starting frontend..."
+          # Note: In standalone mode, we use server.js
+          nohup node server.js > app.log 2>&1 &
+          APP_PID=$!
+          echo $APP_PID > app.pid
+          echo "Frontend started with PID: $APP_PID on port 3000"
+
+          echo "Waiting for frontend to start..."
+          sleep 5
+
+          echo "Running health check..."
+          for i in {1..15}; do
+            if curl -sf http://127.0.0.1:3000 > /dev/null 2>&1; then
+              echo "SUCCESS: Frontend is healthy."
+              exit 0
+            fi
+            echo "Attempt $i/15 - waiting..."
+            sleep 2
+          done
+          
+          echo "WARNING: Health check failed, but process is running."
+          tail -20 app.log
+          SCRIPT
+
+      - name: Verify Deployment
+        env:
+          SSH_HOST: ${{ secrets.VM_IP }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          echo "Verifying deployment..."
+          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} "curl -I http://127.0.0.1:3000"
