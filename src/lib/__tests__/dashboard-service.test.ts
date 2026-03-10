@@ -19,6 +19,8 @@ describe('dashboardService', () => {
         totalCustomers: 25,
         pointsDistributed: 450,
         engagementRate: 78.5,
+        conversionRate: 15.2,
+        expirationVolume: 12,
         monthlyLimit: 100,
         availableCards: 45,
       };
@@ -34,6 +36,8 @@ describe('dashboardService', () => {
       expect(result.totalCustomers).toBe(25);
       expect(result.pointsDistributed).toBe(450);
       expect(result.engagementRate).toBe(78.5);
+      expect(result.conversionRate).toBe(15.2);
+      expect(result.expirationVolume).toBe(12);
       expect(result.monthlyLimit).toBe(100);
       expect(result.availableCards).toBe(45);
       expect(apiClient.get).toHaveBeenCalledWith('/api/web/v1/dashboard/home');
@@ -45,6 +49,8 @@ describe('dashboardService', () => {
         totalCustomers: 0,
         pointsDistributed: 0,
         engagementRate: 0,
+        conversionRate: 0,
+        expirationVolume: 0,
         monthlyLimit: 0,
         availableCards: 0,
       };

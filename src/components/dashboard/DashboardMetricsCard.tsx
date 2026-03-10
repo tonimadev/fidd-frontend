@@ -39,8 +39,8 @@ export const DashboardMetricsCard: React.FC = () => {
   if (isLoading) {
     return (
       <div className="space-y-4 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="h-4 bg-muted rounded w-24"></div>
@@ -81,7 +81,7 @@ export const DashboardMetricsCard: React.FC = () => {
   const metricCards = [
     {
       title: 'Campanhas Ativas',
-      value: metrics.activeCampaigns,
+      value: metrics.activeCampaigns || 0,
       description: 'Campanhas em andamento',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-primary">
@@ -91,7 +91,7 @@ export const DashboardMetricsCard: React.FC = () => {
     },
     {
       title: 'Total de Clientes',
-      value: metrics.totalCustomers,
+      value: metrics.totalCustomers || 0,
       description: 'Clientes fidelizados',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-emerald-500">
@@ -104,7 +104,7 @@ export const DashboardMetricsCard: React.FC = () => {
     },
     {
       title: 'Pontos Distribuídos',
-      value: metrics.pointsDistributed.toLocaleString(),
+      value: (metrics.pointsDistributed || 0).toLocaleString(),
       description: 'Acúmulo total',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-amber-500">
@@ -116,11 +116,35 @@ export const DashboardMetricsCard: React.FC = () => {
     },
     {
       title: 'Taxa de Engajamento',
-      value: `${metrics.engagementRate.toFixed(1)}%`,
+      value: `${(metrics.engagementRate || 0).toFixed(1)}%`,
       description: 'Últimos 30 dias',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-indigo-500">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Taxa de Conversão',
+      value: `${(metrics.conversionRate || 0).toFixed(1)}%`,
+      description: 'Iniciados vs. Resgatados',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-emerald-600">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <polyline points="16 11 18 13 22 9" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Cartões Expirados',
+      value: metrics.expirationVolume || 0,
+      description: 'Volume total expirado',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-red-500">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
       ),
     },
@@ -132,7 +156,7 @@ export const DashboardMetricsCard: React.FC = () => {
 
   return (
     <div className="space-y-4 mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {metricCards.map((card, i) => (
           <Card key={i} className="transition-all hover:shadow-md border-muted/60">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -165,7 +189,7 @@ export const DashboardMetricsCard: React.FC = () => {
                   Status do Plano
                 </div>
                 <div className="text-lg font-bold">
-                  {metrics.availableCards} <span className="text-sm font-normal text-muted-foreground">cartões disponíveis de {metrics.monthlyLimit} no total</span>
+                  {metrics.availableCards || 0} <span className="text-sm font-normal text-muted-foreground">cartões disponíveis de {metrics.monthlyLimit || 0} no total</span>
                 </div>
               </div>
               
@@ -173,7 +197,7 @@ export const DashboardMetricsCard: React.FC = () => {
                 <div className="flex justify-between text-xs font-medium">
                   <span>{usagePercentage}% utilizado este mês</span>
                   <span className={usagePercentage > 90 ? 'text-red-600 font-bold' : ''}>
-                    {metrics.monthlyLimit - metrics.availableCards} / {metrics.monthlyLimit}
+                    {(metrics.monthlyLimit || 0) - (metrics.availableCards || 0)} / {metrics.monthlyLimit || 0}
                   </span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">

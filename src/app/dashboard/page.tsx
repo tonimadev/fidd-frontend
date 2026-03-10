@@ -18,8 +18,9 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { HelpCenter } from '@/components/dashboard/HelpCenter';
 import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
+import { CustomersList } from '@/components/dashboard/CustomersList';
 
-type DashboardTab = 'home' | 'campaigns' | 'redemptions' | 'settings' | 'subscriptions';
+type DashboardTab = 'home' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions';
 
 function DashboardContent() {
   const { user, logout } = useAuth();
@@ -181,6 +182,8 @@ function DashboardContent() {
         );
       case 'campaigns':
         return <CampaignsList onOpenHelp={openHelp} />;
+      case 'customers':
+        return <CustomersList />;
       case 'redemptions':
         return (
           <div className="space-y-8">
