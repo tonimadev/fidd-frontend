@@ -157,7 +157,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
 
               <div className="mt-12 p-6 bg-gray-50 rounded-2xl border border-gray-100">
                 <p className="text-xs text-gray-500 text-center">
-                  Ainda com dúvidas? Entre em contato com o suporte através de <span className="text-primary font-medium">suporte@fidd.app</span>
+                  Ainda com dúvidas? Entre em contato com o suporte através de <span className="text-primary font-medium">suporte@fidd.com.br</span>
                 </p>
               </div>
             </div>
