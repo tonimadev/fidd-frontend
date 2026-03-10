@@ -2,7 +2,7 @@
  * Tipos relacionados ao dashboard
  */
 
-export type DashboardTab = 'home' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions';
+export type DashboardTab = 'home' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions' | 'developers';
 
 export interface DashboardMetrics {
   activeCampaigns: number;

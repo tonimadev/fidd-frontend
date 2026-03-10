@@ -17,3 +17,15 @@ export interface DeleteAccountRequest {
   password: string;
 }
 
+export interface ApiKey {
+  id: number;
+  name: string;
+  key: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+}
+
+export interface CreateApiKeyRequest {
+  name: string;
+}
+

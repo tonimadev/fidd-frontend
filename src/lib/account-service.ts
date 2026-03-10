@@ -3,10 +3,11 @@
  */
 
 import { apiClient } from './api-client';
-import { DeleteAccountStatus, DeleteAccountRequest } from '@/types/account';
+import { DeleteAccountStatus, DeleteAccountRequest, ApiKey, CreateApiKeyRequest } from '@/types/account';
 import { LoginRequest } from '@/types/auth';
 
 const ACCOUNT_BASE_URL = '/api/web/v1/account';
+const API_KEYS_BASE_URL = '/api/web/v1/api-keys';
 
 export const accountService = {
   /**
@@ -46,6 +47,29 @@ export const accountService = {
       data
     );
     return response.data;
+  },
+
+  /**
+   * Lista todas as chaves de API da conta
+   */
+  async listApiKeys(): Promise<ApiKey[]> {
+    const response = await apiClient.get<ApiKey[]>(API_KEYS_BASE_URL);
+    return response.data;
+  },
+
+  /**
+   * Cria uma nova chave de API
+   */
+  async createApiKey(data: CreateApiKeyRequest): Promise<ApiKey> {
+    const response = await apiClient.post<ApiKey>(API_KEYS_BASE_URL, data);
+    return response.data;
+  },
+
+  /**
+   * Revoga (deleta) uma chave de API
+   */
+  async revokeApiKey(id: number): Promise<void> {
+    await apiClient.delete(`${API_KEYS_BASE_URL}/${id}`);
   },
 };
 

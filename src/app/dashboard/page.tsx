@@ -20,6 +20,7 @@ import { HelpCenter } from '@/components/dashboard/HelpCenter';
 import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
 import { CustomersList } from '@/components/dashboard/CustomersList';
 import { DeletionBanner } from '@/components/dashboard/DeletionBanner';
+import { DeveloperGuide } from '@/components/dashboard/DeveloperGuide';
 import { DashboardTab } from '@/types/dashboard';
 
 
@@ -201,6 +202,8 @@ function DashboardContent() {
         return <AccountSettings />;
       case 'subscriptions':
         return <SubscriptionPlans />;
+      case 'developers':
+        return <DeveloperGuide />;
       default:
         return null;
     }
