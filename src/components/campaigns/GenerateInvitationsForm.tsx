@@ -5,6 +5,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateInvitationsSchema, GenerateInvitationsFormData } from '@/lib/validations';
@@ -152,14 +153,13 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="hidden sm:block p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:border-primary/30 transition-colors">
                       {invitation.qrCodeUrl ? (
-                        <img 
+                        <Image 
                           src={invitation.qrCodeUrl} 
                           alt="QR Code" 
+                          width={64}
+                          height={64}
                           className="w-16 h-16"
-                          onError={(e) => {
-                            // Fallback se a URL da imagem falhar
-                            e.currentTarget.style.display = 'none';
-                          }}
+                          unoptimized={true}
                         />
                       ) : (
                         <QRCodeSVG value={invitation.inviteUrl} size={64} />
