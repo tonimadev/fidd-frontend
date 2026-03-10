@@ -86,7 +86,7 @@ jobs:
         env:
           SSH_HOST: ${{ secrets.VM_IP }}
           SSH_USER: ${{ secrets.SSH_USER }}
-          FRONTEND_DIR: ${{ secrets.FRONTEND_DIR || '/home/deploy/fidd-frontend' }}
+          FRONTEND_DIR: ${{ secrets.FRONTEND_DIR || 'fidd-frontend' }}
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8080' }}
         run: |
           ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} bash -s -- "$FRONTEND_DIR" "$NEXT_PUBLIC_API_URL" << 'SCRIPT'
@@ -96,9 +96,14 @@ jobs:
           FRONTEND_DIR="$1"
           API_URL="$2"
           
-          USER_HOME=$(eval echo ~${USER})
-          TAR_PATH="${USER_HOME}/fidd-frontend-new.tar.gz"
-          WORK_DIR="${FRONTEND_DIR}"
+          # Garante que o diretório de trabalho seja relativo ao home se não for absoluto
+          if [[ "$FRONTEND_DIR" != /* ]]; then
+            WORK_DIR="${HOME}/${FRONTEND_DIR}"
+          else
+            WORK_DIR="${FRONTEND_DIR}"
+          fi
+
+          TAR_PATH="${HOME}/fidd-frontend-new.tar.gz"
 
           echo "Creating frontend directory..."
           mkdir -p "$WORK_DIR"
