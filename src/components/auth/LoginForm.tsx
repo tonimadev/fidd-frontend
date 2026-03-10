@@ -87,7 +87,7 @@ export const LoginForm: React.FC = () => {
       }
       reset();
       router.push('/dashboard');
-    } catch (error) {
+    } catch {
       setErrorMessage('Conta reativada, mas erro ao fazer login automático. Por favor, entre manualmente.');
     } finally {
       setIsSubmitting(false);
