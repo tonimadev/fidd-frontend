@@ -6,6 +6,12 @@ import React from 'react';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: "Criar Conta - FIDD",
+  description: "Registre sua loja no sistema FIDD e comece a fidelizar seus clientes hoje mesmo.",
+};
 
 export default function RegisterPage() {
   return (

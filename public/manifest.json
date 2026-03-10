@@ -1,0 +1,21 @@
+{
+  "name": "FIDD - Cartões de Fidelidade Virtuais",
+  "short_name": "FIDD",
+  "description": "Plataforma de gerenciamento de campanhas de fidelização para lojas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/fidd.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/fidd.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

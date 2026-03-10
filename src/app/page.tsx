@@ -2,9 +2,27 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "FIDD",
+  "operatingSystem": "Web",
+  "applicationCategory": "BusinessApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "BRL"
+  },
+  "description": "Plataforma de gerenciamento de campanhas de fidelização para lojas e estabelecimentos comerciais."
+};
+
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/10 via-white to-primary/10">
+    <main className="min-h-screen bg-gradient-to-br from-secondary/10 via-white to-primary/10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Navigation */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -32,9 +50,9 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
             Cartões de Fidelidade Virtuais
-          </h2>
+          </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Aumentar a fidelidade de seus clientes nunca foi tão fácil. Gerenciar campanhas de pontos e recompensas de forma completa e segura.
           </p>
@@ -57,17 +75,17 @@ export default function HomePage() {
 
       {/* Features Section */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <h3 className="text-4xl font-bold text-gray-900 text-center mb-16">
+        <h2 className="text-4xl font-bold text-gray-900 text-center mb-16">
           Recursos Principais
-        </h3>
+        </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Feature 1 */}
           <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">📊</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-3">
+            <div className="text-4xl mb-4" role="img" aria-label="Análise">📊</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Campanhas Inteligentes
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Crie e gerencie campanhas de fidelização personalizadas com metas de pontos e recompensas.
             </p>
@@ -75,10 +93,10 @@ export default function HomePage() {
 
           {/* Feature 2 */}
           <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">📱</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-3">
+            <div className="text-4xl mb-4" role="img" aria-label="Celular">📱</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Integração Mobile
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Seus clientes acessam cartões de fidelidade virtuais pelo app mobile de forma simples e segura.
             </p>
@@ -86,10 +104,10 @@ export default function HomePage() {
 
           {/* Feature 3 */}
           <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">🔐</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-3">
+            <div className="text-4xl mb-4" role="img" aria-label="Segurança">🔐</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Segurança Garantida
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Autenticação JWT, tokens seguros e conformidade total com padrões de segurança.
             </p>
@@ -97,10 +115,10 @@ export default function HomePage() {
 
           {/* Feature 4 */}
           <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">📈</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-3">
+            <div className="text-4xl mb-4" role="img" aria-label="Crescimento">📈</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Análise em Tempo Real
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Acompanhe métricas detalhadas de engajamento e conversão de suas campanhas.
             </p>
@@ -108,10 +126,10 @@ export default function HomePage() {
 
           {/* Feature 5 */}
           <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">🎯</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-3">
+            <div className="text-4xl mb-4" role="img" aria-label="Alvo">🎯</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               QR Codes Dinâmicos
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Gere QR codes com tokens seguros para resgate rápido e verificação de pontos.
             </p>
@@ -119,10 +137,10 @@ export default function HomePage() {
 
           {/* Feature 6 */}
           <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4">⚡</div>
-            <h4 className="text-2xl font-bold text-gray-900 mb-3">
+            <div className="text-4xl mb-4" role="img" aria-label="Velocidade">⚡</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">
               Rápido e Escalável
-            </h4>
+            </h3>
             <p className="text-gray-600">
               Infraestrutura robusta que cresce com seu negócio, desde pequenas lojas até redes.
             </p>
@@ -133,9 +151,9 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-primary to-accent py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-4xl font-bold text-white mb-8">
+          <h2 className="text-4xl font-bold text-white mb-8">
             Pronto para aumentar a fidelidade de seus clientes?
-          </h3>
+          </h2>
           <Link
             href="/register"
             className="inline-block px-10 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg"
@@ -185,6 +203,6 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }
