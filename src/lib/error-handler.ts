@@ -28,13 +28,18 @@ export const getFriendlyErrorMessage = (error: unknown, fallbackMsg: string): st
 
     // Se o backend retornou uma mensagem específica de negócio, usamos ela.
     // Filtramos mensagens que pareçam erros técnicos (SQL, Exception, etc)
-    if (data?.message && 
-        !data.message.toLowerCase().includes('sql') && 
-        !data.message.toLowerCase().includes('exception') &&
-        !data.message.toLowerCase().includes('database') &&
-        !data.message.toLowerCase().includes('hibernate') &&
-        !data.message.toLowerCase().includes('jpa')) {
-      return data.message;
+    if (data?.message) {
+      if (data.message === 'Subscription limit reached') {
+        return 'Este estabelecimento atingiu o limite mensal de cartões. Entre em contato com o suporte do local.';
+      }
+      
+      if (!data.message.toLowerCase().includes('sql') && 
+          !data.message.toLowerCase().includes('exception') &&
+          !data.message.toLowerCase().includes('database') &&
+          !data.message.toLowerCase().includes('hibernate') &&
+          !data.message.toLowerCase().includes('jpa')) {
+        return data.message;
+      }
     }
 
     // Caso contrário, usamos mensagens amigáveis baseadas no status HTTP

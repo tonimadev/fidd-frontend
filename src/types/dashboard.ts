@@ -7,5 +7,7 @@ export interface DashboardMetrics {
   totalCustomers: number;
   pointsDistributed: number;
   engagementRate: number;
+  monthlyLimit: number;
+  availableCards: number;
 }
 

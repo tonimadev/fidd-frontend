@@ -38,19 +38,24 @@ export const DashboardMetricsCard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div className="h-4 bg-muted rounded w-24"></div>
-              <div className="h-4 w-4 bg-muted rounded-full"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-8 bg-muted rounded w-16 mb-1"></div>
-              <div className="h-3 bg-muted rounded w-32"></div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="space-y-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 bg-muted rounded w-24"></div>
+                <div className="h-4 w-4 bg-muted rounded-full"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-muted rounded w-16 mb-1"></div>
+                <div className="h-3 bg-muted rounded w-32"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card className="animate-pulse">
+          <CardContent className="p-4 h-20 bg-muted/20"></CardContent>
+        </Card>
       </div>
     );
   }
@@ -121,24 +126,73 @@ export const DashboardMetricsCard: React.FC = () => {
     },
   ];
 
+  const usagePercentage = metrics.monthlyLimit > 0 
+    ? Math.min(100, Math.round(((metrics.monthlyLimit - metrics.availableCards) / metrics.monthlyLimit) * 100))
+    : 0;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      {metricCards.map((card, i) => (
-        <Card key={i} className="transition-all hover:shadow-md border-muted/60">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {card.title}
-            </CardTitle>
-            {card.icon}
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold tracking-tight">{card.value}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {card.description}
-            </p>
+    <div className="space-y-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {metricCards.map((card, i) => (
+          <Card key={i} className="transition-all hover:shadow-md border-muted/60">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {card.title}
+              </CardTitle>
+              {card.icon}
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold tracking-tight">{card.value}</div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {card.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {metrics.monthlyLimit > 0 && (
+        <Card className="border-muted/60 shadow-sm overflow-hidden">
+          <CardContent className="p-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-primary">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M3 9h18" />
+                    <path d="M9 21V9" />
+                  </svg>
+                  Status do Plano
+                </div>
+                <div className="text-lg font-bold">
+                  {metrics.availableCards} <span className="text-sm font-normal text-muted-foreground">cartões disponíveis de {metrics.monthlyLimit} no total</span>
+                </div>
+              </div>
+              
+              <div className="flex-1 max-w-md w-full space-y-2">
+                <div className="flex justify-between text-xs font-medium">
+                  <span>{usagePercentage}% utilizado este mês</span>
+                  <span className={usagePercentage > 90 ? 'text-red-600 font-bold' : ''}>
+                    {metrics.monthlyLimit - metrics.availableCards} / {metrics.monthlyLimit}
+                  </span>
+                </div>
+                <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all duration-500 ${
+                      usagePercentage > 90 
+                        ? 'bg-red-500' 
+                        : usagePercentage > 75 
+                          ? 'bg-amber-500' 
+                          : 'bg-primary'
+                    }`}
+                    style={{ width: `${usagePercentage}%` }}
+                  />
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
-      ))}
+      )}
     </div>
   );
 };
