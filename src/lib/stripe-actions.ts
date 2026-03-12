@@ -7,7 +7,7 @@ let stripeInstance: Stripe | null = null;
 function getStripeInstance() {
   if (!stripeInstance) {
     stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-      apiVersion: '2025-01-27.acacia',
+      apiVersion: '2026-02-25.clover',
     });
   }
   return stripeInstance;
@@ -34,7 +34,7 @@ export async function getStripePlans(): Promise<StripePlan[]> {
     const priceIds = ['fidd_price_lite', 'fidd_price_pro'];
     
     const plans = await Promise.all(
-      priceIds.map(async (id) => {
+      priceIds.map(async (id): Promise<StripePlan | null> => {
         try {
           const price = await stripe.prices.retrieve(id, {
             expand: ['product'],
