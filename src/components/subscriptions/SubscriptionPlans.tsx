@@ -4,14 +4,67 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { subscriptionService } from '@/lib/subscription-service';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { getStripePlans, StripePlan } from '@/lib/stripe-actions';
 
 export const SubscriptionPlans = () => {
   const [loading, setLoading] = useState(false);
+  const [fetchingPlans, setFetchingPlans] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [plans, setPlans] = useState<StripePlan[]>([]);
+
+  useEffect(() => {
+    async function loadPlans() {
+      try {
+        const data = await getStripePlans();
+        if (data && data.length > 0) {
+          // Ordenar para garantir que o Lite venha antes do Pro
+          const sortedPlans = [...data].sort((a, b) => a.amount - b.amount);
+          setPlans(sortedPlans);
+        } else {
+          // Fallback se não houver planos (ex: chave não configurada)
+          setPlans([
+            {
+              id: 'fidd_price_lite',
+              name: 'Plano Gratuito',
+              description: 'Ideal para pequenos comércios testarem',
+              amount: 0,
+              currency: 'brl',
+              interval: 'month',
+              features: [
+                'Até 50 cartões gerados /mês',
+                '1 campanha ativa por vez',
+                'Dashboard básico de métricas'
+              ]
+            },
+            {
+              id: 'fidd_price_pro',
+              name: 'Plano Pro',
+              description: 'Potencialize a fidelidade de seus clientes',
+              amount: 50,
+              currency: 'brl',
+              interval: 'month',
+              features: [
+                'Até 500 cartões gerados /mês',
+                'Campanhas ilimitadas',
+                'Geração de QR Codes personalizados',
+                'Métricas avançadas',
+                'Suporte prioritário 24/7'
+              ]
+            }
+          ]);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar planos:', err);
+      } finally {
+        setFetchingPlans(false);
+      }
+    }
+    loadPlans();
+  }, []);
 
   const handleSubscribePro = async () => {
     setLoading(true);
@@ -50,94 +103,76 @@ export const SubscriptionPlans = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Plano Free */}
-        <Card className="flex flex-col relative overflow-hidden group hover:border-muted-foreground/20 transition-all">
-          <CardHeader className="pb-8">
-            <CardTitle>Plano Gratuito</CardTitle>
-            <CardDescription>Ideal para pequenos comércios testarem</CardDescription>
-            <div className="mt-4 flex items-baseline">
-              <span className="text-4xl font-black">R$ 0</span>
-              <span className="text-muted-foreground ml-1">/mês</span>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="flex-1">
-            <ul className="space-y-3 text-sm">
-              {[
-                { text: 'Até 50 cartões gerados /mês', check: true },
-                { text: '1 campanha ativa por vez', check: true },
-                { text: 'Dashboard básico de métricas', check: true },
-                { text: 'Personalização de QR Codes', check: false },
-              ].map((item, i) => (
-                <li key={i} className={`flex items-center gap-3 ${item.check ? 'text-foreground' : 'text-muted-foreground opacity-50'}`}>
-                  {item.check ? (
-                    <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  )}
-                  {item.text}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-          
-          <CardFooter>
-            <Button variant="secondary" className="w-full" disabled>
-              Plano Atual
-            </Button>
-          </CardFooter>
-        </Card>
+      {fetchingPlans ? (
+        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground animate-pulse">Carregando planos da Stripe...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {plans.map((plan) => {
+            const isPro = plan.id === 'fidd_price_pro';
+            const isFree = plan.amount === 0;
 
-        {/* Plano Pro */}
-        <Card className="flex flex-col relative overflow-hidden border-primary shadow-xl scale-105 z-10">
-          <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
-            Popular
-          </div>
-          
-          <CardHeader className="pb-8">
-            <CardTitle>Plano Pro</CardTitle>
-            <CardDescription>Potencialize a fidelidade de seus clientes</CardDescription>
-            <div className="mt-4 flex items-baseline text-primary">
-              <span className="text-4xl font-black text-foreground">R$ 50</span>
-              <span className="text-muted-foreground ml-1">/mês</span>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="flex-1">
-            <ul className="space-y-3 text-sm">
-              {[
-                'Até 500 cartões gerados /mês',
-                'Campanhas ilimitadas',
-                'Geração de QR Codes personalizados',
-                'Métricas avançadas',
-                'Suporte prioritário 24/7',
-              ].map((text, i) => (
-                <li key={i} className="flex items-center gap-3">
-                  <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {text}
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-          
-          <CardFooter>
-            <Button 
-              className="w-full shadow-lg shadow-primary/20" 
-              onClick={handleSubscribePro}
-              isLoading={loading}
-            >
-              Assinar Plano Pro
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
+            return (
+              <Card 
+                key={plan.id}
+                className={`flex flex-col relative overflow-hidden transition-all ${
+                  isPro 
+                    ? 'border-primary shadow-xl scale-105 z-10' 
+                    : 'group hover:border-muted-foreground/20'
+                }`}
+              >
+                {isPro && (
+                  <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
+                    Popular
+                  </div>
+                )}
+                
+                <CardHeader className="pb-8">
+                  <CardTitle>{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                  <div className={`mt-4 flex items-baseline ${isPro ? 'text-primary' : ''}`}>
+                    <span className="text-4xl font-black text-foreground">
+                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: plan.currency }).format(plan.amount)}
+                    </span>
+                    <span className="text-muted-foreground ml-1">/{plan.interval === 'month' ? 'mês' : plan.interval}</span>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="flex-1">
+                  <ul className="space-y-3 text-sm">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-3">
+                        <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+                
+                <CardFooter>
+                  {isFree ? (
+                    <Button variant="secondary" className="w-full" disabled>
+                      Plano Atual
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="w-full shadow-lg shadow-primary/20" 
+                      onClick={handleSubscribePro}
+                      isLoading={loading}
+                    >
+                      Assinar {plan.name}
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+      )}
       
       <p className="text-center text-xs text-muted-foreground pt-4 flex items-center justify-center gap-2">
         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
