@@ -22,10 +22,11 @@ describe('subscriptionService', () => {
         data: mockResponse,
       });
 
+      const planName = 'PRO';
       const successUrl = 'http://localhost:3000/success';
       const cancelUrl = 'http://localhost:3000/cancel';
 
-      const result = await subscriptionService.createCheckoutSession(successUrl, cancelUrl);
+      const result = await subscriptionService.createCheckoutSession(planName, successUrl, cancelUrl);
 
       expect(result).toEqual(mockResponse);
       expect(apiClient.post).toHaveBeenCalledWith(
@@ -33,6 +34,7 @@ describe('subscriptionService', () => {
         null,
         {
           params: {
+            planName,
             successUrl,
             cancelUrl,
           },
@@ -44,7 +46,7 @@ describe('subscriptionService', () => {
       (apiClient.post as jest.Mock).mockRejectedValue(new Error('API Error'));
 
       await expect(
-        subscriptionService.createCheckoutSession('url1', 'url2')
+        subscriptionService.createCheckoutSession('PRO', 'url1', 'url2')
       ).rejects.toThrow('API Error');
     });
   });
