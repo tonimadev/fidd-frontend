@@ -202,7 +202,7 @@ export const SubscriptionPlans = () => {
                       className="w-full shadow-lg shadow-primary/20" 
                       onClick={() => handleSubscribe(plan)}
                       isLoading={loading === plan.id}
-                      variant={plan.amount === 0 ? 'outline' : 'default'}
+                      variant={plan.amount === 0 ? 'outline' : 'primary'}
                     >
                       {plan.amount === 0 ? 'Migrar para Gratuito' : `Assinar ${plan.name}`}
                     </Button>
