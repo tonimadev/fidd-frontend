@@ -9,14 +9,19 @@ const SUBSCRIPTION_BASE_URL = '/api/web/v1/subscriptions';
 
 export const subscriptionService = {
   /**
-   * Cria uma sessão de checkout do Stripe para assinar o plano Pro
+   * Cria uma sessão de checkout do Stripe para assinar um plano
    */
-  async createCheckoutSession(successUrl: string, cancelUrl: string): Promise<CheckoutSessionResponse> {
+  async createCheckoutSession(
+    planName: string,
+    successUrl: string,
+    cancelUrl: string
+  ): Promise<CheckoutSessionResponse> {
     const response = await apiClient.post<CheckoutSessionResponse>(
       `${SUBSCRIPTION_BASE_URL}/checkout-session`,
       null, // No body
       {
         params: {
+          planName,
           successUrl,
           cancelUrl,
         },

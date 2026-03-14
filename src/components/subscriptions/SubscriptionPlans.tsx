@@ -5,13 +5,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/context/auth-context';
 import { subscriptionService } from '@/lib/subscription-service';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { getStripePlans, StripePlan } from '@/lib/stripe-actions';
 
 export const SubscriptionPlans = () => {
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const [loading, setLoading] = useState<string | null>(null);
   const [fetchingPlans, setFetchingPlans] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [plans, setPlans] = useState<StripePlan[]>([]);
@@ -21,36 +23,49 @@ export const SubscriptionPlans = () => {
       try {
         const data = await getStripePlans();
         if (data && data.length > 0) {
-          // Ordenar para garantir que o Lite venha antes do Pro
+          // Ordenar por preço
           const sortedPlans = [...data].sort((a, b) => a.amount - b.amount);
           setPlans(sortedPlans);
         } else {
-          // Fallback se não houver planos (ex: chave não configurada)
+          // Fallback se não houver planos vindos da API
           setPlans([
             {
-              id: 'fidd_price_lite',
+              id: 'fidd_price_free',
               name: 'Plano Gratuito',
-              description: 'Ideal para pequenos comércios testarem',
+              description: 'Para quem está começando',
               amount: 0,
               currency: 'brl',
               interval: 'month',
               features: [
                 'Até 50 cartões gerados /mês',
                 '1 campanha ativa por vez',
-                'Dashboard básico de métricas'
+                'Dashboard básico'
+              ]
+            },
+            {
+              id: 'fidd_price_lite',
+              name: 'Plano Lite',
+              description: 'Ideal para pequenos comércios',
+              amount: 25,
+              currency: 'brl',
+              interval: 'month',
+              features: [
+                'Até 250 cartões gerados /mês',
+                '3 campanhas ativas',
+                'Suporte por email'
               ]
             },
             {
               id: 'fidd_price_pro',
               name: 'Plano Pro',
-              description: 'Potencialize a fidelidade de seus clientes',
+              description: 'Potencialize seu negócio',
               amount: 50,
               currency: 'brl',
               interval: 'month',
               features: [
                 'Até 500 cartões gerados /mês',
                 'Campanhas ilimitadas',
-                'Geração de QR Codes personalizados',
+                'QR Codes personalizados',
                 'Métricas avançadas',
                 'Suporte prioritário 24/7'
               ]
@@ -66,14 +81,23 @@ export const SubscriptionPlans = () => {
     loadPlans();
   }, []);
 
-  const handleSubscribePro = async () => {
-    setLoading(true);
+  const handleSubscribe = async (plan: StripePlan) => {
+    setLoading(plan.id);
     setError(null);
     try {
-      const successUrl = `${window.location.origin}/dashboard?subscription=success`;
-      const cancelUrl = `${window.location.origin}/dashboard?subscription=cancel`;
+      const successUrl = `${window.location.origin}/dashboard?tab=subscriptions&subscription=success`;
+      const cancelUrl = `${window.location.origin}/dashboard?tab=subscriptions&subscription=cancel`;
       
-      const response = await subscriptionService.createCheckoutSession(successUrl, cancelUrl);
+      // Mapeamento de IDs para nomes que o backend espera
+      let planName = 'FREE';
+      if (plan.id === 'fidd_price_pro') planName = 'PRO';
+      else if (plan.id === 'fidd_price_lite') planName = 'LITE';
+
+      const response = await subscriptionService.createCheckoutSession(
+        planName,
+        successUrl,
+        cancelUrl
+      );
       
       if (response && response.url) {
         window.location.href = response.url;
@@ -84,16 +108,25 @@ export const SubscriptionPlans = () => {
       setError('Erro ao criar sessão de checkout. Tente novamente mais tarde.');
       console.error('Subscription error:', err);
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 
+  const isCurrentPlan = (planId: string) => {
+    if (!user?.plan) return planId === 'fidd_price_free'; // Default para FREE se não informado
+
+    const userPlan = user.plan.toUpperCase();
+    if (userPlan === 'PRO') return planId === 'fidd_price_pro';
+    if (userPlan === 'LITE') return planId === 'fidd_price_lite';
+    return planId === 'fidd_price_free';
+  };
+
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Planos de Assinatura</h2>
         <p className="text-muted-foreground max-w-lg mx-auto">
-          Escolha o plano ideal para o tamanho do seu negócio e comece a fidelizar seus clientes hoje mesmo.
+          Escolha o plano ideal para o tamanho do seu negócio.
         </p>
       </div>
       
@@ -106,13 +139,13 @@ export const SubscriptionPlans = () => {
       {fetchingPlans ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="text-muted-foreground animate-pulse">Carregando planos da Stripe...</p>
+          <p className="text-muted-foreground animate-pulse">Carregando planos...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {plans.map((plan) => {
             const isPro = plan.id === 'fidd_price_pro';
-            const isFree = plan.amount === 0;
+            const isActive = isCurrentPlan(plan.id);
 
             return (
               <Card 
@@ -121,11 +154,17 @@ export const SubscriptionPlans = () => {
                   isPro 
                     ? 'border-primary shadow-xl scale-105 z-10' 
                     : 'group hover:border-muted-foreground/20'
-                }`}
+                } ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}`}
               >
                 {isPro && (
                   <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
                     Popular
+                  </div>
+                )}
+
+                {isActive && (
+                  <div className="absolute top-0 left-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-br-xl">
+                    Atual
                   </div>
                 )}
                 
@@ -154,17 +193,18 @@ export const SubscriptionPlans = () => {
                 </CardContent>
                 
                 <CardFooter>
-                  {isFree ? (
+                  {isActive ? (
                     <Button variant="secondary" className="w-full" disabled>
                       Plano Atual
                     </Button>
                   ) : (
                     <Button 
                       className="w-full shadow-lg shadow-primary/20" 
-                      onClick={handleSubscribePro}
-                      isLoading={loading}
+                      onClick={() => handleSubscribe(plan)}
+                      isLoading={loading === plan.id}
+                      variant={plan.amount === 0 ? 'outline' : 'default'}
                     >
-                      Assinar {plan.name}
+                      {plan.amount === 0 ? 'Migrar para Gratuito' : `Assinar ${plan.name}`}
                     </Button>
                   )}
                 </CardFooter>

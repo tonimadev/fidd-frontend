@@ -4,7 +4,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { authService } from '@/lib/auth-service';
 import { AuthContext as AuthContextType, User } from '@/types/auth';
 
@@ -21,19 +21,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    * Inicializa contexto ao carregar a página
    */
   useEffect(() => {
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
       const storedToken = localStorage.getItem('authToken');
       const storedUser = localStorage.getItem('user');
 
       if (storedToken && storedUser) {
         try {
           setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
           setIsAuthenticated(true);
+
+          // Buscar dados atualizados do servidor sem disparar loop
+          const userData = await authService.getCurrentUser();
+          if (userData) {
+            const updatedUser = {
+              storeId: userData.storeId,
+              tradeName: userData.tradeName,
+              email: userData.email,
+              role: userData.role,
+              plan: userData.plan
+            };
+            setUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+          }
         } catch (error) {
           console.error('Erro ao carregar autenticação:', error);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
         }
       }
       setIsLoading(false);
@@ -43,29 +56,48 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   /**
+   * Recarrega dados do usuário do servidor
+   */
+  const refreshUser = useCallback(async () => {
+    try {
+      const userData = await authService.getCurrentUser();
+      if (userData) {
+        const updatedUser = {
+          storeId: userData.storeId,
+          tradeName: userData.tradeName,
+          email: userData.email,
+          role: userData.role,
+          plan: userData.plan
+        };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar dados do usuário:', error);
+    }
+  }, []);
+
+  /**
    * Realiza login
    */
-  const login = async (email: string, password: string) => {
+  const login = useCallback(async (email: string, password: string) => {
     try {
       setIsLoading(true);
       const response = await authService.login({ email, password });
 
-      // Armazena token e dados do usuário
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('user', JSON.stringify({
+      const userData = {
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
         role: response.role,
-      }));
+        plan: response.plan,
+      };
+
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(userData));
 
       setToken(response.token);
-      setUser({
-        storeId: response.storeId,
-        tradeName: response.tradeName,
-        email: response.email,
-        role: response.role,
-      });
+      setUser(userData);
       setIsAuthenticated(true);
     } catch (error) {
       setIsAuthenticated(false);
@@ -73,36 +105,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Realiza registro
    */
-  const register = async (tradeName: string, taxId: string, email: string, password: string) => {
+  const register = useCallback(async (tradeName: string, taxId: string, email: string, password: string) => {
     try {
       setIsLoading(true);
-
-      // Detectar se é CNPJ (14 dígitos) ou CPF (11 dígitos)
       const taxIdType = taxId.length === 14 ? 'CNPJ' : 'CPF';
-
       const response = await authService.register({ tradeName, taxId, email, password, taxIdType });
 
-      // ...existing code...
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('user', JSON.stringify({
+      const userData = {
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
         role: response.role,
-      }));
+        plan: response.plan,
+      };
+
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(userData));
 
       setToken(response.token);
-      setUser({
-        storeId: response.storeId,
-        tradeName: response.tradeName,
-        email: response.email,
-        role: response.role,
-      });
+      setUser(userData);
       setIsAuthenticated(true);
     } catch (error) {
       setIsAuthenticated(false);
@@ -110,20 +136,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Realiza logout
    */
-  const logout = () => {
+  const logout = useCallback(() => {
     authService.logout();
     setUser(null);
     setToken(null);
     setIsAuthenticated(false);
     setIsAccountPendingDeletion(false);
-  };
+  }, []);
 
-  const value: AuthContextType = {
+  const contextValue = useMemo(() => ({
     user,
     token,
     isLoading,
@@ -131,11 +157,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isAccountPendingDeletion,
     login,
     register,
+    refreshUser,
     logout,
-  };
+  }), [user, token, isLoading, isAuthenticated, isAccountPendingDeletion, login, register, refreshUser, logout]);
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
@@ -151,4 +178,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-

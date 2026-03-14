@@ -25,7 +25,7 @@ import { DashboardTab } from '@/types/dashboard';
 
 
 function DashboardContent() {
-  const { logout } = useAuth();
+  const { logout, refreshUser } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') as DashboardTab;
@@ -49,6 +49,13 @@ function DashboardContent() {
   }, [searchParams, activeTab]);
 
   const subscriptionStatus = searchParams.get('subscription');
+
+  // Atualizar dados do usuário quando retornar do Stripe com sucesso
+  useEffect(() => {
+    if (subscriptionStatus === 'success') {
+      refreshUser();
+    }
+  }, [subscriptionStatus, refreshUser]);
 
   const handleLogout = () => {
     logout();
@@ -259,7 +266,7 @@ function DashboardContent() {
               </div>
               <div>
                 <p className="font-bold">Assinatura realizada!</p>
-                <p className="text-sm">Seu plano Pro já está ativo. Aproveite todos os benefícios.</p>
+                <p className="text-sm">Seu novo plano já está ativo. Aproveite todos os benefícios.</p>
               </div>
             </div>
           )}
@@ -291,4 +298,3 @@ export default function DashboardPage() {
     </ProtectedRoute>
   );
 }
-

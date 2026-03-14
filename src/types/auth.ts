@@ -9,6 +9,7 @@ export interface AuthResponse {
   tradeName: string;
   email: string;
   role: string;
+  plan?: string;
 }
 
 export interface AuthContext {
@@ -19,6 +20,7 @@ export interface AuthContext {
   isAccountPendingDeletion: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (tradeName: string, taxId: string, email: string, password: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
   logout: () => void;
 }
 
@@ -27,6 +29,7 @@ export interface User {
   tradeName: string;
   email: string;
   role: string;
+  plan?: string;
 }
 
 export interface LoginRequest {
@@ -56,5 +59,3 @@ export interface ApiError {
   message: string;
   errors?: Record<string, string[]>;
 }
-
-
