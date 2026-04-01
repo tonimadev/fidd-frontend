@@ -23,14 +23,14 @@ export const authService = {
    * Solicita recuperação de senha
    */
   async forgotPassword(data: ForgotPasswordRequest): Promise<void> {
-    await apiClient.post(`${AUTH_BASE_URL}/forgot-password`, data);
+    await apiClient.post('/api/auth/forgot-password', data);
   },
 
   /**
    * Redefine a senha utilizando um token
    */
   async resetPassword(data: ResetPasswordRequest): Promise<void> {
-    await apiClient.post(`${AUTH_BASE_URL}/reset-password`, data);
+    await apiClient.post('/api/auth/reset-password', data);
   },
 
   /**
