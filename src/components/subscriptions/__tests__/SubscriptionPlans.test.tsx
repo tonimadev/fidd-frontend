@@ -31,7 +31,7 @@ describe('SubscriptionPlans', () => {
       amount: 25,
       currency: 'brl',
       interval: 'month',
-      features: ['Até 250 cartões gerados /mês']
+      features: ['Até 100 cartões gerados /mês']
     },
     {
       id: 'fidd_price_pro',

@@ -50,7 +50,7 @@ export const SubscriptionPlans = () => {
               currency: 'brl',
               interval: 'month',
               features: [
-                'Até 250 cartões gerados /mês',
+                'Até 100 cartões gerados /mês',
                 '3 campanhas ativas',
                 'Suporte por email'
               ]
