@@ -27,7 +27,7 @@ export const AddressSettings: React.FC = () => {
   
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
-  const { isLoaded } = useJsApiLoader({
+  const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries: libraries,
@@ -113,6 +113,28 @@ export const AddressSettings: React.FC = () => {
 
   if (isLoading) {
     return <div className="p-4 text-center">Carregando mapa...</div>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="p-6 text-center bg-red-50 rounded-lg border border-red-200">
+        <h3 className="text-red-800 font-semibold">Erro ao carregar o Google Maps</h3>
+        <p className="text-red-600 text-sm mt-2">
+          Não foi possível carregar os serviços do Google Maps. Verifique sua conexão e se a chave de API está configurada corretamente.
+        </p>
+      </div>
+    );
+  }
+
+  if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+    return (
+      <div className="p-6 text-center bg-yellow-50 rounded-lg border border-yellow-200">
+        <h3 className="text-yellow-800 font-semibold">Configuração Pendente</h3>
+        <p className="text-yellow-600 text-sm mt-2">
+          A chave de API do Google Maps não foi encontrada. Por favor, configure a variável <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> no seu arquivo <code>.env.local</code>.
+        </p>
+      </div>
+    );
   }
 
   if (!isLoaded) {
