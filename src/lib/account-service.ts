@@ -3,13 +3,29 @@
  */
 
 import { apiClient } from './api-client';
-import { DeleteAccountStatus, DeleteAccountRequest, ApiKey, CreateApiKeyRequest } from '@/types/account';
+import { DeleteAccountStatus, DeleteAccountRequest, ApiKey, CreateApiKeyRequest, StoreProfile, StoreProfileUpdateRequest } from '@/types/account';
 import { LoginRequest } from '@/types/auth';
 
 const ACCOUNT_BASE_URL = '/api/web/v1/account';
 const API_KEYS_BASE_URL = '/api/web/v1/api-keys';
+const PROFILE_BASE_URL = '/api/web/v1/profile';
 
 export const accountService = {
+  /**
+   * Obtém o perfil da loja
+   */
+  async getProfile(): Promise<StoreProfile> {
+    const response = await apiClient.get<StoreProfile>(PROFILE_BASE_URL);
+    return response.data;
+  },
+
+  /**
+   * Atualiza o endereço da loja
+   */
+  async updateAddress(data: StoreProfileUpdateRequest): Promise<void> {
+    await apiClient.put(`${PROFILE_BASE_URL}/address`, data);
+  },
+
   /**
    * Verifica o status de deleção da conta
    */

@@ -9,6 +9,7 @@ import { accountService } from '@/lib/account-service';
 import { DeleteAccountStatus } from '@/types/account';
 import { DeleteAccountModal } from './DeleteAccountModal';
 import { ApiKeysSettings } from './ApiKeysSettings';
+import { AddressSettings } from './AddressSettings';
 
 export const AccountSettings: React.FC = () => {
   const [deleteStatus, setDeleteStatus] = useState<DeleteAccountStatus | null>(null);
@@ -76,6 +77,9 @@ export const AccountSettings: React.FC = () => {
           <p className="text-sm text-red-700">{errorMessage}</p>
         </div>
       )}
+
+      {/* Seção de Localização */}
+      <AddressSettings />
 
       {/* Seção de Chaves de API */}
       <ApiKeysSettings />

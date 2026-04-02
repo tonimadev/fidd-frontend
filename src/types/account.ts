@@ -29,3 +29,17 @@ export interface CreateApiKeyRequest {
   name: string;
 }
 
+export interface StoreProfile {
+  tradeName: string;
+  email: string;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export interface StoreProfileUpdateRequest {
+  address: string;
+  latitude: number;
+  longitude: number;
+}
+
