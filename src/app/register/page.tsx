@@ -43,9 +43,9 @@ export default function RegisterPage() {
                 Termos de Serviço
               </Link>
               {' '}e{' '}
-              <Link href="/privacy" className="text-primary hover:underline">
+              <a href="https://tonima.digital/fidd-policy.html" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                 Política de Privacidade
-              </Link>
+              </a>
             </p>
           </div>
         </div>
@@ -63,4 +63,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-

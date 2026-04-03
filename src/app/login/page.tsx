@@ -58,9 +58,9 @@ export default function LoginPage() {
               Termos de Serviço
             </Link>
             {' '}e{' '}
-            <Link href="/privacy" className="hover:text-primary underline transition-colors">
+            <a href="https://tonima.digital/fidd-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-primary underline transition-colors">
               Política de Privacidade
-            </Link>
+            </a>
           </p>
         </div>
       </div>
@@ -96,4 +96,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
