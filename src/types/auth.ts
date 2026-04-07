@@ -19,6 +19,7 @@ export interface AuthContext {
   isAuthenticated: boolean;
   isAccountPendingDeletion: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   register: (tradeName: string, taxId: string, email: string, password: string) => Promise<void>;
   refreshUser: () => Promise<void>;
   logout: () => void;

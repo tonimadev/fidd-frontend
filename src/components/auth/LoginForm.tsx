@@ -18,10 +18,11 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import axios from 'axios';
 import { LoginRequest } from '@/types/auth';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReactivateModal, setShowReactivateModal] = useState(false);
@@ -146,6 +147,42 @@ export const LoginForm: React.FC = () => {
       >
         Entrar
       </Button>
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">Ou entre com</span>
+        </div>
+      </div>
+
+      <div className="flex justify-center w-full">
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            if (credentialResponse.credential) {
+              try {
+                setIsSubmitting(true);
+                setErrorMessage('');
+                await loginWithGoogle(credentialResponse.credential);
+                router.push('/dashboard');
+              } catch (error) {
+                setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao entrar com Google.'));
+              } finally {
+                setIsSubmitting(false);
+              }
+            }
+          }}
+          onError={() => {
+            setErrorMessage('Falha na autenticação com Google.');
+          }}
+          useOneTap
+          width="100%"
+          theme="outline"
+          text="signin_with"
+          shape="rectangular"
+        />
+      </div>
 
       {/* Link para registro */}
       <p className="text-center text-sm text-muted-foreground mt-4">

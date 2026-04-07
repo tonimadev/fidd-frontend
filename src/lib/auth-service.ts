@@ -20,6 +20,17 @@ export const authService = {
   },
 
   /**
+   * Realiza login de uma loja via Google
+   */
+  async googleLogin(idToken: string): Promise<AuthResponse> {
+    const response = await apiClient.post<AuthResponse>(
+      `${AUTH_BASE_URL}/google`,
+      { idToken }
+    );
+    return response.data;
+  },
+
+  /**
    * Solicita recuperação de senha
    */
   async forgotPassword(data: ForgotPasswordRequest): Promise<void> {

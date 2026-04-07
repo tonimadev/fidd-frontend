@@ -12,10 +12,11 @@ import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import Link from 'next/link';
+import { GoogleLogin } from '@react-oauth/google';
 
 export const RegisterForm: React.FC = () => {
   const router = useRouter();
-  const { register: registerUser } = useAuth();
+  const { register: registerUser, loginWithGoogle } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -259,6 +260,42 @@ export const RegisterForm: React.FC = () => {
       >
         {isSubmitting ? 'Criando conta...' : 'Criar Conta'}
       </button>
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">Ou use sua conta</span>
+        </div>
+      </div>
+
+      <div className="flex justify-center w-full">
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            if (credentialResponse.credential) {
+              try {
+                setIsSubmitting(true);
+                setErrorMessage('');
+                await loginWithGoogle(credentialResponse.credential);
+                router.push('/dashboard');
+              } catch (error) {
+                setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar conta com Google.'));
+              } finally {
+                setIsSubmitting(false);
+              }
+            }
+          }}
+          onError={() => {
+            setErrorMessage('Falha na autenticação com Google.');
+          }}
+          useOneTap
+          width="100%"
+          theme="outline"
+          text="signup_with"
+          shape="rectangular"
+        />
+      </div>
 
       {/* Link para login */}
       <p className="text-center text-sm text-gray-600">

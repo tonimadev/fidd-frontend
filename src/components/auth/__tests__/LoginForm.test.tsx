@@ -23,6 +23,10 @@ jest.mock('@/context/auth-context', () => ({
 
 jest.mock('@/lib/account-service');
 
+jest.mock('@react-oauth/google', () => ({
+  GoogleLogin: jest.fn(() => <div data-testid="google-login">Google Login</div>),
+}));
+
 describe('LoginForm', () => {
   it('deve renderizar formulário de login', () => {
     render(<LoginForm />);

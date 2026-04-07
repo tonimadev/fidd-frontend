@@ -108,6 +108,36 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   /**
+   * Realiza login com Google
+   */
+  const loginWithGoogle = useCallback(async (idToken: string) => {
+    try {
+      setIsLoading(true);
+      const response = await authService.googleLogin(idToken);
+
+      const userData = {
+        storeId: response.storeId,
+        tradeName: response.tradeName,
+        email: response.email,
+        role: response.role,
+        plan: response.plan,
+      };
+
+      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      setToken(response.token);
+      setUser(userData);
+      setIsAuthenticated(true);
+    } catch (error) {
+      setIsAuthenticated(false);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  /**
    * Realiza registro
    */
   const register = useCallback(async (tradeName: string, taxId: string, email: string, password: string) => {
@@ -156,10 +186,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isAuthenticated,
     isAccountPendingDeletion,
     login,
+    loginWithGoogle,
     register,
     refreshUser,
     logout,
-  }), [user, token, isLoading, isAuthenticated, isAccountPendingDeletion, login, register, refreshUser, logout]);
+  }), [user, token, isLoading, isAuthenticated, isAccountPendingDeletion, login, loginWithGoogle, register, refreshUser, logout]);
 
   return (
     <AuthContext.Provider value={contextValue}>
