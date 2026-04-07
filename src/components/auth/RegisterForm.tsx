@@ -75,7 +75,7 @@ export const RegisterForm: React.FC = () => {
   };
 
   const getDocumentLabel = (): string => {
-    return taxIdType === 'CNPJ' ? 'CNPJ (14 dígitos)' : 'CPF (11 dígitos)';
+    return taxIdType === 'CNPJ' ? 'CNPJ' : 'CPF';
   };
 
   const getDocumentMaxLength = (): number => {

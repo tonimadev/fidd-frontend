@@ -3,15 +3,10 @@
  */
 
 import { z } from 'zod';
+import { isValidCnpj, isValidCpf } from './document-validators';
 
 // Regex para validar senha forte
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-// Regex para validar CNPJ (14 dígitos)
-const cnpjRegex = /^\d{14}$/;
-
-// Regex para validar CPF (11 dígitos)
-const cpfRegex = /^\d{11}$/;
 
 /**
  * Remove caracteres de controle não imprimíveis e remove espaços extras
@@ -50,7 +45,7 @@ export const registerSchema = z.object({
   taxIdType: z.enum(['CNPJ', 'CPF'], {
     message: 'Selecione CNPJ ou CPF'
   }),
-  taxId: z.string().trim().min(1, 'Documento obrigatório').max(14, 'Documento inválido'),
+  taxId: z.string().trim().min(1, 'Documento obrigatório').max(18, 'Documento inválido'),
   email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
   password: z.string()
     .min(8, 'Senha deve ter pelo menos 8 caracteres')
@@ -63,11 +58,11 @@ export const registerSchema = z.object({
 }).refine((data) => {
   // Validar CNPJ se selecionado
   if (data.taxIdType === 'CNPJ') {
-    return cnpjRegex.test(data.taxId);
+    return isValidCnpj(data.taxId);
   }
   // Validar CPF se selecionado
   if (data.taxIdType === 'CPF') {
-    return cpfRegex.test(data.taxId);
+    return isValidCpf(data.taxId);
   }
   return false;
 }, {

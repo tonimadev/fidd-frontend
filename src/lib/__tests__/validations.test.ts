@@ -48,7 +48,7 @@ describe('Validation Schemas', () => {
       const data = {
         tradeName: 'Test Store',
         taxIdType: 'CNPJ',
-        taxId: '12345678000195',
+        taxId: '11222333000181',
         email: 'test@example.com',
         password: 'Password123!@',
         confirmPassword: 'Password123!@',
@@ -62,7 +62,7 @@ describe('Validation Schemas', () => {
       const data = {
         tradeName: 'Test Store',
         taxIdType: 'CPF',
-        taxId: '12345678901',
+        taxId: '12345678909',
         email: 'test@example.com',
         password: 'Password123!@',
         confirmPassword: 'Password123!@',
@@ -90,7 +90,7 @@ describe('Validation Schemas', () => {
       const data = {
         tradeName: 'Test Store',
         taxIdType: 'CNPJ',
-        taxId: '12345678000195',
+        taxId: '11222333000181',
         email: 'test@example.com',
         password: 'Password123!@',
         confirmPassword: 'DifferentPassword123!@',
@@ -104,7 +104,7 @@ describe('Validation Schemas', () => {
       const data = {
         tradeName: 'Test Store',
         taxIdType: 'CNPJ',
-        taxId: '12345678000195',
+        taxId: '11222333000181',
         email: 'test@example.com',
         password: 'weak', // Sem maiúscula, número, caractere especial
         confirmPassword: 'weak',
