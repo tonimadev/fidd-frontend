@@ -36,6 +36,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8080' }}
           NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
         run: npm run build
       - name: Prepare Standalone Build
         run: |
@@ -93,8 +94,9 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:8080' }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} bash -s -- "$FRONTEND_DIR" "$NEXT_PUBLIC_API_URL" "$STRIPE_SECRET_KEY" "$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" << 'SCRIPT'
+          ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} bash -s -- "$FRONTEND_DIR" "$NEXT_PUBLIC_API_URL" "$STRIPE_SECRET_KEY" "$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY" "$NEXT_PUBLIC_GOOGLE_CLIENT_ID" << 'SCRIPT'
           #!/bin/bash
           set -euo pipefail
 
@@ -102,6 +104,7 @@ jobs:
           API_URL="$2"
           STRIPE_KEY="$3"
           GOOGLE_MAPS_KEY="$4"
+          GOOGLE_CLIENT_ID="$5"
           
           # Garante que o diretório de trabalho seja relativo ao home se não for absoluto
           if [[ "$FRONTEND_DIR" != /* ]]; then
@@ -150,6 +153,7 @@ jobs:
           export NEXT_PUBLIC_API_URL="${API_URL}"
           export STRIPE_SECRET_KEY="${STRIPE_KEY}"
           export NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="${GOOGLE_MAPS_KEY}"
+          export NEXT_PUBLIC_GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}"
 
           echo "Executing: nohup node server.js > app.log 2>&1 &"
           # Inicia com nohup, desvia output para log e usa disown para desvincular do shell
