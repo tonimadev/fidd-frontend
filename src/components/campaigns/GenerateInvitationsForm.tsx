@@ -187,7 +187,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          const msg = `Parabéns! Você ganhou ${invitation.points} pontos da campanha "${campaignName}". Baixe o FIDD agora para resgatar: Android (https://play.google.com/store/apps/details?id=digital.tonima.fidd) ou Apple (em breve) e use o código ${invitation.inviteToken}`;
+                          const msg = `Parabéns! Você ganhou ${invitation.points} pontos da campanha "${campaignName}".\n\nResgate agora pelo App:\n🤖 Android: https://play.google.com/store/apps/details?id=digital.tonima.fidd\n🍎 Apple: (em breve)\n🌐 Web: ${window.location.origin}/app\n\nUse o código: ${invitation.inviteToken}`;
                           copyToClipboard(msg, 'Mensagem');
                         }}
                         className="h-8 text-xs font-semibold text-green-600 hover:text-green-700 hover:bg-green-50 justify-start md:justify-center"

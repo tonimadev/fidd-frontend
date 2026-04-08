@@ -9,8 +9,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/validations';
 import { useMobileAuth } from '@/context/mobile-auth-context';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
+import { mobileCardService } from '@/lib/mobile-card-service';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -18,6 +19,8 @@ import { GoogleLogin } from '@react-oauth/google';
 
 export const MobileLoginForm: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get('inviteToken');
   const { login, loginWithGoogle } = useMobileAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +40,16 @@ export const MobileLoginForm: React.FC = () => {
       setIsSubmitting(true);
       setErrorMessage('');
       await login(data.email, data.password);
+
+      // Resgatar convite se houver token
+      if (inviteToken) {
+        try {
+          await mobileCardService.redeemInvitation(inviteToken);
+        } catch (err) {
+          console.error('Erro ao resgatar convite após login:', err);
+        }
+      }
+
       reset();
       router.push('/app');
     } catch (error) {
@@ -48,6 +61,12 @@ export const MobileLoginForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {inviteToken && (
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 mb-4 text-center">
+          <p className="text-xs font-bold text-primary uppercase tracking-wider">Convite Detectado!</p>
+          <p className="text-[10px] text-primary/70">Faça login para resgatar seus pontos automaticamente.</p>
+        </div>
+      )}
       <Input
         label="Email"
         type="email"
@@ -130,7 +149,10 @@ export const MobileLoginForm: React.FC = () => {
       {/* Link para registro */}
       <p className="text-center text-sm text-muted-foreground mt-4">
         Não tem uma conta?{' '}
-        <Link href="/app/register" className="text-primary hover:underline font-semibold transition-all">
+        <Link 
+          href={`/app/register${inviteToken ? `?inviteToken=${inviteToken}` : ''}`} 
+          className="text-primary hover:underline font-semibold transition-all"
+        >
           Criar conta de cliente
         </Link>
       </p>
