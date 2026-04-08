@@ -240,7 +240,7 @@ function DashboardContent() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <DeletionBanner />
-        <header className="lg:hidden flex items-center h-16 px-4 border-b border-border bg-white sticky top-0 z-20">
+        <header className="lg:hidden flex items-center h-16 px-4 border-b border-border bg-card sticky top-0 z-20">
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 -ml-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -250,7 +250,7 @@ function DashboardContent() {
             </svg>
           </button>
           <div className="flex items-center gap-2 ml-4">
-            <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} />
+            <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} className="dark:brightness-110" />
             <span className="text-xl font-black tracking-tighter text-primary">FIDD</span>
           </div>
         </header>
@@ -258,7 +258,7 @@ function DashboardContent() {
         <main className="flex-1 p-6 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
           {subscriptionStatus === 'success' && (
-            <div className="mb-8 p-4 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200 flex items-center gap-3 shadow-sm">
+            <div className="mb-8 p-4 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-500/20 flex items-center gap-3 shadow-sm">
               <div className="bg-emerald-500 text-white rounded-full p-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />

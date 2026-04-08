@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/Button';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import Image from 'next/image';
 import { DashboardTab } from '@/types/dashboard';
 
@@ -70,7 +71,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       lg:translate-x-0 
       fixed lg:sticky 
       top-0 left-0 z-40 
-      w-64 bg-white border-r border-border h-screen 
+      w-64 bg-card border-r border-border h-screen 
       flex flex-col transition-transform duration-300 ease-in-out
     `}>
       <div className="p-6 flex items-center justify-between">
@@ -81,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           }}
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} />
+          <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} className="dark:brightness-110" />
           <span className="text-2xl font-black tracking-tighter text-primary">FIDD</span>
         </button>
 
@@ -133,6 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
           </div>
         </div>
+        <ThemeToggle />
         <Button
           variant="ghost"
           size="sm"

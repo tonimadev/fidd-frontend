@@ -18,18 +18,18 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Card de registro */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
           {/* Header */}
           <div className="text-center mb-8 flex flex-col items-center">
-            <Image src="/fidd.png" alt="FIDD Logo" width={48} height={48} className="mb-2" />
-            <h1 className="text-3xl font-bold text-gray-900">FIDD</h1>
-            <p className="text-gray-600 text-sm mt-2">Cartões de Fidelidade Virtuais</p>
+            <Image src="/fidd.png" alt="FIDD Logo" width={48} height={48} className="mb-2 dark:brightness-110" />
+            <h1 className="text-3xl font-bold text-foreground">FIDD</h1>
+            <p className="text-muted-foreground text-sm mt-2">Cartões de Fidelidade Virtuais</p>
           </div>
 
           {/* Título */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Criar Conta</h2>
-            <p className="text-gray-600 text-sm mt-1">Registre sua loja no sistema FIDD</p>
+            <h2 className="text-2xl font-bold text-foreground">Criar Conta</h2>
+            <p className="text-muted-foreground text-sm mt-1">Registre sua loja no sistema FIDD</p>
           </div>
 
           {/* Formulário */}
@@ -52,7 +52,7 @@ export default function RegisterPage() {
 
         {/* Link de suporte */}
         <div className="text-center mt-6">
-          <p className="text-gray-600 text-sm">
+          <p className="text-muted-foreground text-sm">
             Precisa de ajuda?{' '}
             <Link href="/support" className="text-primary hover:text-primary/80 font-medium">
               Contacte-nos

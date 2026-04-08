@@ -209,8 +209,8 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
       </div>
 
       {errorMessage && (
-        <div className="rounded-lg bg-red-50 p-4 border border-red-200">
-          <p className="text-sm text-red-700 font-medium">{errorMessage}</p>
+        <div className="rounded-lg bg-red-500/10 p-4 border border-red-500/20">
+          <p className="text-sm text-red-600 dark:text-red-400 font-medium">{errorMessage}</p>
         </div>
       )}
 
@@ -339,7 +339,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
                   <Button 
                     variant={Boolean(campaign.isActive) ? 'outline' : 'primary'}
                     size="sm" 
-                    className={`w-full ${Boolean(campaign.isActive) ? 'text-amber-600 border-amber-200 hover:bg-amber-50' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}`}
+                    className={`w-full ${Boolean(campaign.isActive) ? 'text-amber-600 dark:text-amber-400 border-amber-500/20 hover:bg-amber-500/10' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}`}
                     onClick={() => handleToggleStatus(campaign)}
                     isLoading={togglingCampaignId === campaign.id}
                     disabled={togglingCampaignId !== null}
@@ -366,7 +366,7 @@ export const CampaignsList: React.FC<CampaignsListProps> = ({ onOpenHelp }) => {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 mt-1"
+                  className="w-full text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10 hover:bg-red-50 mt-1"
                   onClick={() => handleDeleteCampaign(campaign.id)}
                 >
                   Excluir Campanha

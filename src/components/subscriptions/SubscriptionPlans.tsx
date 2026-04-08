@@ -131,7 +131,7 @@ export const SubscriptionPlans = () => {
       </div>
       
       {error && (
-        <div className="p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm font-medium">
+        <div className="p-4 bg-red-500/10 text-red-600 dark:text-red-400 rounded-xl border border-red-500/20 text-sm font-medium">
           ⚠️ {error}
         </div>
       )}

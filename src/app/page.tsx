@@ -18,28 +18,28 @@ const jsonLd = {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-secondary/10 via-white to-primary/10">
+    <main className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Navigation */}
-      <nav className="bg-white shadow-sm sticky top-0 z-50">
+      <nav className="bg-card/80 backdrop-blur-md border-b border-border shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} />
+            <Image src="/fidd.png" alt="FIDD Logo" width={32} height={32} className="dark:brightness-110" />
             <span className="text-2xl font-bold text-primary">FIDD</span>
           </div>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="px-4 py-2 text-primary hover:text-primary/80 font-medium transition-colors"
+              className="px-4 py-2 text-foreground hover:text-primary font-medium transition-colors"
             >
               Login
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium"
+              className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium shadow-md"
             >
               Criar Conta
             </Link>
@@ -50,10 +50,10 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         <div className="text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl font-bold text-foreground mb-6">
             Cartões de Fidelidade Virtuais
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Aumentar a fidelidade de seus clientes nunca foi tão fácil. Gerenciar campanhas de pontos e recompensas de forma completa e segura.
           </p>
           <div className="flex gap-4 justify-center">
@@ -75,73 +75,73 @@ export default function HomePage() {
 
       {/* Features Section */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <h2 className="text-4xl font-bold text-gray-900 text-center mb-16">
+        <h2 className="text-4xl font-bold text-foreground text-center mb-16">
           Recursos Principais
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Feature 1 */}
-          <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4" role="img" aria-label="Análise">📊</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               Campanhas Inteligentes
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Crie e gerencie campanhas de fidelização personalizadas com metas de pontos e recompensas.
             </p>
           </div>
 
           {/* Feature 2 */}
-          <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4" role="img" aria-label="Celular">📱</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               Integração Mobile
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Seus clientes acessam cartões de fidelidade virtuais pelo app mobile de forma simples e segura.
             </p>
           </div>
 
           {/* Feature 3 */}
-          <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4" role="img" aria-label="Segurança">🔐</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               Segurança Garantida
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Autenticação JWT, tokens seguros e conformidade total com padrões de segurança.
             </p>
           </div>
 
           {/* Feature 4 */}
-          <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4" role="img" aria-label="Crescimento">📈</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               Análise em Tempo Real
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Acompanhe métricas detalhadas de engajamento e conversão de suas campanhas.
             </p>
           </div>
 
           {/* Feature 5 */}
-          <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4" role="img" aria-label="Alvo">🎯</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               QR Codes Dinâmicos
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Gere QR codes com tokens seguros para resgate rápido e verificação de pontos.
             </p>
           </div>
 
           {/* Feature 6 */}
-          <div className="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
             <div className="text-4xl mb-4" role="img" aria-label="Velocidade">⚡</div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-2xl font-bold text-foreground mb-3">
               Rápido e Escalável
             </h3>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Infraestrutura robusta que cresce com seu negócio, desde pequenas lojas até redes.
             </p>
           </div>
@@ -156,7 +156,7 @@ export default function HomePage() {
           </h2>
           <Link
             href="/register"
-            className="inline-block px-10 py-4 bg-white text-primary rounded-lg hover:bg-gray-100 transition-colors font-bold text-lg"
+            className="inline-block px-10 py-4 bg-card text-primary rounded-lg hover:bg-muted transition-colors font-bold text-lg shadow-xl"
           >
             Criar Conta Gratuitamente
           </Link>
@@ -164,12 +164,12 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
+      <footer className="bg-slate-950 text-slate-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} className="brightness-0 invert" />
+                <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} />
                 <h5 className="text-white font-bold">FIDD</h5>
               </div>
               <p className="text-sm">Cartões de Fidelidade Virtuais para seu negócio.</p>
@@ -177,28 +177,28 @@ export default function HomePage() {
             <div>
               <h5 className="text-white font-bold mb-4">Produto</h5>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#features" className="hover:text-white">Recursos</Link></li>
-                <li><Link href="/pricing" className="hover:text-white">Preços</Link></li>
-                <li><Link href="/docs" className="hover:text-white">Documentação</Link></li>
+                <li><Link href="#features" className="hover:text-white transition-colors">Recursos</Link></li>
+                <li><Link href="/pricing" className="hover:text-white transition-colors">Preços</Link></li>
+                <li><Link href="/docs" className="hover:text-white transition-colors">Documentação</Link></li>
               </ul>
             </div>
             <div>
               <h5 className="text-white font-bold mb-4">Empresa</h5>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="hover:text-white">Sobre</Link></li>
-                <li><Link href="/contact" className="hover:text-white">Contato</Link></li>
-                <li><Link href="/support" className="hover:text-white">Suporte</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors">Sobre</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors">Contato</Link></li>
+                <li><Link href="/support" className="hover:text-white transition-colors">Suporte</Link></li>
               </ul>
             </div>
             <div>
               <h5 className="text-white font-bold mb-4">Legal</h5>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/terms" className="hover:text-white">Termos</Link></li>
-                <li><Link href="/privacy" className="hover:text-white">Privacidade</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Termos</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacidade</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-sm">
+          <div className="border-t border-slate-800 pt-8 text-center text-sm">
             <p>&copy; 2026 FIDD. Todos os direitos reservados.</p>
           </div>
         </div>

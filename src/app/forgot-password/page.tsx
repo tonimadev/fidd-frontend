@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="flex flex-col items-center mb-8">
           <Link href="/login" className="flex flex-col items-center">
-            <Image src="/fidd.png" alt="FIDD Logo" width={64} height={64} className="mb-2" />
+            <Image src="/fidd.png" alt="FIDD Logo" width={64} height={64} className="mb-2 dark:brightness-110" />
             <h1 className="text-4xl font-black tracking-tighter text-primary">FIDD</h1>
           </Link>
         </div>

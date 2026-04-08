@@ -117,9 +117,9 @@ export const AddressSettings: React.FC = () => {
 
   if (loadError) {
     return (
-      <div className="p-6 text-center bg-red-50 rounded-lg border border-red-200">
-        <h3 className="text-red-800 font-semibold">Erro ao carregar o Google Maps</h3>
-        <p className="text-red-600 text-sm mt-2">
+      <div className="p-6 text-center bg-red-500/10 rounded-lg border border-red-500/20">
+        <h3 className="text-red-600 dark:text-red-400 font-semibold">Erro ao carregar o Google Maps</h3>
+        <p className="text-red-600 dark:text-red-400 text-sm mt-2">
           Não foi possível carregar os serviços do Google Maps. Verifique sua conexão e se a chave de API está configurada corretamente.
         </p>
       </div>
@@ -128,9 +128,9 @@ export const AddressSettings: React.FC = () => {
 
   if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
     return (
-      <div className="p-6 text-center bg-yellow-50 rounded-lg border border-yellow-200">
-        <h3 className="text-yellow-800 font-semibold">Configuração Pendente</h3>
-        <p className="text-yellow-600 text-sm mt-2">
+      <div className="p-6 text-center bg-amber-500/10 rounded-lg border border-amber-500/20">
+        <h3 className="text-amber-600 dark:text-amber-400 font-semibold">Configuração Pendente</h3>
+        <p className="text-amber-600 dark:text-amber-400 text-sm mt-2">
           A chave de API do Google Maps não foi encontrada. Por favor, configure a variável <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> no seu arquivo <code>.env.local</code>.
         </p>
       </div>
@@ -142,22 +142,22 @@ export const AddressSettings: React.FC = () => {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+    <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Localização da Loja</h3>
-        <p className="mt-1 text-sm text-gray-600">
+        <h3 className="text-lg font-semibold text-foreground">Localização da Loja</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
           Defina o endereço da sua loja para que os clientes possam te encontrar no app.
         </p>
       </div>
 
       <div className="space-y-4">
         {errorMessage && (
-          <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          <div className="rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
             {errorMessage}
           </div>
         )}
         {successMessage && (
-          <div className="rounded-lg bg-green-50 p-3 text-sm text-green-700">
+          <div className="rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-600 dark:text-emerald-400">
             {successMessage}
           </div>
         )}
@@ -170,14 +170,14 @@ export const AddressSettings: React.FC = () => {
             <input
               type="text"
               placeholder="Digite o endereço da sua loja"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-lg border border-input bg-background text-foreground px-4 py-2 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               value={selectedAddress}
               onChange={(e) => setSelectedAddress(e.target.value)}
             />
           </Autocomplete>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-gray-200">
+        <div className="overflow-hidden rounded-lg border border-border">
           <GoogleMap
             mapContainerStyle={mapContainerStyle}
             center={selectedLocation || defaultCenter}

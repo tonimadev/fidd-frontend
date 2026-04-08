@@ -62,19 +62,19 @@ export const AccountSettings: React.FC = () => {
 
   if (isLoading && !deleteStatus) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <p className="text-gray-600">Carregando configurações...</p>
+      <div className="rounded-lg border border-border bg-card p-8 text-center">
+        <p className="text-muted-foreground">Carregando configurações...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Configurações da Conta</h2>
+      <h2 className="text-2xl font-bold text-foreground">Configurações da Conta</h2>
 
       {errorMessage && (
-        <div className="rounded-lg bg-red-50 p-4">
-          <p className="text-sm text-red-700">{errorMessage}</p>
+        <div className="rounded-lg bg-red-500/10 p-4 border border-red-500/20">
+          <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
         </div>
       )}
 
@@ -85,25 +85,25 @@ export const AccountSettings: React.FC = () => {
       <ApiKeysSettings />
 
       {/* Seção de Deleção de Conta */}
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Gerenciamento de Conta</h3>
-          <p className="mt-1 text-sm text-gray-600">
+          <h3 className="text-lg font-semibold text-foreground">Gerenciamento de Conta</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
             Opções para gerenciar sua conta na plataforma
           </p>
         </div>
 
         {isPendingDeletion ? (
           // Status de deleção pendente
-          <div className="rounded-lg bg-red-50 p-4 border border-red-200">
+          <div className="rounded-lg bg-red-500/10 p-4 border border-red-500/20">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h4 className="font-semibold text-red-900">Sua conta está marcada para deleção</h4>
-                <p className="mt-1 text-sm text-red-700">
+                <h4 className="font-semibold text-red-600 dark:text-red-400">Sua conta está marcada para deleção</h4>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                   Sua conta será permanentemente deletada em{' '}
                   <strong>{deleteStatus.daysRemaining} dias</strong> ({deleteStatus.scheduledDeletionDate}).
                 </p>
-                <p className="mt-2 text-sm text-red-700">
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                   Se deseja manter sua conta, você pode cancelar a deleção clicando no botão abaixo.
                 </p>
               </div>
@@ -112,14 +112,14 @@ export const AccountSettings: React.FC = () => {
               <button
                 onClick={handleCancelDeletion}
                 disabled={isLoading}
-                className="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:bg-gray-400"
+                className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:bg-muted"
               >
                 {isLoading ? 'Cancelando...' : 'Cancelar Deleção'}
               </button>
               <button
                 onClick={() => setShowDeleteModal(true)}
                 disabled={isLoading}
-                className="rounded-lg border border-red-600 px-4 py-2 font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:bg-gray-100"
+                className="rounded-lg border border-red-600 px-4 py-2 font-semibold text-red-600 transition-colors hover:bg-red-500/10 disabled:bg-muted"
               >
                 Confirmar Deleção Imediata
               </button>
@@ -128,18 +128,18 @@ export const AccountSettings: React.FC = () => {
         ) : (
           // Conta ativa
           <div className="space-y-4">
-            <div className="rounded-lg bg-green-50 p-4 border border-green-200">
-              <p className="text-sm font-semibold text-green-900">
+            <div className="rounded-lg bg-emerald-500/10 p-4 border border-emerald-500/20">
+              <p className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
                 Sua conta está ativa
               </p>
             </div>
 
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-              <h4 className="font-semibold text-red-900">Zona de Perigo</h4>
-              <p className="mt-2 text-sm text-red-700">
+            <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4">
+              <h4 className="font-semibold text-red-600 dark:text-red-400">Zona de Perigo</h4>
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                 Deletar sua conta é uma ação permanente. Todos os seus dados, campanhas e histórico serão perdidos.
               </p>
-              <p className="mt-1 text-sm text-red-700">
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                 Você terá 30 dias para mudar de ideia e reativar sua conta. Após esse período, a deleção será permanente.
               </p>
               <button

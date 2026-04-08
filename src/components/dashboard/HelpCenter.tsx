@@ -72,9 +72,9 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
   }, {} as Record<string, Tutorial[]>);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-48px)] sm:max-w-md max-h-[calc(100vh-120px)] bg-white shadow-2xl rounded-2xl flex flex-col border border-gray-100 animate-in slide-in-from-bottom-4 duration-300 overflow-hidden shadow-primary/10">
+    <div className="fixed bottom-6 right-6 z-50 w-[calc(100vw-48px)] sm:max-w-md max-h-[calc(100vh-120px)] bg-card shadow-2xl rounded-2xl flex flex-col border border-border animate-in slide-in-from-bottom-4 duration-300 overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+      <div className="p-4 border-b border-border flex items-center justify-between bg-card sticky top-0 z-10">
           <div className="flex items-center gap-3">
             <div className="bg-primary text-white p-1.5 rounded-lg shadow-sm">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,13 +82,13 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
               </svg>
             </div>
             <div>
-              <h2 className="text-base font-bold text-gray-900 leading-none mb-1">Central de Ajuda</h2>
+              <h2 className="text-base font-bold text-foreground leading-none mb-1">Central de Ajuda</h2>
               <p className="text-[10px] text-muted-foreground leading-none">Aprenda a usar o FIDD</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-400 hover:text-gray-900"
+            className="p-1.5 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-foreground"
             title="Fechar"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,8 +105,8 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
               <p className="text-sm text-muted-foreground">Carregando guias...</p>
             </div>
           ) : error ? (
-            <div className="text-center p-8 bg-red-50 rounded-xl border border-red-100">
-              <p className="text-sm text-red-600 mb-4">{error}</p>
+            <div className="text-center p-8 bg-red-500/10 rounded-xl border border-red-500/20">
+              <p className="text-sm text-red-600 dark:text-red-400 mb-4">{error}</p>
               <Button size="sm" onClick={loadTutorials}>Tentar Novamente</Button>
             </div>
           ) : selectedTutorial ? (
@@ -127,15 +127,15 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
                   {selectedTutorial.category}
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4 leading-tight">
+              <h3 className="text-2xl font-bold text-foreground mb-4 leading-tight">
                 {selectedTutorial.title}
               </h3>
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <p className="text-muted-foreground mb-8 leading-relaxed">
                 {selectedTutorial.description}
               </p>
 
               <div className="space-y-6">
-                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2" />
                   </svg>
@@ -148,15 +148,15 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
                         {index + 1}
                       </div>
                       <div className="pt-1 flex-1">
-                        <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
+                        <p className="text-sm text-foreground/80 leading-relaxed">{step}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-12 p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                <p className="text-xs text-gray-500 text-center">
+              <div className="mt-12 p-6 bg-muted rounded-2xl border border-border">
+                <p className="text-xs text-muted-foreground text-center">
                   Ainda com dúvidas? Entre em contato com o suporte através de <span className="text-primary font-medium">suporte@fidd.com.br</span>
                 </p>
               </div>
@@ -166,7 +166,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
             <div className="space-y-8 animate-in fade-in duration-300">
               {Object.entries(groupedTutorials).map(([category, items]) => (
                 <div key={category}>
-                  <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-400 mb-3 px-1">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground mb-3 px-1">
                     {category}
                   </h3>
                   <div className="space-y-2">
@@ -174,18 +174,18 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
                       <button
                         key={tutorial.id}
                         onClick={() => setSelectedTutorial(tutorial)}
-                        className="w-full text-left p-4 rounded-xl border border-gray-100 hover:border-primary/30 hover:bg-primary/5 transition-all group shadow-sm hover:shadow-md"
+                        className="w-full text-left p-4 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all group shadow-sm hover:shadow-md"
                       >
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors">
+                            <h4 className="text-sm font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
                               {tutorial.title}
                             </h4>
-                            <p className="text-xs text-gray-500 line-clamp-1">
+                            <p className="text-xs text-muted-foreground line-clamp-1">
                               {tutorial.description}
                             </p>
                           </div>
-                          <svg className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                           </svg>
                         </div>
@@ -197,12 +197,12 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
 
               {tutorials.length === 0 && !loading && (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-muted-foreground/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
-                  <p className="text-sm text-gray-500">Nenhum tutorial disponível no momento.</p>
+                  <p className="text-sm text-muted-foreground">Nenhum tutorial disponível no momento.</p>
                 </div>
               )}
             </div>
@@ -210,10 +210,10 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ isOpen, onClose, activeT
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+        <div className="p-6 border-t border-border bg-muted/50">
           <Button 
             variant="outline" 
-            className="w-full border-gray-200 text-gray-600 hover:bg-white"
+            className="w-full border-border text-muted-foreground hover:bg-card hover:text-foreground"
             onClick={onClose}
           >
             Fechar Central de Ajuda

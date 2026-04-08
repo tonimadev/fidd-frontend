@@ -73,17 +73,17 @@ export const ApiKeysSettings: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg border border-gray-200 bg-white p-6">
+      <div className="rounded-lg border border-border bg-card p-6">
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">Chaves de API</h3>
-          <p className="mt-1 text-sm text-gray-600">
+          <h3 className="text-lg font-semibold text-foreground">Chaves de API</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
             Utilize estas chaves para integrar seu sistema externo (PDV, E-commerce, CRM) com o FIDD.
           </p>
         </div>
 
         {errorMessage && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4">
-            <p className="text-sm text-red-700">{errorMessage}</p>
+          <div className="mb-4 rounded-lg bg-red-500/10 p-4 border border-red-500/20">
+            <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
           </div>
         )}
 
@@ -94,13 +94,13 @@ export const ApiKeysSettings: React.FC = () => {
             value={newKeyName}
             onChange={(e) => setNewKeyName(e.target.value)}
             placeholder="Nome da chave (ex: PDV Loja Centro)"
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+            className="flex-1 rounded-lg border border-input bg-background text-foreground px-4 py-2 focus:border-primary focus:outline-none"
             required
           />
           <button
             type="submit"
             disabled={isCreating}
-            className="rounded-lg bg-blue-600 px-6 py-2 font-semibold text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400"
+            className="rounded-lg bg-primary px-6 py-2 font-semibold text-white transition-colors hover:bg-primary/90 disabled:bg-muted"
           >
             {isCreating ? 'Gerando...' : 'Gerar Nova Chave'}
           </button>
@@ -108,24 +108,24 @@ export const ApiKeysSettings: React.FC = () => {
 
         {/* Exibição da chave recém-criada */}
         {lastCreatedKey && (
-          <div className="mb-8 rounded-lg bg-yellow-50 p-4 border border-yellow-200">
-            <h4 className="font-semibold text-yellow-900">Guarde sua chave com segurança!</h4>
-            <p className="mt-1 text-sm text-yellow-700">
+          <div className="mb-8 rounded-lg bg-amber-500/10 p-4 border border-amber-500/20">
+            <h4 className="font-semibold text-amber-600 dark:text-amber-400">Guarde sua chave com segurança!</h4>
+            <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
               Por motivos de segurança, ela não será exibida novamente.
             </p>
             <div className="mt-3 flex items-center gap-2">
-              <code className="flex-1 break-all rounded bg-white p-2 border border-yellow-300 font-mono text-sm">
+              <code className="flex-1 break-all rounded bg-muted p-2 border border-amber-500/20 font-mono text-sm">
                 {lastCreatedKey}
               </code>
               <button
                 onClick={() => copyToClipboard(lastCreatedKey)}
-                className="rounded bg-yellow-600 px-3 py-2 text-sm font-bold text-white hover:bg-yellow-700"
+                className="rounded bg-amber-600 px-3 py-2 text-sm font-bold text-white hover:bg-amber-700"
               >
                 Copiar
               </button>
               <button
                 onClick={() => setLastCreatedKey(null)}
-                className="text-sm text-yellow-700 hover:underline"
+                className="text-sm text-amber-600 dark:text-amber-400 hover:underline"
               >
                 Fechar
               </button>
@@ -135,36 +135,36 @@ export const ApiKeysSettings: React.FC = () => {
 
         {/* Lista de Chaves */}
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="min-w-full divide-y divide-border">
             <thead>
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Nome</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Criada em</th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Último uso</th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Ações</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Nome</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Criada em</th>
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">Último uso</th>
+                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-border bg-card">
               {isLoading ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-gray-500">Carregando chaves...</td>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">Carregando chaves...</td>
                 </tr>
               ) : apiKeys.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-gray-500">Nenhuma chave de API gerada.</td>
+                  <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">Nenhuma chave de API gerada.</td>
                 </tr>
               ) : (
                 apiKeys.map((key) => (
                   <tr key={key.id}>
-                    <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-gray-900">{key.name}</td>
-                    <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">{new Date(key.createdAt).toLocaleDateString()}</td>
-                    <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+                    <td className="whitespace-nowrap px-4 py-4 text-sm font-medium text-foreground">{key.name}</td>
+                    <td className="whitespace-nowrap px-4 py-4 text-sm text-muted-foreground">{new Date(key.createdAt).toLocaleDateString()}</td>
+                    <td className="whitespace-nowrap px-4 py-4 text-sm text-muted-foreground">
                       {key.lastUsedAt ? new Date(key.lastUsedAt).toLocaleDateString() : 'Nunca utilizada'}
                     </td>
                     <td className="whitespace-nowrap px-4 py-4 text-right text-sm font-medium">
                       <button
                         onClick={() => handleRevokeKey(key.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-600 hover:text-red-900 dark:text-red-400"
                       >
                         Revogar
                       </button>
