@@ -54,9 +54,9 @@ export default function RegisterPage() {
         <div className="text-center mt-6">
           <p className="text-muted-foreground text-sm">
             Precisa de ajuda?{' '}
-            <Link href="/support" className="text-primary hover:text-primary/80 font-medium">
+            <a href="mailto:suporte@fidd.com.br" className="text-primary hover:text-primary/80 font-medium">
               Contacte-nos
-            </Link>
+            </a>
           </p>
         </div>
       </div>

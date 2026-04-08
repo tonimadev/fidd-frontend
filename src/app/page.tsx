@@ -97,9 +97,28 @@ export default function HomePage() {
             <h3 className="text-2xl font-bold text-foreground mb-3">
               Integração Mobile
             </h3>
-            <p className="text-muted-foreground">
-              Seus clientes acessam cartões de fidelidade virtuais pelo app mobile de forma simples e segura.
-            </p>
+              <p className="text-muted-foreground">
+                Seus clientes acessam cartões de fidelidade virtuais pelo app mobile de forma simples e segura.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-4">
+                <a 
+                  href="https://play.google.com/store/apps/details?id=digital.tonima.fidd" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium"
+                >
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.1-.12c-.106-.153-.16-.33-.16-.51V2.445c0-.18.054-.357.16-.51.03-.045.064-.085.1-.121zM14.735 12.943l2.844-2.844 3.764 2.14a1 1 0 0 1 0 1.74l-3.764 2.14-2.844-3.176zm-1.886-1.886L3.92 2.114 13.56 11.75l-.711.307zM3.92 21.886l8.929-8.929.711.307-9.64 9.64a.978.978 0 0 1-.225-.11z" />
+                  </svg>
+                  Google Play
+                </a>
+                <div className="inline-flex items-center gap-2 bg-slate-200 text-slate-500 px-4 py-2 rounded-lg cursor-not-allowed text-sm font-medium">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-1.99.77-3.26.82-1.31.05-2.31-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.89 1.22-2.11 1.09-3.33-1.04.04-2.3.69-3.05 1.56-.67.77-1.26 2.03-1.1 3.22 1.16.09 2.33-.56 3.06-1.45z" />
+                  </svg>
+                  App Store (Breve)
+                </div>
+              </div>
           </div>
 
           {/* Feature 3 */}
@@ -172,29 +191,46 @@ export default function HomePage() {
                 <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} />
                 <h5 className="text-white font-bold">FIDD</h5>
               </div>
-              <p className="text-sm">Cartões de Fidelidade Virtuais para seu negócio.</p>
+              <p className="text-sm mb-4">Cartões de Fidelidade Virtuais para seu negócio.</p>
+              <div className="space-y-2">
+                <a 
+                  href="https://play.google.com/store/apps/details?id=digital.tonima.fidd" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-slate-900 text-white px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors text-xs font-medium w-fit border border-slate-800"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.1-.12c-.106-.153-.16-.33-.16-.51V2.445c0-.18.054-.357.16-.51.03-.045.064-.085.1-.121zM14.735 12.943l2.844-2.844 3.764 2.14a1 1 0 0 1 0 1.74l-3.764 2.14-2.844-3.176zm-1.886-1.886L3.92 2.114 13.56 11.75l-.711.307zM3.92 21.886l8.929-8.929.711.307-9.64 9.64a.978.978 0 0 1-.225-.11z" />
+                  </svg>
+                  Google Play
+                </a>
+                <div className="flex items-center gap-2 bg-slate-950 text-slate-600 px-3 py-2 rounded-lg text-xs font-medium w-fit border border-slate-900 cursor-not-allowed">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-1.99.77-3.26.82-1.31.05-2.31-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83zM13 3.5c.73-.89 1.22-2.11 1.09-3.33-1.04.04-2.3.69-3.05 1.56-.67.77-1.26 2.03-1.1 3.22 1.16.09 2.33-.56 3.06-1.45z" />
+                  </svg>
+                  App Store (Breve)
+                </div>
+              </div>
             </div>
             <div>
               <h5 className="text-white font-bold mb-4">Produto</h5>
               <ul className="space-y-2 text-sm">
                 <li><Link href="#features" className="hover:text-white transition-colors">Recursos</Link></li>
-                <li><Link href="/pricing" className="hover:text-white transition-colors">Preços</Link></li>
                 <li><Link href="/docs" className="hover:text-white transition-colors">Documentação</Link></li>
               </ul>
             </div>
             <div>
               <h5 className="text-white font-bold mb-4">Empresa</h5>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="hover:text-white transition-colors">Sobre</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contato</Link></li>
-                <li><Link href="/support" className="hover:text-white transition-colors">Suporte</Link></li>
+                <li><a href="mailto:suporte@fidd.com.br" className="hover:text-white transition-colors">Contato</a></li>
+                <li><a href="mailto:suporte@fidd.com.br" className="hover:text-white transition-colors">Suporte</a></li>
               </ul>
             </div>
             <div>
               <h5 className="text-white font-bold mb-4">Legal</h5>
               <ul className="space-y-2 text-sm">
                 <li><Link href="/terms" className="hover:text-white transition-colors">Termos</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacidade</Link></li>
+                <li><a href="https://tonima.digital/fidd-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacidade</a></li>
               </ul>
             </div>
           </div>

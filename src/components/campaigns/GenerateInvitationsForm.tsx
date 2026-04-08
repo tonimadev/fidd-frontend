@@ -183,6 +183,17 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
                       >
                         Copiar Link
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const msg = `Parabéns! Você ganhou ${invitation.points} pontos da campanha "${campaignName}". Baixe o FIDD agora para resgatar: Android (https://play.google.com/store/apps/details?id=digital.tonima.fidd) ou Apple (em breve) e use o código ${invitation.inviteToken}`;
+                          copyToClipboard(msg, 'Mensagem');
+                        }}
+                        className="h-8 text-xs font-semibold text-green-600 hover:text-green-700 hover:bg-green-50 justify-start md:justify-center"
+                      >
+                        Copiar Mensagem
+                      </Button>
                     </div>
                   </div>
                 </div>
