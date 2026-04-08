@@ -73,14 +73,13 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title = 'F
             <span className="text-[10px] font-bold uppercase tracking-wider">Início</span>
           </Link>
           
-          <button 
-            className="flex flex-col items-center gap-1 text-muted-foreground opacity-50 cursor-not-allowed"
-            disabled
-            title="Em breve"
+          <Link 
+            href="/app#stores" 
+            className={`flex flex-col items-center gap-1 ${pathname === '/app#stores' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <MapPin size={22} />
             <span className="text-[10px] font-bold uppercase tracking-wider">Lojas</span>
-          </button>
+          </Link>
 
           <div className="-mt-12">
             <button 
@@ -91,14 +90,13 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title = 'F
             </button>
           </div>
 
-          <button 
-            className="flex flex-col items-center gap-1 text-muted-foreground opacity-50 cursor-not-allowed"
-            disabled
-            title="Em breve"
+          <Link 
+            href="/app/profile" 
+            className={`flex flex-col items-center gap-1 ${pathname === '/app/profile' ? 'text-primary' : 'text-muted-foreground'}`}
           >
-            <User size={22} />
+            <User size={22} className={pathname === '/app/profile' ? 'fill-primary/10' : ''} />
             <span className="text-[10px] font-bold uppercase tracking-wider">Perfil</span>
-          </button>
+          </Link>
           
           <button 
             onClick={() => logout()}

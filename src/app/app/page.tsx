@@ -23,17 +23,37 @@ export default function CustomerDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [locationName, setLocationName] = useState('Localizando...');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
+
+        // Tentar obter a localização real
+        let lat = -23.5505; // Fallback: São Paulo
+        let lng = -46.6333;
+        
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              timeout: 10000,
+              enableHighAccuracy: true
+            });
+          });
+          lat = position.coords.latitude;
+          lng = position.coords.longitude;
+          setLocationName('Sua Localização');
+        } catch (geoErr) {
+          console.warn('Erro ao obter geolocalização, usando fallback:', geoErr);
+          setLocationName('São Paulo, SP');
+        }
         
         // Em paralelo para ser mais rápido
         const [cardsData, storesData] = await Promise.allSettled([
           mobileCardService.getCards(),
-          // Simulando localização de São Paulo se o navegador não der permissão rápido
-          mobileStoreService.getNearbyStores(-23.5505, -46.6333)
+          mobileStoreService.getNearbyStores(lat, lng)
         ]);
 
         if (cardsData.status === 'fulfilled') {
@@ -88,10 +108,10 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Nearby Stores */}
-        <section>
+        <section id="stores">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-black tracking-tight uppercase italic text-slate-800">Lojas Próximas</h3>
-            <span className="text-[10px] font-black bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full uppercase">São Paulo, SP</span>
+            <span className="text-[10px] font-black bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full uppercase">{locationName}</span>
           </div>
           
           {isLoading ? (
