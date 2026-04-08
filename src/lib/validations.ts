@@ -70,6 +70,29 @@ export const registerSchema = z.object({
   path: ['taxId'],
 });
 
+export const mobileRegisterSchema = z.object({
+  name: z.string()
+    .transform(sanitizeString)
+    .pipe(
+      z.string()
+        .min(3, 'Nome deve ter pelo menos 3 caracteres')
+        .max(100, 'Nome não pode exceder 100 caracteres')
+    ),
+  phone: z.string()
+    .trim()
+    .min(10, 'Telefone inválido (ex: 11988887777)')
+    .max(15, 'Telefone muito longo'),
+  email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
+  password: z.string()
+    .min(8, 'Senha deve ter pelo menos 8 caracteres')
+    .max(100, 'Senha muito longa')
+    .regex(passwordRegex, 'Senha deve conter maiúscula, minúscula, número e caractere especial (@$!%*?&)'),
+  confirmPassword: z.string().max(100, 'Senha muito longa'),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'As senhas não coincidem',
+  path: ['confirmPassword'],
+});
+
 export const createCampaignSchema = z.object({
   name: z.string()
     .transform(sanitizeString)
@@ -132,6 +155,7 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
+export type MobileRegisterFormData = z.infer<typeof mobileRegisterSchema>;
 export type CreateCampaignFormData = z.infer<typeof createCampaignSchema>;
 export type DeleteAccountFormData = z.infer<typeof deleteAccountSchema>;
 export type GenerateInvitationsFormData = z.infer<typeof generateInvitationsSchema>;

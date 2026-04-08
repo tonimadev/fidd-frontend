@@ -27,23 +27,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (storedToken && storedUser) {
         try {
-          setToken(storedToken);
           const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setIsAuthenticated(true);
+          
+          // Verificar se é um usuário lojista (tem storeId)
+          if (parsedUser.storeId) {
+            setToken(storedToken);
+            setUser(parsedUser);
+            setIsAuthenticated(true);
 
-          // Buscar dados atualizados do servidor sem disparar loop
-          const userData = await authService.getCurrentUser();
-          if (userData) {
-            const updatedUser = {
-              storeId: userData.storeId,
-              tradeName: userData.tradeName,
-              email: userData.email,
-              role: userData.role,
-              plan: userData.plan
-            };
-            setUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
+            // Buscar dados atualizados do servidor sem disparar loop
+            const userData = await authService.getCurrentUser();
+            if (userData) {
+              const updatedUser = {
+                storeId: userData.storeId,
+                tradeName: userData.tradeName,
+                email: userData.email,
+                role: userData.role,
+                plan: userData.plan
+              };
+              setUser(updatedUser);
+              localStorage.setItem('user', JSON.stringify(updatedUser));
+            }
           }
         } catch (error) {
           console.error('Erro ao carregar autenticação:', error);

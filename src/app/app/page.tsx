@@ -1,0 +1,169 @@
+/**
+ * Dashboard do cliente (mobile web)
+ */
+
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { MobileLayout } from '@/components/mobile/MobileLayout';
+import { useMobileAuth } from '@/context/mobile-auth-context';
+import { mobileCardService } from '@/lib/mobile-card-service';
+import { mobileStoreService } from '@/lib/mobile-store-service';
+import { MobileCardResponse } from '@/types/mobile-cards';
+import { MobileStoreNearbyResponse } from '@/types/mobile-stores';
+import { MobileCard } from '@/components/mobile/MobileCard';
+import { MobileStore } from '@/components/mobile/MobileStore';
+import { AlertCircle, PlusCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+
+export default function CustomerDashboard() {
+  const { user } = useMobileAuth();
+  const [cards, setCards] = useState<MobileCardResponse[]>([]);
+  const [stores, setStores] = useState<MobileStoreNearbyResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Em paralelo para ser mais rápido
+        const [cardsData, storesData] = await Promise.allSettled([
+          mobileCardService.getCards(),
+          // Simulando localização de São Paulo se o navegador não der permissão rápido
+          mobileStoreService.getNearbyStores(-23.5505, -46.6333)
+        ]);
+
+        if (cardsData.status === 'fulfilled') {
+          setCards(cardsData.value);
+        } else {
+          console.error('Erro ao buscar cartões:', cardsData.reason);
+          setError('Não foi possível carregar seus cartões.');
+        }
+
+        if (storesData.status === 'fulfilled') {
+          setStores(storesData.value);
+        }
+
+      } catch (err) {
+        console.error('Erro geral:', err);
+        setError('Ocorreu um erro ao carregar os dados.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const activeCards = cards.filter(c => c.status === 'IN_PROGRESS' || c.status === 'COMPLETED');
+  const historyCards = cards.filter(c => c.status === 'REDEEMED' || c.status === 'EXPIRED');
+
+  return (
+    <MobileLayout>
+      <div className="px-6 py-6 space-y-8">
+        {/* Welcome Section */}
+        <div className="bg-primary p-6 rounded-[2rem] text-white shadow-xl shadow-primary/20">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-md">
+              <span className="text-2xl font-bold uppercase">{user?.name?.charAt(0)}</span>
+            </div>
+            <div>
+              <p className="text-primary-foreground/80 text-sm font-bold uppercase tracking-widest">Bem-vindo(a)</p>
+              <h2 className="text-2xl font-black tracking-tight">{user?.name}</h2>
+            </div>
+          </div>
+          <div className="bg-white/10 rounded-2xl p-4 flex justify-between items-center backdrop-blur-sm border border-white/10">
+            <div>
+              <p className="text-xs font-bold uppercase opacity-70 tracking-tighter">Cartões Ativos</p>
+              <p className="text-2xl font-black">{activeCards.length}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-bold uppercase opacity-70 tracking-tighter">Concluídos</p>
+              <p className="text-2xl font-black">{activeCards.filter(c => c.status === 'COMPLETED').length}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Nearby Stores */}
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-black tracking-tight uppercase italic text-slate-800">Lojas Próximas</h3>
+            <span className="text-[10px] font-black bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full uppercase">São Paulo, SP</span>
+          </div>
+          
+          {isLoading ? (
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
+              {[1, 2].map(i => (
+                <div key={i} className="min-w-[280px] h-24 bg-slate-200 animate-pulse rounded-2xl" />
+              ))}
+            </div>
+          ) : stores.length > 0 ? (
+            <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
+              {stores.map(store => (
+                <MobileStore key={store.id} store={store} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-slate-100 p-6 rounded-2xl border border-dashed border-slate-300 text-center">
+              <p className="text-sm text-slate-500 font-medium">Nenhuma loja encontrada na sua região.</p>
+            </div>
+          )}
+        </section>
+
+        {/* Cards Section */}
+        <section>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-black tracking-tight uppercase italic text-slate-800">Meus Cartões</h3>
+            <Button variant="ghost" size="sm" className="text-primary font-bold uppercase text-xs">Ver todos</Button>
+          </div>
+
+          {isLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-2xl" />
+              ))}
+            </div>
+          ) : error ? (
+            <div className="bg-red-50 p-6 rounded-2xl border border-red-100 flex flex-col items-center gap-3">
+              <AlertCircle className="text-red-500" size={32} />
+              <p className="text-red-700 font-bold text-center">{error}</p>
+              <Button onClick={() => window.location.reload()} size="sm" variant="outline" className="border-red-200 text-red-600">Tentar novamente</Button>
+            </div>
+          ) : activeCards.length > 0 ? (
+            <div className="space-y-4">
+              {activeCards.map(card => (
+                <MobileCard key={card.id} card={card} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white p-8 rounded-[2rem] border border-dashed border-slate-300 flex flex-col items-center gap-4 text-center">
+              <div className="bg-slate-50 p-4 rounded-full">
+                <PlusCircle size={48} className="text-slate-300" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-slate-800">Nenhum cartão ativo</h4>
+                <p className="text-sm text-slate-500">Visite uma loja parceira e peça seu cartão FIDD!</p>
+              </div>
+              <Button className="rounded-xl px-8 uppercase font-black tracking-widest text-xs">Descobrir Lojas</Button>
+            </div>
+          )}
+        </section>
+
+        {/* History Section */}
+        {historyCards.length > 0 && (
+          <section className="pb-8">
+            <h3 className="text-sm font-black tracking-widest uppercase text-slate-400 mb-4">Histórico</h3>
+            <div className="space-y-3 opacity-60 grayscale">
+              {historyCards.map(card => (
+                <MobileCard key={card.id} card={card} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </MobileLayout>
+  );
+}
