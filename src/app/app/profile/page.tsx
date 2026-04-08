@@ -9,6 +9,7 @@ import { MobileLayout } from '@/components/mobile/MobileLayout';
 import { useMobileAuth } from '@/context/mobile-auth-context';
 import { User, LogOut, ChevronRight, Settings, Shield, HelpCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { DownloadButtons } from '@/components/mobile/DownloadButtons';
 
 export default function ProfilePage() {
   const { user, logout } = useMobileAuth();
@@ -60,6 +61,11 @@ export default function ProfilePage() {
               className="text-red-600"
             />
           </div>
+        </div>
+
+        {/* Download App Section */}
+        <div className="pt-4">
+          <DownloadButtons />
         </div>
 
         <div className="text-center pt-4">

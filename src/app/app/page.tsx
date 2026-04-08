@@ -13,6 +13,7 @@ import { MobileCardResponse } from '@/types/mobile-cards';
 import { MobileStoreNearbyResponse } from '@/types/mobile-stores';
 import { MobileCard } from '@/components/mobile/MobileCard';
 import { MobileStore } from '@/components/mobile/MobileStore';
+import { DownloadButtons } from '@/components/mobile/DownloadButtons';
 import { AlertCircle, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -183,6 +184,11 @@ export default function CustomerDashboard() {
             </div>
           </section>
         )}
+
+        {/* Download App Section */}
+        <section className="pb-4">
+          <DownloadButtons />
+        </section>
       </div>
     </MobileLayout>
   );

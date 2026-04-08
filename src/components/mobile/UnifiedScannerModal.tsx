@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, CheckCircle, AlertCircle, QrCode, Ticket, Loader2 } from 'lucide-react';
+import React, { useState, useCallback } from 'react';
+import { X, CheckCircle, AlertCircle, QrCode, Ticket, Loader2, Camera, Keyboard } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { mobileCardService } from '@/lib/mobile-card-service';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
+import { QrScanner } from './QrScanner';
 
 interface UnifiedScannerModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
   const [token, setToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'CAMERA' | 'MANUAL'>('CAMERA');
   const [successData, setSuccessData] = useState<{ 
     message: string; 
     type: 'INVITATION' | 'PUNCH';
@@ -30,11 +32,17 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
     newScore?: number;
   } | null>(null);
 
-  if (!isOpen) return null;
+  const finalize = useCallback(() => {
+    setTimeout(() => {
+      setToken('');
+      setSuccessData(null);
+      onClose();
+      if (onSuccess) onSuccess();
+    }, 3000);
+  }, [onClose, onSuccess]);
 
-  const handleAction = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanToken = token.trim();
+  const processCode = useCallback(async (code: string, isFromQrCode: boolean) => {
+    const cleanToken = code.trim();
     if (!cleanToken) return;
 
     setIsLoading(true);
@@ -47,7 +55,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
           const res = await mobileCardService.collectPoints({
             cardId: initialCardId,
             qrToken: cleanToken,
-            isQrCode: false
+            isQrCode: isFromQrCode
           });
           if (res.success) {
             setSuccessData({ message: res.message, type: 'PUNCH', newScore: res.newScore });
@@ -62,7 +70,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
 
       // Se não era punch ou não tínhamos cardId, tentamos convite
       try {
-        const res = await mobileCardService.redeemInvitation(cleanToken, false);
+        const res = await mobileCardService.redeemInvitation(cleanToken, isFromQrCode);
         if (res.success) {
           setSuccessData({ 
             message: res.message, 
@@ -82,15 +90,13 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [initialCardId, finalize]);
 
-  const finalize = () => {
-    setTimeout(() => {
-      setToken('');
-      setSuccessData(null);
-      onClose();
-      if (onSuccess) onSuccess();
-    }, 3000);
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    processCode(token, false);
   };
 
   return (
@@ -104,12 +110,33 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
             <X size={20} />
           </button>
 
-          <div className="mb-6">
-            <h2 className="text-2xl font-black tracking-tighter text-slate-800 uppercase italic flex items-center gap-2">
-              <QrCode size={24} className="text-primary" />
-              Escanear Código
-            </h2>
-            <p className="text-slate-500 text-sm font-medium">Insira o código de pontos ou convite.</p>
+          <div className="mb-6 flex justify-between items-start">
+            <div>
+              <h2 className="text-2xl font-black tracking-tighter text-slate-800 uppercase italic flex items-center gap-2">
+                <QrCode size={24} className="text-primary" />
+                Validar
+              </h2>
+              <p className="text-slate-500 text-sm font-medium">Use a câmera ou digite o código.</p>
+            </div>
+            
+            {!successData && (
+              <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
+                <button
+                  onClick={() => setMode('CAMERA')}
+                  className={`p-2 rounded-xl transition-all ${mode === 'CAMERA' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`}
+                  title="Usar Câmera"
+                >
+                  <Camera size={20} />
+                </button>
+                <button
+                  onClick={() => setMode('MANUAL')}
+                  className={`p-2 rounded-xl transition-all ${mode === 'MANUAL' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`}
+                  title="Digitar Código"
+                >
+                  <Keyboard size={20} />
+                </button>
+              </div>
+            )}
           </div>
 
           {successData ? (
@@ -133,20 +160,46 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
               </div>
             </div>
           ) : (
-            <form onSubmit={handleAction} className="space-y-4">
-              <div className="relative">
-                <Input
-                  label="Código do Lojista"
-                  placeholder="EX: ABC-123"
-                  value={token}
-                  onChange={(e) => setToken(e.target.value)}
-                  autoFocus
-                  className="text-center font-mono text-lg uppercase tracking-widest py-8 border-2 border-slate-100 focus:border-primary/50"
-                />
-                <div className="absolute right-4 top-[3.2rem] text-slate-300">
-                  {isLoading ? <Loader2 size={24} className="animate-spin" /> : <Ticket size={24} />}
+            <div className="space-y-4">
+              {mode === 'CAMERA' ? (
+                <div className="py-2">
+                  <QrScanner 
+                    onResult={(code) => processCode(code, true)} 
+                    onError={(err) => console.error("Scanner Error:", err)}
+                  />
+                  {isLoading && (
+                    <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center gap-3">
+                      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                      <span className="text-xs font-black uppercase tracking-widest text-primary">Validando...</span>
+                    </div>
+                  )}
                 </div>
-              </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="relative">
+                    <Input
+                      label="Código do Lojista"
+                      placeholder="EX: ABC-123"
+                      value={token}
+                      onChange={(e) => setToken(e.target.value)}
+                      autoFocus
+                      className="text-center font-mono text-lg uppercase tracking-widest py-8 border-2 border-slate-100 focus:border-primary/50"
+                    />
+                    <div className="absolute right-4 top-[3.2rem] text-slate-300">
+                      {isLoading ? <Loader2 size={24} className="animate-spin" /> : <Ticket size={24} />}
+                    </div>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full py-7 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/30 active:scale-95 transition-all"
+                    isLoading={isLoading}
+                    disabled={!token.trim()}
+                  >
+                    Validar Agora
+                  </Button>
+                </form>
+              )}
 
               {error && (
                 <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-bold animate-in shake-in">
@@ -154,22 +207,13 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
                   <span>{error}</span>
                 </div>
               )}
-
-              <Button
-                type="submit"
-                className="w-full py-7 rounded-2xl bg-primary text-white font-black uppercase tracking-widest shadow-lg shadow-primary/30 active:scale-95 transition-all"
-                isLoading={isLoading}
-                disabled={!token.trim()}
-              >
-                Validar Agora
-              </Button>
               
               <div className="pt-2 text-center">
                 <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest">
                   FIDD • Digitalizando sua fidelidade
                 </p>
               </div>
-            </form>
+            </div>
           )}
         </div>
       </div>
