@@ -11,9 +11,9 @@ export const qrcodeService = {
   /**
    * Gera um novo QR Code token para pontuação presencial
    */
-  async generateQRCode(campaignId: number): Promise<QRCodeResponse> {
+  async generateQRCode(campaignId: number, points: number = 1): Promise<QRCodeResponse> {
     const response = await apiClient.get<QRCodeResponse>(
-      `${QRCODES_BASE_URL}/generate/${campaignId}`
+      `${QRCODES_BASE_URL}/generate/${campaignId}?points=${points}`
     );
     return response.data;
   },

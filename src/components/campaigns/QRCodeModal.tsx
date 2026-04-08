@@ -27,12 +27,13 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(60);
   const [progress, setProgress] = useState(100);
+  const [points, setPoints] = useState(1);
 
   const fetchQRCode = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await qrcodeService.generateQRCode(campaignId);
+      const data = await qrcodeService.generateQRCode(campaignId, points);
       setQrData(data);
       setTimeLeft(60);
       setProgress(100);
@@ -42,12 +43,12 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [campaignId]);
+  }, [campaignId, points]);
 
-  // Busca inicial
+  // Busca inicial e quando os pontos mudam
   useEffect(() => {
     fetchQRCode();
-  }, [fetchQRCode]);
+  }, [fetchQRCode, points]);
 
   // Timer e Refresh automático
   useEffect(() => {
@@ -97,6 +98,42 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
         </CardHeader>
         
         <CardContent className="flex flex-col items-center py-6">
+          {/* Seletor de Pontos */}
+          <div className="w-full mb-6 px-4">
+            <label className="block text-sm font-medium text-muted-foreground mb-2 text-center">
+              Pontos a gerar: <span className="text-primary font-bold text-lg">{points}</span>
+            </label>
+            <div className="flex items-center justify-center gap-4">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-8 w-8 rounded-full"
+                onClick={() => setPoints(prev => Math.max(1, prev - 1))}
+                disabled={points <= 1 || isLoading}
+              >
+                -
+              </Button>
+              <input 
+                type="range" 
+                min="1" 
+                max="10" 
+                value={points} 
+                onChange={(e) => setPoints(parseInt(e.target.value))}
+                className="w-full max-w-[150px] h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                disabled={isLoading}
+              />
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-8 w-8 rounded-full"
+                onClick={() => setPoints(prev => Math.min(10, prev + 1))}
+                disabled={points >= 10 || isLoading}
+              >
+                +
+              </Button>
+            </div>
+          </div>
+
           {isLoading && !qrData ? (
             <div className="w-64 h-64 flex items-center justify-center bg-muted rounded-xl animate-pulse">
               <div className="text-muted-foreground">Gerando...</div>
@@ -118,15 +155,15 @@ export const QRCodeModal: React.FC<QRCodeModalProps> = ({
                 {qrData && (
                   <QRCodeSVG 
                     value={qrData.token} 
-                    size={200}
-                    level="H"
-                    includeMargin={false}
+                    size={280}
+                    level="M"
+                    includeMargin={true}
                     imageSettings={{
                       src: "/fidd.png", // Opcional: logo no centro
                       x: undefined,
                       y: undefined,
-                      height: 40,
-                      width: 40,
+                      height: 50,
+                      width: 50,
                       excavate: true,
                     }}
                   />
