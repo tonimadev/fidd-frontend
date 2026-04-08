@@ -7,10 +7,10 @@
 import React from 'react';
 import { useMobileAuth } from '@/context/mobile-auth-context';
 import { useRouter, usePathname } from 'next/navigation';
-import { LogOut, User, Home, MapPin, Ticket } from 'lucide-react';
+import { LogOut, User, Home, MapPin, QrCode } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { RedeemInviteModal } from '@/components/mobile/RedeemInviteModal';
+import { UnifiedScannerModal } from '@/components/mobile/UnifiedScannerModal';
 
 interface MobileLayoutProps {
   children: React.ReactNode;
@@ -22,7 +22,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title = 'F
   const { logout, isAuthenticated, isLoading } = useMobileAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isRedeemModalOpen, setIsRedeemModalOpen] = React.useState(false);
+  const [isScannerOpen, setIsScannerOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -85,11 +85,11 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title = 'F
 
           <div className="-mt-12">
             <button 
-              onClick={() => setIsRedeemModalOpen(true)}
+              onClick={() => setIsScannerOpen(true)}
               className="bg-primary text-white p-4 rounded-2xl shadow-lg shadow-primary/40 active:scale-95 transition-transform group relative"
-              title="Resgatar Convite"
+              title="Escanear"
             >
-              <Ticket size={28} className="group-hover:rotate-12 transition-transform" />
+              <QrCode size={28} className="group-hover:rotate-12 transition-transform" />
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-4 w-4 bg-primary-foreground text-primary text-[10px] items-center justify-center font-black">!</span>
@@ -114,13 +114,13 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({ children, title = 'F
           </button>
         </div>
       </nav>
-      {/* Redeem Modal */}
-      <RedeemInviteModal 
-        isOpen={isRedeemModalOpen} 
-        onClose={() => setIsRedeemModalOpen(false)}
+      {/* Scanner Modal */}
+      <UnifiedScannerModal 
+        isOpen={isScannerOpen} 
+        onClose={() => setIsScannerOpen(false)}
         onSuccess={() => {
-          // Se estiver no dashboard, recarrega os dados
-          if (pathname === '/app') {
+          // Recarrega os dados se estiver na home ou card detail
+          if (pathname === '/app' || pathname.startsWith('/app/cards/')) {
             window.location.reload();
           }
         }}

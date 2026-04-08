@@ -115,13 +115,13 @@ export default function CustomerDashboard() {
           </div>
           
           {isLoading ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
+            <div className="flex gap-6 overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
               {[1, 2].map(i => (
                 <div key={i} className="min-w-[280px] h-24 bg-slate-200 animate-pulse rounded-2xl" />
               ))}
             </div>
           ) : stores.length > 0 ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
+            <div className="flex gap-6 overflow-x-auto pb-4 -mx-6 px-6 no-scrollbar">
               {stores.map(store => (
                 <MobileStore key={store.id} store={store} />
               ))}
@@ -141,7 +141,7 @@ export default function CustomerDashboard() {
           </div>
 
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {[1, 2, 3].map(i => (
                 <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-2xl" />
               ))}
@@ -153,7 +153,7 @@ export default function CustomerDashboard() {
               <Button onClick={() => window.location.reload()} size="sm" variant="outline" className="border-red-200 text-red-600">Tentar novamente</Button>
             </div>
           ) : activeCards.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {activeCards.map(card => (
                 <MobileCard key={card.id} card={card} />
               ))}
@@ -176,7 +176,7 @@ export default function CustomerDashboard() {
         {historyCards.length > 0 && (
           <section className="pb-8">
             <h3 className="text-sm font-black tracking-widest uppercase text-slate-400 mb-4">Histórico</h3>
-            <div className="space-y-3 opacity-60 grayscale">
+            <div className="space-y-4 opacity-60 grayscale">
               {historyCards.map(card => (
                 <MobileCard key={card.id} card={card} />
               ))}

@@ -4,9 +4,13 @@
 
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { MobileRegisterForm } from '@/components/auth/MobileRegisterForm';
 import Image from 'next/image';
+
+function RegisterForm() {
+  return <MobileRegisterForm />;
+}
 
 export default function MobileRegisterPage() {
   return (
@@ -21,7 +25,9 @@ export default function MobileRegisterPage() {
         </div>
 
         <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
-          <MobileRegisterForm />
+          <Suspense fallback={<div className="h-64 animate-pulse bg-slate-100 rounded-xl" />}>
+            <RegisterForm />
+          </Suspense>
         </div>
       </div>
     </div>

@@ -24,8 +24,8 @@ export const MobileStore: React.FC<MobileStoreProps> = ({ store }) => {
   };
 
   return (
-    <Card className="min-w-[280px] border-secondary/10 shadow-none bg-secondary/10">
-      <CardContent className="p-4 flex items-center gap-4">
+    <Card className="min-w-[280px] border-secondary/10 shadow-sm bg-white hover:shadow-md transition-shadow">
+      <CardContent className="p-5 flex items-center gap-4">
         <div className="bg-primary/10 p-3 rounded-2xl text-primary">
           <Store size={24} />
         </div>

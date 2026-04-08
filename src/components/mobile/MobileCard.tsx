@@ -20,9 +20,9 @@ export const MobileCard: React.FC<MobileCardProps> = ({ card }) => {
 
   return (
     <Link href={`/app/cards/${card.id}`}>
-      <Card className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer border-primary/10">
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start mb-2">
+      <Card className="overflow-hidden hover:shadow-lg transition-all cursor-pointer border-primary/10 hover:border-primary/30 active:scale-[0.98] shadow-sm">
+        <CardContent className="p-5">
+          <div className="flex justify-between items-start mb-3">
             <div className="flex items-center gap-2 text-primary font-bold">
               <Store size={16} />
               <span className="text-sm uppercase tracking-wider">{card.storeName}</span>

@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -17,6 +19,8 @@ const jsonLd = {
 };
 
 export default function HomePage() {
+  const [userType, setUserType] = useState<'merchant' | 'customer'>('merchant');
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10">
       <script
@@ -32,42 +36,73 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-4">
             <Link
-              href="/login"
+              href={userType === 'merchant' ? "/login" : "/app/login"}
               className="px-4 py-2 text-foreground hover:text-primary font-medium transition-colors"
             >
               Login
             </Link>
             <Link
-              href="/register"
+              href={userType === 'merchant' ? "/register" : "/app/register"}
               className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-medium shadow-md"
             >
-              Criar Conta
+              {userType === 'merchant' ? 'Criar Conta Lojista' : 'Criar Conta Cliente'}
             </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="text-5xl font-bold text-foreground mb-6">
-            Cartões de Fidelidade Virtuais
+          {/* User Type Toggle */}
+          <div className="inline-flex p-1 bg-muted rounded-xl mb-12 shadow-inner border border-border">
+            <button
+              onClick={() => setUserType('merchant')}
+              className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${
+                userType === 'merchant'
+                  ? 'bg-primary text-white shadow-md scale-105'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Sou Lojista
+            </button>
+            <button
+              onClick={() => setUserType('customer')}
+              className={`px-6 py-2 rounded-lg font-bold text-sm transition-all ${
+                userType === 'customer'
+                  ? 'bg-primary text-white shadow-md scale-105'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Sou Cliente
+            </button>
+          </div>
+
+          <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
+            {userType === 'merchant' ? (
+              <>Cartões de Fidelidade <span className="text-primary">Virtuais</span></>
+            ) : (
+              <>Seus Pontos e Prêmios em <span className="text-primary">um só lugar</span></>
+            )}
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Aumentar a fidelidade de seus clientes nunca foi tão fácil. Gerenciar campanhas de pontos e recompensas de forma completa e segura.
+          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+            {userType === 'merchant' 
+              ? 'Aumentar a fidelidade de seus clientes nunca foi tão fácil. Gerencie campanhas de pontos e recompensas de forma completa e segura.'
+              : 'Acompanhe seus cartões de fidelidade, descubra novas lojas e resgate seus prêmios direto no seu navegador ou celular.'
+            }
           </p>
           <div className="flex gap-4 justify-center">
             <Link
-              href="/register"
-              className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-lg"
+              href={userType === 'merchant' ? "/register" : "/app"}
+              className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-lg shadow-lg shadow-primary/20"
             >
-              Começar Agora
+              {userType === 'merchant' ? 'Começar Agora' : 'Acessar meus Cartões'}
             </Link>
             <Link
               href="#features"
               className="px-8 py-3 border-2 border-primary text-primary rounded-lg hover:bg-primary/5 transition-colors font-semibold text-lg"
             >
-              Saiba Mais
+              Como funciona?
             </Link>
           </div>
         </div>
@@ -180,13 +215,16 @@ export default function HomePage() {
       <section className="bg-gradient-to-r from-primary to-accent py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-white mb-8">
-            Pronto para aumentar a fidelidade de seus clientes?
+            {userType === 'merchant' 
+              ? 'Pronto para aumentar a fidelidade de seus clientes?'
+              : 'Pronto para começar a ganhar prêmios e pontos?'
+            }
           </h2>
           <Link
-            href="/register"
+            href={userType === 'merchant' ? "/register" : "/app"}
             className="inline-block px-10 py-4 bg-card text-primary rounded-lg hover:bg-muted transition-colors font-bold text-lg shadow-xl"
           >
-            Criar Conta Gratuitamente
+            {userType === 'merchant' ? 'Criar Conta Lojista' : 'Acessar meus Cartões'}
           </Link>
         </div>
       </section>
@@ -200,7 +238,7 @@ export default function HomePage() {
                 <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} />
                 <h5 className="text-white font-bold">FIDD</h5>
               </div>
-              <p className="text-sm mb-4">Cartões de Fidelidade Virtuais para seu negócio.</p>
+              <p className="text-sm mb-4">Cartões de Fidelidade Virtuais para todos.</p>
               <div className="space-y-2">
                 <a 
                   href="https://play.google.com/store/apps/details?id=digital.tonima.fidd" 
@@ -222,23 +260,25 @@ export default function HomePage() {
               </div>
             </div>
             <div>
-              <h5 className="text-white font-bold mb-4">Produto</h5>
+              <h5 className="text-white font-bold mb-4">Acesso</h5>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#features" className="hover:text-white transition-colors">Recursos</Link></li>
-                <li><Link href="/docs" className="hover:text-white transition-colors">Documentação</Link></li>
+                <li><Link href="/app" className="hover:text-white transition-colors">Área do Cliente (Web)</Link></li>
+                <li><Link href="/login" className="hover:text-white transition-colors">Painel do Lojista</Link></li>
+                <li><Link href="/register" className="hover:text-white transition-colors">Criar Conta Lojista</Link></li>
               </ul>
             </div>
             <div>
-              <h5 className="text-white font-bold mb-4">Empresa</h5>
+              <h5 className="text-white font-bold mb-4">Suporte</h5>
               <ul className="space-y-2 text-sm">
+                <li><Link href="/docs" className="hover:text-white transition-colors">Documentação</Link></li>
                 <li><a href="mailto:suporte@fidd.com.br" className="hover:text-white transition-colors">Contato</a></li>
-                <li><a href="mailto:suporte@fidd.com.br" className="hover:text-white transition-colors">Suporte</a></li>
+                <li><a href="mailto:suporte@fidd.com.br" className="hover:text-white transition-colors">Ajuda</a></li>
               </ul>
             </div>
             <div>
               <h5 className="text-white font-bold mb-4">Legal</h5>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/terms" className="hover:text-white transition-colors">Termos</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Termos de Uso</Link></li>
                 <li><a href="https://tonima.digital/fidd-policy.html" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Privacidade</a></li>
               </ul>
             </div>

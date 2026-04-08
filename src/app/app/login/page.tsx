@@ -4,9 +4,13 @@
 
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { MobileLoginForm } from '@/components/auth/MobileLoginForm';
 import Image from 'next/image';
+
+function LoginForm() {
+  return <MobileLoginForm />;
+}
 
 export default function MobileLoginPage() {
   return (
@@ -21,7 +25,9 @@ export default function MobileLoginPage() {
         </div>
 
         <div className="bg-card p-6 rounded-2xl shadow-sm border border-border">
-          <MobileLoginForm />
+          <Suspense fallback={<div className="h-48 animate-pulse bg-slate-100 rounded-xl" />}>
+            <LoginForm />
+          </Suspense>
         </div>
       </div>
     </div>

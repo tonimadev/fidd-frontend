@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { useParams, useRouter } from 'next/navigation';
 import { ChevronLeft, QrCode, Info, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
+import { UnifiedScannerModal } from '@/components/mobile/UnifiedScannerModal';
 
 export default function CardDetailPage() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ export default function CardDetailPage() {
   const [isRedeeming, setIsRedeeming] = useState(false);
   const [redemptionCode, setRedemptionCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isCollectModalOpen, setIsCollectModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCard = async () => {
@@ -227,7 +229,7 @@ export default function CardDetailPage() {
               <Button 
                 variant="outline"
                 className="w-full h-16 rounded-[1.5rem] border-primary/20 bg-white text-primary font-black uppercase tracking-[0.1em] shadow-lg shadow-slate-100 flex items-center justify-center gap-3 active:scale-95 transition-all"
-                onClick={() => alert('Em breve: Escaneie o QR Code do lojista')}
+                onClick={() => setIsCollectModalOpen(true)}
               >
                 <QrCode size={24} />
                 Escanear Pontos
@@ -236,6 +238,17 @@ export default function CardDetailPage() {
           </div>
         )}
       </div>
+
+      <UnifiedScannerModal 
+        isOpen={isCollectModalOpen}
+        onClose={() => setIsCollectModalOpen(false)}
+        initialCardId={Number(id)}
+        onSuccess={async () => {
+          // Recarregar os dados do cartão após ganhar pontos
+          const updatedCard = await mobileCardService.getCardById(Number(id));
+          setCard(updatedCard);
+        }}
+      />
     </MobileLayout>
   );
 }
