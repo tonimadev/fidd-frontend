@@ -10,6 +10,7 @@ import { subscriptionService } from '@/lib/subscription-service';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { getStripePlans, StripePlan } from '@/lib/stripe-actions';
+import { redirectToCheckout } from '@/lib/navigation';
 
 export const SubscriptionPlans = () => {
   const { user } = useAuth();
@@ -100,10 +101,11 @@ export const SubscriptionPlans = () => {
       );
       
       if (response && response.url) {
-        window.location.href = response.url;
-      } else {
-        throw new Error('URL de checkout não recebida do servidor.');
-      }
+              // Sai o window.location.href, entra o nosso wrapper
+              redirectToCheckout(response.url);
+            } else {
+              throw new Error('URL de checkout não recebida do servidor.');
+            }
     } catch (err) {
       setError('Erro ao criar sessão de checkout. Tente novamente mais tarde.');
       console.error('Subscription error:', err);

@@ -6,6 +6,13 @@ import React from 'react';
 import { render, screen } from '@/test-utils';
 import { LoginForm } from '@/components/auth/LoginForm';
 
+jest.mock('@/lib/firebase', () => ({
+  trackEvent: jest.fn(),
+  app: {},
+  analytics: {},
+  performance: {},
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),

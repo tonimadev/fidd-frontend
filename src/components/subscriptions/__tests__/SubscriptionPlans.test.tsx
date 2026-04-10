@@ -8,10 +8,17 @@ import { SubscriptionPlans } from '@/components/subscriptions/SubscriptionPlans'
 import { subscriptionService } from '@/lib/subscription-service';
 import { getStripePlans } from '@/lib/stripe-actions';
 import { useAuth } from '@/context/auth-context';
+// IMPORTAÇÃO NOVA AQUI:
+import { redirectToCheckout } from '@/lib/navigation';
 
 jest.mock('@/lib/subscription-service');
 jest.mock('@/lib/stripe-actions');
 jest.mock('@/context/auth-context');
+
+// MOCK NOVO AQUI:
+jest.mock('@/lib/navigation', () => ({
+  redirectToCheckout: jest.fn(),
+}));
 
 describe('SubscriptionPlans', () => {
   const mockPlans = [
@@ -56,13 +63,10 @@ describe('SubscriptionPlans', () => {
   it('deve renderizar os planos gratuito, lite e pro após carregamento', async () => {
     render(<SubscriptionPlans />);
 
-    // Títulos dos planos (Heading)
     expect(await screen.findByRole('heading', { name: /Plano Gratuito/i })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /Plano Lite/i })).toBeInTheDocument();
     expect(await screen.findByRole('heading', { name: /Plano Pro/i })).toBeInTheDocument();
 
-    // Verificar se os preços aparecem usando getAll para evitar erros de ambiguidade
-    // O JSDOM às vezes detecta múltiplos elementos para textos formatados
     expect(screen.getAllByText(/0,00/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/25,00/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/50,00/).length).toBeGreaterThan(0);
@@ -76,14 +80,11 @@ describe('SubscriptionPlans', () => {
 
     render(<SubscriptionPlans />);
 
-    // Aguarda o render do Lite
     await screen.findByRole('heading', { name: /Plano Lite/i });
 
-    // O botão do plano Lite deve estar marcado como atual
     const currentPlanButtons = screen.getAllByRole('button', { name: /Plano Atual/i });
     expect(currentPlanButtons.length).toBeGreaterThan(0);
 
-    // Verifica se algum botão "Plano Atual" está desabilitado
     const disabledButton = screen.queryByRole('button', { name: /Plano Atual/i, disabled: true });
     expect(disabledButton).toBeInTheDocument();
   });
@@ -94,15 +95,8 @@ describe('SubscriptionPlans', () => {
       url: mockUrl,
     });
 
-    // Mock window.location.href
-    const originalLocation = window.location;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    delete (window as any).location;
-    window.location = { ...originalLocation, href: '' };
-
     render(<SubscriptionPlans />);
 
-    // Aguardar o carregamento dos planos e clicar no botão do Pro
     const subscribeButton = await screen.findByRole('button', { name: /assinar plano pro/i });
     fireEvent.click(subscribeButton);
 
@@ -112,13 +106,15 @@ describe('SubscriptionPlans', () => {
         expect.any(String),
         expect.any(String)
       );
-      expect(window.location.href).toBe(mockUrl);
+      // Validamos se a nossa função wrapper foi chamada com a URL certa!
+      expect(redirectToCheckout).toHaveBeenCalledWith(mockUrl);
     });
-
-    window.location = originalLocation;
   });
 
   it('deve mostrar mensagem de erro quando a chamada falha', async () => {
+    // Espiona e silencia o console.error apenas para este teste
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
     (subscriptionService.createCheckoutSession as jest.Mock).mockRejectedValue(new Error('Network error'));
 
     render(<SubscriptionPlans />);
@@ -129,5 +125,8 @@ describe('SubscriptionPlans', () => {
     await waitFor(() => {
       expect(screen.getByText(/erro ao criar sessão de checkout/i)).toBeInTheDocument();
     });
+
+    // Restaura o console.error para o comportamento normal
+    consoleSpy.mockRestore();
   });
 });
