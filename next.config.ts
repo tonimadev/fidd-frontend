@@ -1,14 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   output: 'standalone',
   reactCompiler: true,
-  experimental: {
-    turbopackUseSystemTlsCerts: true,
-  },
 
-  // Proxy para API do backend
+  // Proxy para API do backend (Spring Boot)
   rewrites: async () => {
     return {
       beforeFiles: [
