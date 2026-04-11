@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import Image from 'next/image';
 import { DashboardTab } from '@/types/dashboard';
-import { Instagram, Facebook } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: DashboardTab;
@@ -145,7 +144,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors group"
             >
-              <Instagram size={16} className="group-hover:scale-110 transition-transform" />
+              <svg
+                className="w-4 h-4 group-hover:scale-110 transition-transform"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2Zm0 1.8A4 4 0 0 0 3.8 7.8v8.4a4 4 0 0 0 4 4h8.4a4 4 0 0 0 4-4V7.8a4 4 0 0 0-4-4H7.8Zm8.95 1.35a1.05 1.05 0 1 1 0 2.1 1.05 1.05 0 0 1 0-2.1ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z" />
+              </svg>
               <span className="text-[11px] font-bold tracking-tight">@fidd_br</span>
             </a>
             <a
@@ -154,7 +160,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-primary transition-colors group"
             >
-              <Facebook size={16} className="group-hover:scale-110 transition-transform" />
+              <svg
+                className="w-4 h-4 group-hover:scale-110 transition-transform"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M13.5 22v-8h2.6l.4-3h-3V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H7.9v3h2.8v8h2.8Z" />
+              </svg>
             </a>
           </div>
         </div>
