@@ -14,7 +14,9 @@ import { GenerateInvitationsResponse } from '@/types/invitation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { QRCodeSVG } from 'qrcode.react';
+import { Copy, Check, ExternalLink, QrCode, FileDown, PlusCircle } from 'lucide-react';
 
 interface GenerateInvitationsFormProps {
   campaignId: number;
@@ -32,13 +34,14 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [invitationsResult, setInvitationsResult] = useState<GenerateInvitationsResponse | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm({
+  } = useForm<GenerateInvitationsFormData>({
     resolver: zodResolver(generateInvitationsSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -68,9 +71,10 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     }
   };
 
-  const copyToClipboard = (text: string, label: string = 'Link') => {
+  const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
-    alert(`${label} copiado para a área de transferência!`);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const downloadInvitations = () => {
@@ -98,118 +102,111 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
   if (invitationsResult) {
     return (
       <div className="space-y-6">
-        <div className="rounded-lg bg-green-50 border border-green-200 p-6">
-          <h3 className="text-lg font-semibold text-green-900">Convites Gerados com Sucesso!</h3>
-          <p className="mt-2 text-sm text-green-700">
+        <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-5">
+          <h3 className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Convites Gerados com Sucesso!</h3>
+          <p className="mt-1 text-sm text-emerald-600/80 dark:text-emerald-400/80">
             {invitationsResult.message}
           </p>
-          <p className="mt-1 text-sm text-green-700">
-            Total de <strong>{invitationsResult.totalGenerated}</strong> convites gerados para a campanha{' '}
-            <strong>{campaignName}</strong>
+          <p className="mt-2 text-sm text-emerald-600/80 dark:text-emerald-400/80">
+            Total de <span className="font-bold">{invitationsResult.totalGenerated}</span> convites para <span className="font-bold">{campaignName}</span>
           </p>
         </div>
 
         {/* Lista de Convites */}
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-            <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
-            Seus Convites:
+          <h4 className="font-bold text-foreground flex items-center gap-2 text-sm uppercase tracking-wider">
+            <QrCode className="w-4 h-4 text-primary" />
+            Seus Convites
           </h4>
-          <div className="max-h-[500px] overflow-y-auto border border-gray-200 rounded-xl divide-y divide-gray-100 bg-white shadow-sm">
-            {invitationsResult.invitations.map((invitation, index) => (
-              <div
-                key={invitation.id || index}
-                className="p-5 hover:bg-gray-50/50 transition-colors group"
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary text-white text-lg font-mono font-bold px-4 py-1.5 rounded-lg tracking-wider shadow-sm">
-                        {invitation.inviteToken}
+          <div className="max-h-[450px] overflow-y-auto border border-border rounded-xl divide-y divide-border bg-card/50">
+            {invitationsResult.invitations.map((invitation, index) => {
+              const uniqueId = `inv-${index}`;
+              return (
+                <div
+                  key={invitation.id || index}
+                  className="p-5 hover:bg-muted/30 transition-colors group"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-primary text-primary-foreground text-lg font-mono font-black px-4 py-2 rounded-lg tracking-widest shadow-sm ring-1 ring-primary/20">
+                          {invitation.inviteToken}
+                        </div>
+                        <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full uppercase tracking-widest border border-emerald-500/20">
+                          +{invitation.points} PONTOS
+                        </span>
                       </div>
-                      <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full uppercase tracking-wide border border-green-100">
-                        {invitation.points} pontos
-                      </span>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-900 break-all flex items-center gap-2">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.826L10.242 9.172a4 4 0 015.656 0l4 4a4 4 0 01-5.656 5.656l-1.102 1.101" />
-                        </svg>
-                        {invitation.inviteUrl}
-                      </p>
-                      <p className="text-[11px] text-gray-500 flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Expira em: {new Date(invitation.expiresAt).toLocaleString('pt-BR')}
-                      </p>
-                    </div>
-                  </div>
 
-                  <div className="flex items-center gap-4 shrink-0">
-                    <div className="hidden sm:block p-2 bg-white border border-gray-100 rounded-lg shadow-sm group-hover:border-primary/30 transition-colors">
-                      {invitation.qrCodeUrl ? (
-                        <Image 
-                          src={invitation.qrCodeUrl} 
-                          alt="QR Code" 
-                          width={64}
-                          height={64}
-                          className="w-16 h-16"
-                          unoptimized={true}
-                        />
-                      ) : (
-                        <QRCodeSVG value={invitation.inviteUrl} size={64} />
-                      )}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 group/link">
+                          <ExternalLink className="w-3.5 h-3.5 text-muted-foreground" />
+                          <p className="text-xs font-medium text-foreground/80 break-all select-all">
+                            {invitation.inviteUrl}
+                          </p>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground flex items-center gap-1.5 font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          EXPIRA EM: {new Date(invitation.expiresAt).toLocaleString('pt-BR')}
+                        </p>
+                      </div>
                     </div>
-                    
-                    <div className="flex flex-col gap-2 w-full md:w-auto">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => copyToClipboard(invitation.inviteToken, 'Código')}
-                        className="h-8 text-xs font-semibold justify-start md:justify-center"
-                      >
-                        Copiar Código
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(invitation.inviteUrl, 'Link')}
-                        className="h-8 text-xs font-semibold text-primary hover:text-primary/80 hover:bg-primary/5 justify-start md:justify-center"
-                      >
-                        Copiar Link
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          const msg = `Parabéns! Você ganhou ${invitation.points} pontos da campanha "${campaignName}".\n\nResgate agora pelo App:\n🤖 Android: https://play.google.com/store/apps/details?id=digital.tonima.fidd\n🍎 Apple: (em breve)\n🌐 Web: ${window.location.origin}/app\n\nUse o código: ${invitation.inviteToken}`;
-                          copyToClipboard(msg, 'Mensagem');
-                        }}
-                        className="h-8 text-xs font-semibold text-green-600 hover:text-green-700 hover:bg-green-50 justify-start md:justify-center"
-                      >
-                        Copiar Mensagem
-                      </Button>
+
+                    <div className="flex items-center gap-5 shrink-0">
+                      <div className="hidden sm:block p-2.5 bg-white rounded-xl shadow-md group-hover:ring-2 group-hover:ring-primary/30 transition-all">
+                        {invitation.qrCodeUrl ? (
+                          <Image
+                            src={invitation.qrCodeUrl}
+                            alt="QR Code"
+                            width={70}
+                            height={70}
+                            className="w-[70px] h-[70px]"
+                            unoptimized={true}
+                          />
+                        ) : (
+                          <QRCodeSVG value={invitation.inviteUrl} size={70} />
+                        )}
+                      </div>
+
+                      <div className="flex flex-col gap-2 w-full md:w-36">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(invitation.inviteToken, `${uniqueId}-code`)}
+                          className="h-9 text-xs font-bold justify-center border-border hover:border-primary/50"
+                        >
+                          {copiedId === `${uniqueId}-code` ? <Check className="w-3.5 h-3.5 mr-2" /> : <Copy className="w-3.5 h-3.5 mr-2" />}
+                          CÓDIGO
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const msg = `Parabéns! Você ganhou ${invitation.points} pontos da campanha "${campaignName}".\n\nResgate agora pelo App:\n🤖 Android: https://play.google.com/store/apps/details?id=digital.tonima.fidd\n🍎 Apple: (em breve)\n🌐 Web: ${window.location.origin}/app\n\nUse o código: ${invitation.inviteToken}`;
+                            copyToClipboard(msg, `${uniqueId}-msg`);
+                          }}
+                          className="h-9 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 justify-center"
+                        >
+                          {copiedId === `${uniqueId}-msg` ? <Check className="w-3.5 h-3.5 mr-2" /> : <Copy className="w-3.5 h-3.5 mr-2" />}
+                          MENSAGEM
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Botões de Ação */}
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
           <Button
             onClick={downloadInvitations}
             variant="outline"
-            className="flex-1 border-green-600 text-green-700 hover:bg-green-50"
+            className="flex-1 font-bold border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
           >
-            Baixar CSV
+            <FileDown className="w-4 h-4 mr-2" />
+            BAIXAR CSV
           </Button>
           <Button
             onClick={() => {
@@ -217,17 +214,17 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
               reset();
               onSuccess?.();
             }}
-            variant="primary"
-            className="flex-1 bg-green-600 hover:bg-green-700"
+            className="flex-1 font-bold bg-emerald-600 hover:bg-emerald-700 text-white"
           >
-            Gerar Mais
+            <PlusCircle className="w-4 h-4 mr-2" />
+            GERAR MAIS
           </Button>
           <Button
             onClick={onCancel}
             variant="secondary"
-            className="flex-1"
+            className="flex-1 font-bold"
           >
-            Fechar
+            FECHAR
           </Button>
         </div>
       </div>
@@ -237,92 +234,67 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {errorMessage && (
-        <div className="rounded-lg bg-red-50 p-4">
-          <p className="text-sm text-red-700">{errorMessage}</p>
+        <div className="rounded-lg bg-red-500/10 p-4 border border-red-500/20">
+          <p className="text-sm text-red-600 dark:text-red-400 font-medium">{errorMessage}</p>
         </div>
       )}
 
       {/* Informações da Campanha */}
-      <div className="rounded-lg bg-primary/5 border border-primary/20 p-4">
-        <p className="text-sm text-primary/90">
-          Gerando convites para a campanha: <strong>{campaignName}</strong>
+      <div className="rounded-xl bg-primary/10 border border-primary/20 p-4">
+        <p className="text-sm text-primary font-medium text-center">
+          Campanha Ativa: <span className="font-black underline decoration-primary/30">{campaignName}</span>
         </p>
       </div>
 
-      {/* Quantidade de Convites */}
-      <div>
-        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
-          Quantidade de Convites
-        </label>
-        <input
+      <div className="space-y-5">
+        <Input
+          label="Quantidade de Convites"
           {...register('quantity')}
           type="number"
           id="quantity"
           placeholder="10"
           min="1"
           max="1000"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          error={errors.quantity?.message}
         />
-        {errors.quantity && (
-          <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>
-        )}
-        <p className="mt-1 text-xs text-gray-500">
-          Quantidade de convites a gerar (1-1000)
+        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter px-1">
+          Limite: 1.000 unidades por lote
         </p>
-      </div>
 
-      {/* Pontos por Convite */}
-      <div>
-        <label htmlFor="pointsPerInvitation" className="block text-sm font-medium text-gray-700">
-          Pontos por Convite
-        </label>
-        <input
+        <Input
+          label="Pontos por Convite"
           {...register('pointsPerInvitation')}
           type="number"
           id="pointsPerInvitation"
           placeholder="5"
           min="1"
           max="10000"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          error={errors.pointsPerInvitation?.message}
         />
-        {errors.pointsPerInvitation && (
-          <p className="mt-1 text-sm text-red-600">{errors.pointsPerInvitation.message}</p>
-        )}
-        <p className="mt-1 text-xs text-gray-500">
-          Quantos pontos cada cliente ganha ao usar o convite
-        </p>
-      </div>
 
-      {/* Expiração em Minutos */}
-      <div>
-        <label htmlFor="expirationMinutes" className="block text-sm font-medium text-gray-700">
-          Expiração (em minutos)
-        </label>
-        <input
+        <Input
+          label="Expiração (em minutos)"
           {...register('expirationMinutes')}
           type="number"
           id="expirationMinutes"
-          placeholder="60"
+          placeholder="1440"
           min="5"
           max="10080"
-          className="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          error={errors.expirationMinutes?.message}
         />
-        {errors.expirationMinutes && (
-          <p className="mt-1 text-sm text-red-600">{errors.expirationMinutes.message}</p>
-        )}
-        <p className="mt-1 text-xs text-gray-500">
-          Tempo de expiração dos convites (5 min a 7 dias = 10080 min)
+        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter px-1">
+          Padrão: 24 horas (1440 min)
         </p>
       </div>
 
       {/* Botões */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 pt-4">
         <Button
           type="submit"
           isLoading={isSubmitting}
-          className="flex-1"
+          className="flex-1 font-bold"
         >
-          {isSubmitting ? 'Gerando...' : 'Gerar Convites'}
+          {isSubmitting ? 'GERANDO...' : 'GERAR CONVITES'}
         </Button>
         {onCancel && (
           <Button
@@ -330,13 +302,12 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
             variant="outline"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="flex-1"
+            className="flex-1 font-bold"
           >
-            Cancelar
+            CANCELAR
           </Button>
         )}
       </div>
     </form>
   );
 };
-

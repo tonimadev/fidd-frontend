@@ -140,8 +140,8 @@ export const LoginForm: React.FC = () => {
 
       {/* Mensagem de erro */}
       {errorMessage && (
-        <div className="rounded-lg bg-red-50 p-3 border border-red-200">
-          <p className="text-sm text-red-700 font-medium">{errorMessage}</p>
+        <div className="rounded-lg bg-red-500/10 p-3 border border-red-500/20">
+          <p className="text-sm text-red-600 dark:text-red-400 font-medium">{errorMessage}</p>
         </div>
       )}
 
@@ -156,10 +156,10 @@ export const LoginForm: React.FC = () => {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300"></div>
+          <div className="w-full border-t border-border"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">Ou entre com</span>
+          <span className="px-2 bg-background text-muted-foreground">Ou entre com</span>
         </div>
       </div>
 

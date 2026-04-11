@@ -13,6 +13,7 @@ import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { CheckCircle2 } from 'lucide-react';
 
 export const ForgotPasswordForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,8 +36,6 @@ export const ForgotPasswordForm: React.FC = () => {
       await authService.forgotPassword(data);
       setIsSuccess(true);
     } catch (error) {
-      // Como recomendado, o backend deve retornar 200 mesmo se o email não existir,
-      // mas se houver um erro real (rede, etc), tratamos aqui.
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao processar solicitação. Tente novamente mais tarde.'));
     } finally {
       setIsSubmitting(false);
@@ -45,19 +44,17 @@ export const ForgotPasswordForm: React.FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="rounded-full bg-green-100 p-3 w-16 h-16 flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-          </svg>
+      <div className="space-y-6 text-center py-4">
+        <div className="rounded-full bg-emerald-500/10 p-3 w-16 h-16 flex items-center justify-center mx-auto border border-emerald-500/20">
+          <CheckCircle2 className="w-8 h-8 text-emerald-500" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-bold">Verifique seu e-mail</h3>
-          <p className="text-muted-foreground">
+          <h3 className="text-xl font-bold text-foreground">Verifique seu e-mail</h3>
+          <p className="text-sm text-muted-foreground max-w-[280px] mx-auto">
             Se o e-mail informado estiver cadastrado, você receberá as instruções para redefinir sua senha em instantes.
           </p>
         </div>
-        <Link href="/login" className="block">
+        <Link href="/login" className="block pt-2">
           <Button variant="outline" className="w-full">
             Voltar para o login
           </Button>
@@ -67,8 +64,8 @@ export const ForgotPasswordForm: React.FC = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2 text-center mb-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <div className="space-y-2 text-center mb-2">
         <p className="text-sm text-muted-foreground">
           Informe seu e-mail abaixo e enviaremos um link para você definir uma nova senha.
         </p>
@@ -84,8 +81,8 @@ export const ForgotPasswordForm: React.FC = () => {
       />
 
       {errorMessage && (
-        <div className="rounded-lg bg-red-50 p-3 border border-red-200">
-          <p className="text-sm text-red-700 font-medium">{errorMessage}</p>
+        <div className="rounded-lg bg-red-500/10 p-3 border border-red-500/20">
+          <p className="text-sm text-red-600 dark:text-red-400 font-medium text-center">{errorMessage}</p>
         </div>
       )}
 
@@ -97,7 +94,7 @@ export const ForgotPasswordForm: React.FC = () => {
         Enviar link de recuperação
       </Button>
 
-      <div className="text-center mt-4">
+      <div className="text-center mt-2">
         <Link href="/login" className="text-sm text-primary hover:underline font-semibold transition-all">
           Lembrou a senha? Fazer login
         </Link>

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Card de registro */}
         <div className="bg-card rounded-2xl shadow-xl p-8 border border-border">
@@ -23,7 +23,7 @@ export default function RegisterPage() {
           <div className="text-center mb-8 flex flex-col items-center">
             <Image src="/fidd.png" alt="FIDD Logo" width={48} height={48} className="mb-2 dark:brightness-110" />
             <h1 className="text-3xl font-bold text-foreground">FIDD</h1>
-            <p className="text-muted-foreground text-sm mt-2">Cartões de Fidelidade Virtuais</p>
+            <p className="text-muted-foreground text-sm mt-2 font-medium tracking-tight">Cartões de Fidelidade Virtuais</p>
           </div>
 
           {/* Título */}
@@ -36,14 +36,14 @@ export default function RegisterPage() {
           <RegisterForm />
 
           {/* Footer */}
-          <div className="mt-6 text-center text-xs text-gray-500 border-t pt-6">
-            <p>
+          <div className="mt-8 text-center text-xs text-muted-foreground border-t border-border pt-6">
+            <p className="leading-relaxed">
               Ao se registrar, você concorda com nossos{' '}
-              <Link href="/terms" className="text-primary hover:underline">
+              <Link href="/terms" className="text-primary hover:underline font-medium">
                 Termos de Serviço
               </Link>
               {' '}e{' '}
-              <a href="https://tonima.digital/fidd-policy.html" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              <a href="https://tonima.digital/fidd-policy.html" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
                 Política de Privacidade
               </a>
             </p>
@@ -51,11 +51,11 @@ export default function RegisterPage() {
         </div>
 
         {/* Link de suporte */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <p className="text-muted-foreground text-sm">
             Precisa de ajuda?{' '}
-            <a href="mailto:suporte@fidd.com.br" className="text-primary hover:text-primary/80 font-medium">
-              Contacte-nos
+            <a href="mailto:suporte@fidd.com.br" className="text-primary hover:underline font-medium transition-colors">
+              Fale com nosso suporte
             </a>
           </p>
         </div>

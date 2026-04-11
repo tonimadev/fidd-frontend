@@ -18,7 +18,7 @@ describe('RedemptionForm', () => {
     render(<RedemptionForm />);
 
     expect(screen.getByText('Resgate de Prêmio')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Ex: XJ7K2P')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('XJ7K2P')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /validar e resgatar/i })).toBeInTheDocument();
   });
 
@@ -35,7 +35,7 @@ describe('RedemptionForm', () => {
 
     render(<RedemptionForm />);
 
-    const input = screen.getByPlaceholderText('Ex: XJ7K2P');
+    const input = screen.getByPlaceholderText('XJ7K2P');
     fireEvent.change(input, { target: { value: 'XJ7K2P' } });
     
     const button = screen.getByRole('button', { name: /validar e resgatar/i });
@@ -63,7 +63,7 @@ describe('RedemptionForm', () => {
 
     render(<RedemptionForm />);
 
-    const input = screen.getByPlaceholderText('Ex: XJ7K2P');
+    const input = screen.getByPlaceholderText('XJ7K2P');
     fireEvent.change(input, { target: { value: 'USED01' } });
     
     const button = screen.getByRole('button', { name: /validar e resgatar/i });
@@ -77,7 +77,7 @@ describe('RedemptionForm', () => {
   it('deve mostrar erro de validação para códigos com tamanho diferente de 6', async () => {
     render(<RedemptionForm />);
 
-    const input = screen.getByPlaceholderText('Ex: XJ7K2P');
+    const input = screen.getByPlaceholderText('XJ7K2P');
     fireEvent.change(input, { target: { value: 'ABC' } });
     
     const button = screen.getByRole('button', { name: /validar e resgatar/i });

@@ -28,19 +28,19 @@ describe('GenerateInvitationsForm', () => {
   it('deve renderizar o formulário de geração de convites', () => {
     render(<GenerateInvitationsForm {...campaignProps} />);
 
-    expect(screen.getByText(/Gerando convites para a campanha:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Campanha Ativa:/i)).toBeInTheDocument();
     expect(screen.getByText('Minha Campanha')).toBeInTheDocument();
     expect(screen.getByLabelText('Quantidade de Convites')).toBeInTheDocument();
     expect(screen.getByLabelText('Pontos por Convite')).toBeInTheDocument();
     expect(screen.getByLabelText('Expiração (em minutos)')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Gerar Convites/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /GERAR CONVITES/i })).toBeInTheDocument();
   });
 
   it('deve mostrar erros de validação para valores inválidos', async () => {
     render(<GenerateInvitationsForm {...campaignProps} />);
 
     const quantityInput = screen.getByLabelText('Quantidade de Convites');
-    const submitButton = screen.getByRole('button', { name: /Gerar Convites/i });
+    const submitButton = screen.getByRole('button', { name: /GERAR CONVITES/i });
 
     fireEvent.change(quantityInput, { target: { value: '0' } });
     fireEvent.blur(quantityInput);
@@ -85,7 +85,7 @@ describe('GenerateInvitationsForm', () => {
 
     render(<GenerateInvitationsForm {...campaignProps} />);
 
-    const submitButton = screen.getByRole('button', { name: /Gerar Convites/i });
+    const submitButton = screen.getByRole('button', { name: /GERAR CONVITES/i });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -97,19 +97,19 @@ describe('GenerateInvitationsForm', () => {
     expect(screen.getByText('ABC123')).toBeInTheDocument();
     expect(screen.getByText('DEF456')).toBeInTheDocument();
 
-    // Verificar se os pontos estão visíveis
-    const pointsLabels = screen.getAllByText('5 pontos');
+    // Verificar se os pontos estão visíveis (Novo formato: +5 PONTOS)
+    const pointsLabels = screen.getAllByText(/\+5 PONTOS/i);
     expect(pointsLabels).toHaveLength(2);
 
-    // Verificar botões de ação na lista
-    expect(screen.getAllByText('Copiar Código')).toHaveLength(2);
-    expect(screen.getAllByText('Copiar Link')).toHaveLength(2);
+    // Verificar botões de ação na lista (Novos nomes)
+    expect(screen.getAllByText('CÓDIGO')).toHaveLength(2);
+    expect(screen.getAllByText('MENSAGEM')).toHaveLength(2);
   });
 
   it('deve chamar onCancel quando o botão cancelar é clicado', () => {
     render(<GenerateInvitationsForm {...campaignProps} />);
     
-    const cancelButton = screen.getByRole('button', { name: /Cancelar/i });
+    const cancelButton = screen.getByRole('button', { name: /CANCELAR/i });
     fireEvent.click(cancelButton);
     
     expect(campaignProps.onCancel).toHaveBeenCalled();
