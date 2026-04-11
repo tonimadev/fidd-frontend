@@ -21,7 +21,7 @@ export const MobileRegisterForm: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inviteToken = searchParams.get('inviteToken');
-  const { register: registerUser, loginWithGoogle } = useMobileAuth();
+  const { register: registerUser, loginWithGoogle, user } = useMobileAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,7 +33,24 @@ export const MobileRegisterForm: React.FC = () => {
   } = useForm<MobileRegisterFormData>({
     resolver: zodResolver(mobileRegisterSchema),
     mode: 'onBlur',
+    defaultValues: {
+      name: user?.name || '',
+      email: user?.email || '',
+    },
   });
+
+  // Atualiza campos se o usuário autenticar com Google SSO (novo usuário)
+  React.useEffect(() => {
+    if (user && user.isNewUser) {
+      reset({
+        name: user.name,
+        email: user.email,
+        phone: '',
+        password: '',
+        confirmPassword: '',
+      });
+    }
+  }, [user, reset]);
 
   const onSubmit = async (data: MobileRegisterFormData) => {
     try {
@@ -145,7 +162,16 @@ export const MobileRegisterForm: React.FC = () => {
                 setIsSubmitting(true);
                 setErrorMessage('');
                 await loginWithGoogle(credentialResponse.credential);
-                router.push('/app');
+                
+                // Verifica se é novo usuário para decidir redirecionamento
+                const userJson = localStorage.getItem('user');
+                if (userJson) {
+                  const userData = JSON.parse(userJson);
+                  if (!userData.isNewUser) {
+                    router.push('/app');
+                  }
+                  // Se for isNewUser, continua na página de registro para completar os dados
+                }
               } catch (error) {
                 setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar conta com Google.'));
               } finally {

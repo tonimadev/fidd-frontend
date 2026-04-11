@@ -10,6 +10,7 @@ export interface AuthResponse {
   email: string;
   role: string;
   plan?: string;
+  isNewUser?: boolean;
 }
 
 export interface AuthContext {
@@ -31,6 +32,7 @@ export interface User {
   email: string;
   role: string;
   plan?: string;
+  isNewUser?: boolean;
 }
 
 export interface LoginRequest {

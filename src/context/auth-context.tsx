@@ -125,6 +125,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: response.email,
         role: response.role,
         plan: response.plan,
+        isNewUser: response.isNewUser,
       };
 
       localStorage.setItem('authToken', response.token);
@@ -156,6 +157,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: response.email,
         role: response.role,
         plan: response.plan,
+        isNewUser: false,
       };
 
       localStorage.setItem('authToken', response.token);

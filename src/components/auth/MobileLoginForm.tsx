@@ -127,6 +127,17 @@ export const MobileLoginForm: React.FC = () => {
                 setIsSubmitting(true);
                 setErrorMessage('');
                 await loginWithGoogle(credentialResponse.credential);
+                
+                // Verifica se é novo usuário para decidir redirecionamento
+                const userJson = localStorage.getItem('user');
+                if (userJson) {
+                  const userData = JSON.parse(userJson);
+                  if (userData.isNewUser) {
+                    router.push(`/app/register${inviteToken ? `?inviteToken=${inviteToken}` : ''}`);
+                    return;
+                  }
+                }
+
                 router.push('/app');
               } catch (error) {
                 setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao entrar com Google.'));

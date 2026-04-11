@@ -172,6 +172,17 @@ export const LoginForm: React.FC = () => {
                 setErrorMessage('');
                 await loginWithGoogle(credentialResponse.credential);
                 trackEvent('login', { method: 'google' });
+                
+                // Get user from localStorage to check if new user
+                const userJson = localStorage.getItem('user');
+                if (userJson) {
+                  const userData = JSON.parse(userJson);
+                  if (userData.isNewUser) {
+                    router.push('/register');
+                    return;
+                  }
+                }
+                
                 router.push('/dashboard');
               } catch (error) {
                 trackEvent('login_failed', { method: 'google' });

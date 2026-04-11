@@ -19,7 +19,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 export const RegisterForm: React.FC = () => {
   const router = useRouter();
-  const { register: registerUser, loginWithGoogle } = useAuth();
+  const { register: registerUser, loginWithGoogle, user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,8 +35,24 @@ export const RegisterForm: React.FC = () => {
     mode: 'onBlur',
     defaultValues: {
       taxIdType: 'CNPJ',
+      tradeName: user?.tradeName || '',
+      email: user?.email || '',
     },
   });
+
+  // Atualiza campos se o usuário autenticar com Google SSO (novo usuário)
+  React.useEffect(() => {
+    if (user && user.isNewUser) {
+      reset({
+        tradeName: user.tradeName,
+        email: user.email,
+        taxIdType: watch('taxIdType') || 'CNPJ',
+        taxId: watch('taxId') || '',
+        password: '',
+        confirmPassword: '',
+      });
+    }
+  }, [user, reset]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const password = watch('password');
   const taxIdType = watch('taxIdType');
@@ -248,7 +264,16 @@ export const RegisterForm: React.FC = () => {
                 setIsSubmitting(true);
                 setErrorMessage('');
                 await loginWithGoogle(credentialResponse.credential);
-                router.push('/dashboard');
+                
+                // Verifica se é novo usuário para decidir redirecionamento
+                const userJson = localStorage.getItem('user');
+                if (userJson) {
+                  const userData = JSON.parse(userJson);
+                  if (!userData.isNewUser) {
+                    router.push('/dashboard');
+                  }
+                  // Se for isNewUser, continua na página de registro para completar os dados
+                }
               } catch (error) {
                 setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar conta com Google.'));
               } finally {

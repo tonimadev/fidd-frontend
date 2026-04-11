@@ -9,6 +9,7 @@ export interface MobileAuthResponse {
   name: string;
   email: string;
   role: string;
+  isNewUser?: boolean;
 }
 
 export interface MobileUser {
@@ -16,6 +17,7 @@ export interface MobileUser {
   name: string;
   email: string;
   role: string;
+  isNewUser?: boolean;
 }
 
 export interface MobileRegisterRequest {
