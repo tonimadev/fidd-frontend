@@ -8,8 +8,19 @@ import { SubscriptionPlans } from '@/components/subscriptions/SubscriptionPlans'
 import { subscriptionService } from '@/lib/subscription-service';
 import { getStripePlans } from '@/lib/stripe-actions';
 import { useAuth } from '@/context/auth-context';
-// IMPORTAÇÃO NOVA AQUI:
 import { redirectToCheckout } from '@/lib/navigation';
+
+jest.mock('@/lib/analytics', () => ({
+  analyticsService: {
+    track: jest.fn(),
+  },
+}));
+
+jest.mock('@/lib/firebase', () => ({
+  app: {},
+  analytics: {},
+  performance: {},
+}));
 
 jest.mock('@/lib/subscription-service');
 jest.mock('@/lib/stripe-actions');

@@ -12,6 +12,7 @@ import { generateInvitationsSchema, GenerateInvitationsFormData } from '@/lib/va
 import { invitationService } from '@/lib/invitation-service';
 import { GenerateInvitationsResponse } from '@/types/invitation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
+import { analyticsService } from '@/lib/analytics';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -63,8 +64,19 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
         expirationMinutes: data.expirationMinutes,
       });
 
+      analyticsService.track('invitations_generated', {
+        campaign_id: campaignId,
+        quantity: data.quantity,
+        points_per_invitation: data.pointsPerInvitation,
+        expiration_minutes: data.expirationMinutes,
+      });
+
       setInvitationsResult(result);
     } catch (error) {
+      analyticsService.track('invitation_generation_failed', {
+        campaign_id: campaignId,
+        error_type: error instanceof Error ? error.message : 'unknown',
+      });
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao gerar convites. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
@@ -73,6 +85,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
+    analyticsService.track('invitation_copied', { campaign_id: campaignId });
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -88,6 +101,10 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     const content = header + csv;
 
     const blob = new Blob([content], { type: 'text/csv' });
+    analyticsService.track('invitations_downloaded', {
+      campaign_id: campaignId,
+      quantity: invitationsResult.totalGenerated,
+    });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

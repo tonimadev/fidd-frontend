@@ -7,6 +7,13 @@ import { render, screen, waitFor } from '@/test-utils';
 import { DashboardMetricsCard } from '../DashboardMetricsCard';
 import { dashboardService } from '@/lib/dashboard-service';
 
+// Mock do analyticsService
+jest.mock('@/lib/analytics', () => ({
+  analyticsService: {
+    track: jest.fn(),
+  },
+}));
+
 // Mock do dashboardService
 jest.mock('@/lib/dashboard-service', () => ({
   dashboardService: {

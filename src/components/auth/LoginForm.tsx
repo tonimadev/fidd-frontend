@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/Input';
 import axios from 'axios';
 import { LoginRequest } from '@/types/auth';
 import { GoogleLogin } from '@react-oauth/google';
-import { trackEvent } from '@/lib/firebase';
+import { analyticsService } from '@/lib/analytics';
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
@@ -45,7 +45,7 @@ export const LoginForm: React.FC = () => {
       setErrorMessage('');
       await login(data.email, data.password);
 
-      trackEvent('login', { method: 'email' });
+      analyticsService.track('login', { method: 'email' });
 
       // Verifica se a conta está marcada para deleção (Cenário onde o login ainda funciona)
       try {
@@ -63,7 +63,7 @@ export const LoginForm: React.FC = () => {
       reset();
       router.push('/dashboard');
     } catch (error) {
-      trackEvent('login_failed', { method: 'email', error_type: 'bad_credentials' });
+      analyticsService.track('login_failed', { method: 'email', error_type: 'bad_credentials' });
       // Cenário B: API retorna 400 se a conta estiver em processo de exclusão
       if (axios.isAxiosError(error) && error.response?.status === 400) {
         const apiMessage = error.response.data?.message || '';
@@ -85,7 +85,7 @@ export const LoginForm: React.FC = () => {
 
   const handleReactivateSuccess = async () => {
     setShowReactivateModal(false);
-    trackEvent('account_reactivation', { status: 'success' });
+    analyticsService.track('account_reactivation', { status: 'success' });
 
     // Após reativar, precisamos logar novamente se ainda não estivermos logados
     // ou simplesmente redirecionar se já tivermos o token
@@ -132,7 +132,7 @@ export const LoginForm: React.FC = () => {
         <Link 
           href="/forgot-password" 
           className="text-sm font-medium text-primary hover:underline transition-colors"
-          onClick={() => trackEvent('forgot_password_click')}
+          onClick={() => analyticsService.track('forgot_password_click')}
         >
           Esqueceu sua senha?
         </Link>
@@ -171,7 +171,7 @@ export const LoginForm: React.FC = () => {
                 setIsSubmitting(true);
                 setErrorMessage('');
                 await loginWithGoogle(credentialResponse.credential);
-                trackEvent('login', { method: 'google' });
+                analyticsService.track('login', { method: 'google' });
                 
                 // Get user from localStorage to check if new user
                 const userJson = localStorage.getItem('user');
@@ -185,7 +185,7 @@ export const LoginForm: React.FC = () => {
                 
                 router.push('/dashboard');
               } catch (error) {
-                trackEvent('login_failed', { method: 'google' });
+                analyticsService.track('login_failed', { method: 'google' });
                 setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao entrar com Google.'));
               } finally {
                 setIsSubmitting(false);
@@ -193,7 +193,7 @@ export const LoginForm: React.FC = () => {
             }
           }}
           onError={() => {
-            trackEvent('login_failed', { method: 'google', error_type: 'popup_closed' });
+            analyticsService.track('login_failed', { method: 'google', error_type: 'popup_closed' });
             setErrorMessage('Falha na autenticação com Google.');
           }}
           useOneTap
@@ -210,7 +210,7 @@ export const LoginForm: React.FC = () => {
         <Link
           href="/register"
           className="text-primary hover:underline font-semibold transition-all"
-          onClick={() => trackEvent('navigate_to_register')}
+          onClick={() => analyticsService.track('navigate_to_register')}
         >
           Criar conta
         </Link>

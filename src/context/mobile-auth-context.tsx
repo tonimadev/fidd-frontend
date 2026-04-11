@@ -7,6 +7,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { mobileAuthService } from '@/lib/mobile-auth-service';
 import { MobileUser, MobileRegisterRequest } from '@/types/mobile-auth';
+import { analyticsService } from '@/lib/analytics';
 
 interface MobileAuthContextType {
   user: MobileUser | null;
@@ -70,8 +71,10 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
       setToken(response.token);
       setUser(userData);
       setIsAuthenticated(true);
+      analyticsService.track('login', { method: 'email' });
     } catch (error) {
       setIsAuthenticated(false);
+      analyticsService.track('login_failed', { method: 'email', error_type: 'bad_credentials' });
       throw error;
     } finally {
       setIsLoading(false);
@@ -97,8 +100,10 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
       setToken(response.token);
       setUser(userData);
       setIsAuthenticated(true);
+      analyticsService.track('login', { method: 'google' });
     } catch (error) {
       setIsAuthenticated(false);
+      analyticsService.track('login_failed', { method: 'google' });
       throw error;
     } finally {
       setIsLoading(false);
@@ -133,6 +138,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
   }, []);
 
   const logout = useCallback(() => {
+    analyticsService.track('logout');
     mobileAuthService.logout();
     setUser(null);
     setToken(null);

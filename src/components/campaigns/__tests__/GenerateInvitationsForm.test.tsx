@@ -7,6 +7,18 @@ import { render, screen, fireEvent, waitFor } from '@/test-utils';
 import { GenerateInvitationsForm } from '@/components/campaigns/GenerateInvitationsForm';
 import { invitationService } from '@/lib/invitation-service';
 
+jest.mock('@/lib/analytics', () => ({
+  analyticsService: {
+    track: jest.fn(),
+  },
+}));
+
+jest.mock('@/lib/firebase', () => ({
+  app: {},
+  analytics: {},
+  performance: {},
+}));
+
 jest.mock('@/lib/invitation-service', () => ({
   invitationService: {
     generateInvitations: jest.fn(),

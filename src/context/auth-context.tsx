@@ -7,6 +7,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { authService } from '@/lib/auth-service';
 import { AuthContext as AuthContextType, User } from '@/types/auth';
+import { analyticsService } from '@/lib/analytics';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -178,6 +179,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    * Realiza logout
    */
   const logout = useCallback(() => {
+    analyticsService.track('logout');
     authService.logout();
     setUser(null);
     setToken(null);

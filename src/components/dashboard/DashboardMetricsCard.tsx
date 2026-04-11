@@ -8,6 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { DashboardMetrics } from '@/types/dashboard';
 import { dashboardService } from '@/lib/dashboard-service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { analyticsService } from '@/lib/analytics';
 
 export const DashboardMetricsCard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
@@ -158,7 +159,11 @@ export const DashboardMetricsCard: React.FC = () => {
     <div className="space-y-4 mb-8">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {metricCards.map((card, i) => (
-          <Card key={i} className="transition-all hover:shadow-md border-muted/60">
+          <Card 
+            key={i} 
+            className="transition-all hover:shadow-md border-muted/60 cursor-pointer"
+            onClick={() => analyticsService.track('dashboard_metric_clicked', { metric_name: card.title })}
+          >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {card.title}

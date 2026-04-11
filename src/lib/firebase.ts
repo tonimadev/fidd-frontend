@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAnalytics, logEvent, Analytics } from "firebase/analytics";
+import { getAnalytics, Analytics } from "firebase/analytics";
 import { getPerformance, FirebasePerformance } from "firebase/performance";
 
 const firebaseConfig = {
@@ -24,14 +24,3 @@ if (typeof window !== "undefined") {
 }
 
 export { app, analytics, performance };
-
-/**
- * Log a custom event to Firebase Analytics
- * @param eventName Name of the event
- * @param params Additional parameters (avoid private data)
- */
-export const trackEvent = (eventName: string, params?: Record<string, string | number | boolean | undefined>) => {
-  if (analytics) {
-    logEvent(analytics, eventName, params);
-  }
-};

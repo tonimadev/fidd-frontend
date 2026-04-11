@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/Button';
 import { getStripePlans, StripePlan } from '@/lib/stripe-actions';
 import { redirectToCheckout } from '@/lib/navigation';
+import { analyticsService } from '@/lib/analytics';
 
 export const SubscriptionPlans = () => {
   const { user } = useAuth();
@@ -27,6 +28,10 @@ export const SubscriptionPlans = () => {
           // Ordenar por preço
           const sortedPlans = [...data].sort((a, b) => a.amount - b.amount);
           setPlans(sortedPlans);
+          // Log viewing first plan or most relevant one
+          if (sortedPlans.length > 0) {
+            analyticsService.track('subscription_plan_viewed', { plan_id: sortedPlans[0].id });
+          }
         } else {
           // Fallback se não houver planos vindos da API
           setPlans([
@@ -99,6 +104,11 @@ export const SubscriptionPlans = () => {
         successUrl,
         cancelUrl
       );
+
+      analyticsService.track('subscription_checkout_started', {
+        plan_id: plan.id,
+        interval: plan.interval === 'year' ? 'yearly' : 'monthly'
+      });
       
       if (response && response.url) {
               // Sai o window.location.href, entra o nosso wrapper
