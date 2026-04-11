@@ -249,7 +249,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
       <div className="space-y-5">
         <Input
           label="Quantidade de Convites"
-          {...register('quantity')}
+          {...register('quantity', { valueAsNumber: true })}
           type="number"
           id="quantity"
           placeholder="10"
@@ -263,7 +263,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
 
         <Input
           label="Pontos por Convite"
-          {...register('pointsPerInvitation')}
+          {...register('pointsPerInvitation', { valueAsNumber: true })}
           type="number"
           id="pointsPerInvitation"
           placeholder="5"
@@ -274,7 +274,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
 
         <Input
           label="Expiração (em minutos)"
-          {...register('expirationMinutes')}
+          {...register('expirationMinutes', { valueAsNumber: true })}
           type="number"
           id="expirationMinutes"
           placeholder="1440"
