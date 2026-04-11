@@ -69,7 +69,7 @@ class AnalyticsService {
       try {
         // Garantir que não estamos enviando objetos complexos ou PII acidentalmente
         const sanitizedParams = params ? this.sanitizeParams(params) : undefined;
-        logEvent(analytics, eventName, sanitizedParams);
+        logEvent(analytics, String(eventName), sanitizedParams as Record<string, unknown> | undefined);
       } catch (error) {
         if (this.isDevelopment) {
           console.error('[Analytics] Error logging event:', error);
