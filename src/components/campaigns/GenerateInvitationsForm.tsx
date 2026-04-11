@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateInvitationsSchema, GenerateInvitationsFormData } from '@/lib/validations';
 import { invitationService } from '@/lib/invitation-service';
@@ -41,7 +41,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<GenerateInvitationsFormData>({
+  } = useForm({
     resolver: zodResolver(generateInvitationsSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -51,7 +51,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     },
   });
 
-  const onSubmit: SubmitHandler<GenerateInvitationsFormData> = async (data) => {
+  const onSubmit = async (data: GenerateInvitationsFormData) => {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
