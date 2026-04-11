@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generateInvitationsSchema, GenerateInvitationsFormData } from '@/lib/validations';
 import { invitationService } from '@/lib/invitation-service';
@@ -51,7 +51,7 @@ export const GenerateInvitationsForm: React.FC<GenerateInvitationsFormProps> = (
     },
   });
 
-  const onSubmit = async (data: GenerateInvitationsFormData) => {
+  const onSubmit: SubmitHandler<GenerateInvitationsFormData> = async (data) => {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
