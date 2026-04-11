@@ -21,6 +21,8 @@ import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
 import { CustomersList } from '@/components/dashboard/CustomersList';
 import { DeletionBanner } from '@/components/dashboard/DeletionBanner';
 import { DeveloperGuide } from '@/components/dashboard/DeveloperGuide';
+import { InsightsDashboard } from '@/components/dashboard/InsightsDashboard';
+import { RoiSimulator } from '@/components/RoiSimulator';
 import { DashboardTab } from '@/types/dashboard';
 
 
@@ -189,6 +191,8 @@ function DashboardContent() {
             </div>
           </div>
         );
+      case 'insights':
+        return <InsightsDashboard />;
       case 'campaigns':
         return <CampaignsList onOpenHelp={openHelp} />;
       case 'customers':
@@ -211,6 +215,18 @@ function DashboardContent() {
         return <SubscriptionPlans />;
       case 'developers':
         return <DeveloperGuide />;
+      case 'simulator':
+        return (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">Simulador de ROI</h2>
+              <p className="text-muted-foreground">
+                Calcule o retorno sobre o investimento do seu programa de fidelidade.
+              </p>
+            </div>
+            <RoiSimulator />
+          </div>
+        );
       default:
         return null;
     }

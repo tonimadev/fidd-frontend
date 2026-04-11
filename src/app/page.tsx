@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { RoiSimulator } from '@/components/RoiSimulator';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -210,6 +211,23 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ROI Simulator Section */}
+      {userType === 'merchant' && (
+        <section className="bg-slate-50 dark:bg-slate-900/50 py-24 border-y border-border">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-foreground mb-4">
+                Simule seu <span className="text-primary">Lucro</span>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Veja na prática como um programa de fidelidade bem estruturado pode aumentar seu faturamento sem comprometer sua margem.
+              </p>
+            </div>
+            <RoiSimulator />
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="bg-gradient-to-r from-primary to-accent py-16">

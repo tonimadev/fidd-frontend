@@ -2,7 +2,7 @@
  * Tipos relacionados ao dashboard
  */
 
-export type DashboardTab = 'home' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions' | 'developers';
+export type DashboardTab = 'home' | 'insights' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions' | 'developers' | 'simulator';
 
 export interface DashboardMetrics {
   activeCampaigns: number;
@@ -13,5 +13,26 @@ export interface DashboardMetrics {
   expirationVolume: number;
   monthlyLimit: number;
   availableCards: number;
+}
+
+export interface HeatmapData {
+  dayOfWeek: number;
+  hourOfDay: number;
+  count: number;
+}
+
+export interface TopCustomerData {
+  customerName: string;
+  totalPunches: number;
+  totalRedemptions: number;
+}
+
+export interface StoreInsights {
+  heatmap: HeatmapData[];
+  topCustomers: TopCustomerData[];
+  completionRate: number;
+  averageReturnTimeDays: number;
+  totalActiveCustomers: number;
+  totalPunchesToday: number;
 }
 

@@ -13,6 +13,7 @@ import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { TextArea } from '@/components/ui/TextArea';
+import { useSearchParams } from 'next/navigation';
 
 interface CreateCampaignFormProps {
   onSuccess?: () => void;
@@ -22,6 +23,7 @@ interface CreateCampaignFormProps {
 export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSuccess, onCancel }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -35,7 +37,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
     mode: 'onBlur',
     defaultValues: {
       name: '',
-      pointsRequired: 10,
+      pointsRequired: Number(searchParams?.get('stampCount')) || 10,
       expirationDate: '',
       description: '',
     }
