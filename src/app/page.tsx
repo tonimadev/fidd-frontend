@@ -212,6 +212,44 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* App Showcase Section */}
+      <section className="bg-muted/30 py-24 border-y border-border overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              O <span className="text-primary">App</span> na sua Mão
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Leve seus cartões de fidelidade para qualquer lugar. Interface intuitiva, rápida e segura para seus clientes.
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[1, 2, 3, 4].map((num) => (
+                <div key={num} className="relative group transition-all hover:-translate-y-2">
+                  <div className="absolute -inset-1 bg-gradient-to-b from-primary/20 to-accent/20 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                  <div className="relative bg-background rounded-[2.5rem] p-4 shadow-2xl border border-border overflow-hidden ring-8 ring-slate-900/5">
+                    <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[1.5rem] bg-slate-100">
+                      <Image
+                        src={`/screenshots/${num}.png`}
+                        alt={`Screenshot do App ${num}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">App View {num}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ROI Simulator Section */}
       {userType === 'merchant' && (
         <section className="bg-slate-50 dark:bg-slate-900/50 py-24 border-y border-border">

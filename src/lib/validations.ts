@@ -80,8 +80,12 @@ export const mobileRegisterSchema = z.object({
     ),
   phone: z.string()
     .trim()
-    .min(10, 'Telefone inválido (ex: 11988887777)')
-    .max(15, 'Telefone muito longo'),
+    .transform(v => v.replace(/\D/g, ''))
+    .pipe(
+      z.string()
+        .min(10, 'Telefone inválido (ex: 11988887777)')
+        .max(11, 'Telefone muito longo')
+    ),
   email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
   password: z.string()
     .min(8, 'Senha deve ter pelo menos 8 caracteres')

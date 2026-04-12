@@ -17,6 +17,19 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { GoogleLogin } from '@react-oauth/google';
 
+const formatPhone = (value: string) => {
+  const digits = value.replace(/\D/g, '');
+  if (digits.length <= 10) {
+    return digits
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{4})(\d)/, '$1-$2');
+  }
+  return digits
+    .replace(/(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .slice(0, 15);
+};
+
 export const MobileRegisterForm: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -96,10 +109,14 @@ export const MobileRegisterForm: React.FC = () => {
       <Input
         label="Celular"
         type="tel"
-        placeholder="11988887777"
+        placeholder="(11) 98888-7777"
         error={errors.phone?.message}
         maxLength={15}
-        {...register('phone')}
+        {...register('phone', {
+          onChange: (e) => {
+            e.target.value = formatPhone(e.target.value);
+          }
+        })}
       />
 
       <Input

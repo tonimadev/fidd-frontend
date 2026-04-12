@@ -10,6 +10,7 @@ export interface MobileAuthResponse {
   email: string;
   role: string;
   isNewUser?: boolean;
+  linkedPunchesCount?: number;
 }
 
 export interface MobileUser {
@@ -18,6 +19,7 @@ export interface MobileUser {
   email: string;
   role: string;
   isNewUser?: boolean;
+  linkedPunchesCount?: number;
 }
 
 export interface MobileRegisterRequest {

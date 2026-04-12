@@ -63,6 +63,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         email: response.email,
         role: response.role,
         isNewUser: false,
+        linkedPunchesCount: response.linkedPunchesCount,
       };
 
       localStorage.setItem('authToken', response.token);
@@ -92,6 +93,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         email: response.email,
         role: response.role,
         isNewUser: response.isNewUser,
+        linkedPunchesCount: response.linkedPunchesCount,
       };
 
       localStorage.setItem('authToken', response.token);
@@ -121,6 +123,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         email: response.email,
         role: response.role,
         isNewUser: false,
+        linkedPunchesCount: response.linkedPunchesCount,
       };
 
       localStorage.setItem('authToken', response.token);

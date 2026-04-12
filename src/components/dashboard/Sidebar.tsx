@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -23,6 +23,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose
 }) => {
   const { user } = useAuth();
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [user?.profilePictureUrl]);
   const menuItems: { id: DashboardTab; label: string; icon: React.ReactNode }[] = [
     { id: 'home', label: 'Dashboard', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,13 +181,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <div className="flex items-center gap-3 px-3 py-1">
           {user?.profilePictureUrl ? (
-            <img 
-              src={user.profilePictureUrl} 
-              alt={user.tradeName} 
+            <Image 
+              src={imgError ? `https://via.placeholder.com/150?text=${user?.tradeName?.charAt(0) || 'L'}` : user.profilePictureUrl} 
+              alt={user.tradeName || 'Logo'} 
+              width={32}
+              height={32}
               className="w-8 h-8 rounded-full object-cover border border-border shrink-0"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=' + (user?.tradeName?.charAt(0) || 'L');
-              }}
+              unoptimized
+              onError={() => setImgError(true)}
             />
           ) : (
             <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">

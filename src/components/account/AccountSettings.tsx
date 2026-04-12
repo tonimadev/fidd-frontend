@@ -15,6 +15,7 @@ import { AddressSettings } from './AddressSettings';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { SecurityConfirmationModal } from './SecurityConfirmationModal';
+import Image from 'next/image';
 
 export const AccountSettings: React.FC = () => {
   const [deleteStatus, setDeleteStatus] = useState<DeleteAccountStatus | null>(null);
@@ -28,6 +29,7 @@ export const AccountSettings: React.FC = () => {
   const [profile, setProfile] = useState<StoreProfile | null>(null);
   const [tradeName, setTradeName] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
+  const [imgError, setImgError] = useState(false);
   
   // Security Modal
   const [showSecurityModal, setShowSecurityModal] = useState(false);
@@ -37,6 +39,10 @@ export const AccountSettings: React.FC = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [profilePictureUrl]);
 
   const loadData = async () => {
     try {
@@ -170,13 +176,14 @@ export const AccountSettings: React.FC = () => {
               </div>
               <div className="w-16 h-16 rounded-lg border border-border bg-muted flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
                 {profilePictureUrl ? (
-                  <img 
-                    src={profilePictureUrl} 
+                  <Image 
+                    src={imgError ? 'https://via.placeholder.com/150?text=Erro' : profilePictureUrl} 
                     alt="Preview" 
+                    width={64}
+                    height={64}
                     className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Erro';
-                    }}
+                    unoptimized
+                    onError={() => setImgError(true)}
                   />
                 ) : (
                   <div className="text-muted-foreground">

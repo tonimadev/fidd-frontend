@@ -14,7 +14,7 @@ import { MobileStoreNearbyResponse } from '@/types/mobile-stores';
 import { MobileCard } from '@/components/mobile/MobileCard';
 import { MobileStore } from '@/components/mobile/MobileStore';
 import { DownloadButtons } from '@/components/mobile/DownloadButtons';
-import { AlertCircle, PlusCircle } from 'lucide-react';
+import { AlertCircle, PlusCircle, PartyPopper, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export default function CustomerDashboard() {
@@ -23,8 +23,15 @@ export default function CustomerDashboard() {
   const [stores, setStores] = useState<MobileStoreNearbyResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showRetroactiveAlert, setShowRetroactiveAlert] = useState(false);
 
   const [locationName, setLocationName] = useState('Localizando...');
+
+  useEffect(() => {
+    if (user?.linkedPunchesCount && user.linkedPunchesCount > 0) {
+      setShowRetroactiveAlert(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +92,29 @@ export default function CustomerDashboard() {
   return (
     <MobileLayout>
       <div className="px-6 py-6 space-y-8">
+        {/* Retroactive Points Alert */}
+        {showRetroactiveAlert && user?.linkedPunchesCount && (
+          <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 relative animate-in fade-in slide-in-from-top-4 duration-500">
+            <button 
+              onClick={() => setShowRetroactiveAlert(false)}
+              className="absolute top-2 right-2 p-1 text-amber-500 hover:text-amber-700 transition-colors"
+            >
+              <X size={16} />
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="bg-amber-100 p-2 rounded-xl">
+                <PartyPopper className="text-amber-600" size={24} />
+              </div>
+              <div className="pr-6">
+                <h4 className="font-black text-amber-900 text-sm uppercase tracking-tight">Pontos Recuperados!</h4>
+                <p className="text-xs text-amber-800 font-medium">
+                  Parabéns! Encontramos <span className="font-black text-amber-900">{user.linkedPunchesCount}</span> {user.linkedPunchesCount === 1 ? 'carimbo' : 'carimbos'} anteriores vinculados ao seu e-mail!
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Welcome Section */}
         <div className="bg-primary p-6 rounded-[2rem] text-white shadow-xl shadow-primary/20">
           <div className="flex items-center gap-4 mb-4">
