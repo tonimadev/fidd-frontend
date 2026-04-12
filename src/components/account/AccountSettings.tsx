@@ -115,7 +115,7 @@ export const AccountSettings: React.FC = () => {
 
   const handleDeleteSuccess = () => {
     setShowDeleteModal(false);
-    loadDeleteStatus();
+    loadData();
   };
 
   const isPendingDeletion = deleteStatus?.status === 'PENDING_DELETION';
