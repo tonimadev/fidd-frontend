@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { campaignService } from '@/lib/campaign-service';
-import { stampService } from '@/lib/stamp-service';
+import { stampService, ManualPunchResponse } from '@/lib/stamp-service';
 import { Campaign } from '@/types/campaign';
 import { AxiosError } from 'axios';
 import { ApiError } from '@/types/auth';
