@@ -82,10 +82,10 @@ export const AccountSettings: React.FC = () => {
     } catch (error: unknown) {
       const axiosError = error as AxiosError<ApiError>;
       const errorMsg = axiosError.response?.data?.message || '';
-      if (errorMsg === 'REQUIRE_PASSWORD_CREATION') {
+      if (axiosError.response?.status === 403 || errorMsg === 'REQUIRE_PASSWORD_CREATION') {
         setRequirePasswordCreation(true);
         setSecurityError('REQUIRE_PASSWORD_CREATION');
-      } else if (errorMsg === 'authentication.invalid.password') {
+      } else if (errorMsg === 'authentication.invalid.password' || axiosError.response?.status === 401) {
         setSecurityError('Senha incorreta');
       } else {
         setSecurityError('Erro ao atualizar perfil');
