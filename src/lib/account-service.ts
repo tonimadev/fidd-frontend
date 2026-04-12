@@ -20,6 +20,13 @@ export const accountService = {
   },
 
   /**
+   * Atualiza o perfil da loja
+   */
+  async updateProfile(data: StoreProfileUpdateRequest): Promise<void> {
+    await apiClient.put(PROFILE_BASE_URL, data);
+  },
+
+  /**
    * Atualiza o endereço da loja
    */
   async updateAddress(data: StoreProfileUpdateRequest): Promise<void> {

@@ -6,32 +6,92 @@
 
 import React, { useState, useEffect } from 'react';
 import { accountService } from '@/lib/account-service';
-import { DeleteAccountStatus } from '@/types/account';
+import { DeleteAccountStatus, StoreProfile } from '@/types/account';
+import { ApiError } from '@/types/auth';
+import { AxiosError } from 'axios';
 import { DeleteAccountModal } from './DeleteAccountModal';
 import { ApiKeysSettings } from './ApiKeysSettings';
 import { AddressSettings } from './AddressSettings';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { SecurityConfirmationModal } from './SecurityConfirmationModal';
 
 export const AccountSettings: React.FC = () => {
   const [deleteStatus, setDeleteStatus] = useState<DeleteAccountStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  // Profile fields
+  const [profile, setProfile] = useState<StoreProfile | null>(null);
+  const [tradeName, setTradeName] = useState('');
+  
+  // Security Modal
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [requirePasswordCreation, setRequirePasswordCreation] = useState(false);
+  const [securityError, setSecurityError] = useState('');
 
   useEffect(() => {
-    loadDeleteStatus();
+    loadData();
   }, []);
 
-  const loadDeleteStatus = async () => {
+  const loadData = async () => {
     try {
       setIsLoading(true);
       setErrorMessage('');
-      const status = await accountService.getDeleteStatus();
+      const [status, profileData] = await Promise.all([
+        accountService.getDeleteStatus(),
+        accountService.getProfile()
+      ]);
       setDeleteStatus(status);
+      setProfile(profileData);
+      setTradeName(profileData.tradeName);
     } catch (error) {
-      setErrorMessage('Erro ao carregar status da conta. Tente novamente.');
-      console.error('Erro ao carregar status:', error);
+      setErrorMessage('Erro ao carregar dados da conta. Tente novamente.');
+      console.error('Erro ao carregar dados:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleUpdateProfileClick = () => {
+    if (!tradeName.trim()) {
+      setErrorMessage('O nome da loja não pode estar vazio.');
+      return;
+    }
+    setSecurityError('');
+    setShowSecurityModal(true);
+  };
+
+  const confirmProfileUpdate = async (password: string) => {
+    try {
+      setIsSaving(true);
+      setSecurityError('');
+      setSuccessMessage('');
+      
+      await accountService.updateProfile({
+        tradeName,
+        currentPassword: password
+      });
+      
+      setSuccessMessage('Perfil atualizado com sucesso!');
+      setShowSecurityModal(false);
+      setRequirePasswordCreation(false);
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<ApiError>;
+      const errorMsg = axiosError.response?.data?.message || '';
+      if (errorMsg === 'REQUIRE_PASSWORD_CREATION') {
+        setRequirePasswordCreation(true);
+        setSecurityError('REQUIRE_PASSWORD_CREATION');
+      } else if (errorMsg === 'authentication.invalid.password') {
+        setSecurityError('Senha incorreta');
+      } else {
+        setSecurityError('Erro ao atualizar perfil');
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -77,6 +137,48 @@ export const AccountSettings: React.FC = () => {
           <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
         </div>
       )}
+
+      {successMessage && (
+        <div className="rounded-lg bg-emerald-500/10 p-4 border border-emerald-500/20">
+          <p className="text-sm text-emerald-600 dark:text-emerald-400">{successMessage}</p>
+        </div>
+      )}
+
+      {/* Seção de Informações Básicas */}
+      <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-foreground">Informações Básicas</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Altere as informações públicas do seu estabelecimento.
+          </p>
+        </div>
+
+        <div className="space-y-4 max-w-md">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Nome do Estabelecimento</label>
+            <Input 
+              value={tradeName}
+              onChange={(e) => setTradeName(e.target.value)}
+              placeholder="Ex: Pizzaria do Zé"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">E-mail de Contato</label>
+            <Input 
+              value={profile?.email || ''} 
+              disabled 
+              className="bg-muted cursor-not-allowed"
+            />
+            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">O e-mail não pode ser alterado</p>
+          </div>
+
+          <div className="pt-2">
+            <Button onClick={handleUpdateProfileClick}>
+              Salvar Alterações
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {/* Seção de Localização */}
       <AddressSettings />
@@ -160,6 +262,16 @@ export const AccountSettings: React.FC = () => {
           onCancel={() => setShowDeleteModal(false)}
         />
       )}
+
+      {/* Modal de Segurança */}
+      <SecurityConfirmationModal
+        isOpen={showSecurityModal}
+        onClose={() => setShowSecurityModal(false)}
+        onConfirm={confirmProfileUpdate}
+        isLoading={isSaving}
+        error={securityError}
+        requirePasswordCreation={requirePasswordCreation}
+      />
     </div>
   );
 };

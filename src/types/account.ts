@@ -38,8 +38,10 @@ export interface StoreProfile {
 }
 
 export interface StoreProfileUpdateRequest {
-  address: string;
-  latitude: number;
-  longitude: number;
+  tradeName: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  currentPassword?: string;
 }
 
