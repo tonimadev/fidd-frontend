@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { RoiSimulator } from '@/components/RoiSimulator';
+import { AppScreenshotsCarousel } from '@/components/AppScreenshotsCarousel';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -224,29 +225,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="relative">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[1, 2, 3, 4].map((num) => (
-                <div key={num} className="relative group transition-all hover:-translate-y-2">
-                  <div className="absolute -inset-1 bg-gradient-to-b from-primary/20 to-accent/20 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative bg-background rounded-[2.5rem] p-4 shadow-2xl border border-border overflow-hidden ring-8 ring-slate-900/5">
-                    <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[1.5rem] bg-slate-100">
-                      <Image
-                        src={`/screenshots/${num}.png`}
-                        alt={`Screenshot do App ${num}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4 text-center">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">App View {num}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <AppScreenshotsCarousel />
         </div>
       </section>
 
