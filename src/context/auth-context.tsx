@@ -44,7 +44,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 tradeName: userData.tradeName,
                 email: userData.email,
                 role: userData.role,
-                plan: userData.plan
+                plan: userData.plan,
+                profilePictureUrl: userData.profilePictureUrl
               };
               setUser(updatedUser);
               localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -72,7 +73,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           tradeName: userData.tradeName,
           email: userData.email,
           role: userData.role,
-          plan: userData.plan
+          plan: userData.plan,
+          profilePictureUrl: userData.profilePictureUrl
         };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -96,6 +98,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         email: response.email,
         role: response.role,
         plan: response.plan,
+        profilePictureUrl: response.profilePictureUrl,
       };
 
       localStorage.setItem('authToken', response.token);

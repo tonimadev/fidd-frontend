@@ -175,9 +175,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="h-px bg-border mx-3 opacity-50"></div>
 
         <div className="flex items-center gap-3 px-3 py-1">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
-            {user?.tradeName?.charAt(0).toUpperCase() || 'L'}
-          </div>
+          {user?.profilePictureUrl ? (
+            <img 
+              src={user.profilePictureUrl} 
+              alt={user.tradeName} 
+              className="w-8 h-8 rounded-full object-cover border border-border shrink-0"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=' + (user?.tradeName?.charAt(0) || 'L');
+              }}
+            />
+          ) : (
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+              {user?.tradeName?.charAt(0).toUpperCase() || 'L'}
+            </div>
+          )}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold truncate text-foreground">{user?.tradeName}</p>
             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>

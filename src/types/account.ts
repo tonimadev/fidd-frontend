@@ -35,6 +35,7 @@ export interface StoreProfile {
   address: string | null;
   latitude: number | null;
   longitude: number | null;
+  profilePictureUrl?: string | null;
 }
 
 export interface StoreProfileUpdateRequest {
@@ -42,6 +43,7 @@ export interface StoreProfileUpdateRequest {
   address?: string;
   latitude?: number;
   longitude?: number;
+  profilePictureUrl?: string;
   currentPassword?: string;
 }
 

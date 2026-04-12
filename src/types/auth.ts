@@ -10,6 +10,7 @@ export interface AuthResponse {
   email: string;
   role: string;
   plan?: string;
+  profilePictureUrl?: string;
   isNewUser?: boolean;
 }
 
@@ -32,6 +33,7 @@ export interface User {
   email: string;
   role: string;
   plan?: string;
+  profilePictureUrl?: string;
   isNewUser?: boolean;
 }
 

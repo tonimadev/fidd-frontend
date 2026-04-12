@@ -27,6 +27,7 @@ export const AccountSettings: React.FC = () => {
   // Profile fields
   const [profile, setProfile] = useState<StoreProfile | null>(null);
   const [tradeName, setTradeName] = useState('');
+  const [profilePictureUrl, setProfilePictureUrl] = useState('');
   
   // Security Modal
   const [showSecurityModal, setShowSecurityModal] = useState(false);
@@ -48,6 +49,7 @@ export const AccountSettings: React.FC = () => {
       setDeleteStatus(status);
       setProfile(profileData);
       setTradeName(profileData.tradeName);
+      setProfilePictureUrl(profileData.profilePictureUrl || '');
     } catch (error) {
       setErrorMessage('Erro ao carregar dados da conta. Tente novamente.');
       console.error('Erro ao carregar dados:', error);
@@ -73,6 +75,7 @@ export const AccountSettings: React.FC = () => {
       
       await accountService.updateProfile({
         tradeName,
+        profilePictureUrl,
         currentPassword: password
       });
       
@@ -154,6 +157,37 @@ export const AccountSettings: React.FC = () => {
         </div>
 
         <div className="space-y-4 max-w-md">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Imagem do Estabelecimento (URL)</label>
+            <div className="flex gap-4 items-start">
+              <div className="flex-1 space-y-2">
+                <Input 
+                  value={profilePictureUrl}
+                  onChange={(e) => setProfilePictureUrl(e.target.value)}
+                  placeholder="https://exemplo.com/foto.jpg"
+                />
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Insira a URL de uma imagem quadrada (Ex: 512x512)</p>
+              </div>
+              <div className="w-16 h-16 rounded-lg border border-border bg-muted flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+                {profilePictureUrl ? (
+                  <img 
+                    src={profilePictureUrl} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Erro';
+                    }}
+                  />
+                ) : (
+                  <div className="text-muted-foreground">
+                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 16m-7-4a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Nome do Estabelecimento</label>
             <Input 
