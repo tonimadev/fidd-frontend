@@ -38,7 +38,7 @@ export interface StoreProfile {
 }
 
 export interface StoreProfileUpdateRequest {
-  tradeName: string;
+  tradeName?: string;
   address?: string;
   latitude?: number;
   longitude?: number;
