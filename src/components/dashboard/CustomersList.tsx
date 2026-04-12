@@ -176,6 +176,28 @@ export const CustomersList: React.FC = () => {
                     <p className="text-lg font-bold text-foreground">{customer.totalCards}</p>
                   </div>
                 </div>
+
+                {customer.cards && customer.cards.length > 0 && (
+                  <div className="mt-4 space-y-3">
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Progresso dos Cartões</p>
+                    {customer.cards
+                      .filter(card => card.status === 'IN_PROGRESS')
+                      .map(card => (
+                        <div key={card.id} className="space-y-1">
+                          <div className="flex justify-between text-[10px]">
+                            <span className="font-medium truncate max-w-[120px]">{card.campaignName}</span>
+                            <span className="font-bold">{card.currentPoints}/{card.pointsRequired}</span>
+                          </div>
+                          <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                            <div 
+                              className="bg-primary h-full transition-all duration-500" 
+                              style={{ width: `${(card.currentPoints / card.pointsRequired) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                    ))}
+                  </div>
+                )}
                 <div className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

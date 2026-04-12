@@ -9,10 +9,19 @@ const STAMPS_BASE_URL = '/api/v1/stamps';
 export interface ManualPunchRequest {
   identifier: string;
   campaignId: number;
+  punchCount?: number;
+  bypassWarnings?: boolean;
 }
 
 export interface ManualPunchResponse {
   message: string;
+  warning?: {
+    cardsNeeded: number;
+    cardsAvailable: number;
+    currentPoints: number;
+    pointsRequired: number;
+    punchesRemainingToComplete: number;
+  };
 }
 
 export const stampService = {
