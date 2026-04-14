@@ -8,6 +8,8 @@ import { useAuth } from '@/context/auth-context';
 import { 
   LayoutDashboard, 
   Store, 
+  Users,
+  Megaphone,
   LogOut, 
   ChevronRight
 } from 'lucide-react';
@@ -26,6 +28,16 @@ export const AdminSidebar: React.FC = () => {
       title: 'Lojistas',
       href: '/admin/stores',
       icon: Store,
+    },
+    {
+      title: 'Clientes',
+      href: '/admin/customers',
+      icon: Users,
+    },
+    {
+      title: 'Campanhas',
+      href: '/admin/campaigns',
+      icon: Megaphone,
     },
   ];
 
