@@ -49,6 +49,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 emailVerified: userData.emailVerified
               };
               setUser(updatedUser);
+              setIsAuthenticated(!!storedToken && userData.emailVerified !== false);
               localStorage.setItem('user', JSON.stringify(updatedUser));
             }
           }
@@ -79,6 +80,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           emailVerified: userData.emailVerified
         };
         setUser(updatedUser);
+        setIsAuthenticated(!!localStorage.getItem('authToken') && userData.emailVerified !== false);
         localStorage.setItem('user', JSON.stringify(updatedUser));
       }
     } catch (error) {

@@ -41,6 +41,18 @@ export const MobileLoginForm: React.FC = () => {
     mode: 'onBlur',
   });
 
+  // Verifica se já existe um usuário no localStorage pendente de verificação
+  React.useEffect(() => {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const userData = JSON.parse(userJson);
+      if (userData.emailVerified === false && userData.email) {
+        setUserEmail(userData.email);
+        setShowEmailVerificationModal(true);
+      }
+    }
+  }, []);
+
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsSubmitting(true);

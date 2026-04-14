@@ -46,6 +46,18 @@ export const RegisterForm: React.FC = () => {
     },
   });
 
+  // Verifica se já existe um usuário no localStorage pendente de verificação
+  React.useEffect(() => {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const userData = JSON.parse(userJson);
+      if (userData.emailVerified === false && userData.email) {
+        setUserEmail(userData.email);
+        setShowEmailVerificationModal(true);
+      }
+    }
+  }, []);
+
   // Atualiza campos se o usuário autenticar com Google SSO (novo usuário)
   React.useEffect(() => {
     if (user && user.isNewUser) {
