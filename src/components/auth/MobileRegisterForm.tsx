@@ -92,7 +92,13 @@ export const MobileRegisterForm: React.FC = () => {
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 400) {
         const apiMessage = error.response.data?.message || '';
-        if (apiMessage === 'authentication.email.not.verified' || apiMessage.toLowerCase().includes('e-mail não verificado')) {
+        const lowerMessage = apiMessage.toLowerCase();
+        if (
+          apiMessage === 'authentication.email.not.verified' || 
+          lowerMessage.includes('e-mail não verificado') ||
+          lowerMessage.includes('email não verificado') ||
+          lowerMessage.includes('validar o código')
+        ) {
            setUserEmail(data.email);
            setTempCredentials({ email: data.email, password: data.password });
            setShowEmailVerificationModal(true);
