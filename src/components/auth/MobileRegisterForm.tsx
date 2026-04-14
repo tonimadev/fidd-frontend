@@ -12,6 +12,7 @@ import { useMobileAuth } from '@/context/mobile-auth-context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { analyticsService } from '@/lib/analytics';
+import { mobileCardService } from '@/lib/mobile-card-service';
 import { storage } from '@/lib/storage';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
