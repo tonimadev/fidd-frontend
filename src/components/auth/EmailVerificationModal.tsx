@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { authService } from '@/lib/auth-service';
+import { analyticsService } from '@/lib/analytics';
 import { AxiosError } from 'axios';
 
 interface EmailVerificationModalProps {
@@ -47,11 +48,13 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
       setIsLoading(true);
       setErrorMessage('');
       await authService.verifyEmail(email, code);
+      analyticsService.track('email_verification', { status: 'success' });
       setSuccessMessage('E-mail verificado com sucesso!');
       setTimeout(() => {
         onSuccess();
       }, 1500);
     } catch (error) {
+      analyticsService.track('email_verification', { status: 'failed' });
       const axiosError = error as AxiosError<{ message?: string }>;
       const message = axiosError.response?.data?.message === 'validation.invalid.verification.code'
         ? 'Código inválido. Verifique e tente novamente.'

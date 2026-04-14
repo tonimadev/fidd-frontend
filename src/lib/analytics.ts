@@ -10,8 +10,12 @@ export type AnalyticsEvents = {
   // Autenticação
   login: { method: 'email' | 'google' };
   login_failed: { method: 'email' | 'google'; error_type?: string };
+  registration: { method: 'email' | 'google' };
+  registration_failed: { method: 'email' | 'google'; error_type?: string };
   logout: undefined;
   account_reactivation: { status: 'success' | 'failed' };
+  email_verification: { status: 'success' | 'failed' };
+  email_verification_requested: { user_type: 'customer' | 'store' };
   forgot_password_click: undefined;
   navigate_to_register: undefined;
   

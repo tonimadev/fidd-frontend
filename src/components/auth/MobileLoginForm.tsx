@@ -12,6 +12,7 @@ import { useMobileAuth } from '@/context/mobile-auth-context';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { mobileCardService } from '@/lib/mobile-card-service';
+import { analyticsService } from '@/lib/analytics';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -45,7 +46,8 @@ export const MobileLoginForm: React.FC = () => {
       setIsSubmitting(true);
       setErrorMessage('');
       await login(data.email, data.password);
-
+      analyticsService.track('login', { method: 'email' });
+      
       // Resgatar convite se houver token
       if (inviteToken) {
         try {
@@ -67,6 +69,7 @@ export const MobileLoginForm: React.FC = () => {
            return;
         }
       }
+      analyticsService.track('login_failed', { method: 'email', error_type: 'bad_credentials' });
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao fazer login. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
@@ -75,6 +78,7 @@ export const MobileLoginForm: React.FC = () => {
 
   const handleEmailVerificationSuccess = async () => {
     setShowEmailVerificationModal(false);
+    analyticsService.track('email_verification', { status: 'success' });
     try {
       if (tempCredentials) {
         setIsSubmitting(true);

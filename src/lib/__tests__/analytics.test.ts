@@ -76,7 +76,7 @@ describe('AnalyticsService', () => {
     };
 
     // @ts-expect-error - Testando proteção em runtime
-    analyticsService.track('subscription_plan_viewed', paramsWithInvalidTypes);
+    analyticsService.track('subscription_plan_viewed', paramsWithInvalidTypes as unknown as Record<string, string | number | boolean>);
 
     expect(logEvent).toHaveBeenCalledWith(
       expect.anything(),

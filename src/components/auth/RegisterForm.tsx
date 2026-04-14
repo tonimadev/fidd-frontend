@@ -11,6 +11,7 @@ import { registerSchema, RegisterFormData } from '@/lib/validations';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
+import { analyticsService } from '@/lib/analytics';
 import Link from 'next/link';
 import { GoogleLogin } from '@react-oauth/google';
 import { Input } from '@/components/ui/Input';
@@ -68,6 +69,7 @@ export const RegisterForm: React.FC = () => {
       setIsSubmitting(true);
       setErrorMessage('');
       await registerUser(data.tradeName, data.taxId, data.email, data.password);
+      analyticsService.track('registration', { method: 'email' });
       reset();
       router.push('/dashboard');
     } catch (error) {
@@ -80,6 +82,7 @@ export const RegisterForm: React.FC = () => {
            return;
         }
       }
+      analyticsService.track('registration_failed', { method: 'email', error_type: 'bad_request' });
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar conta. Tente novamente.'));
     } finally {
       setIsSubmitting(false);
@@ -88,6 +91,7 @@ export const RegisterForm: React.FC = () => {
 
   const handleEmailVerificationSuccess = async () => {
     setShowEmailVerificationModal(false);
+    analyticsService.track('email_verification', { status: 'success' });
     try {
       if (tempCredentials) {
         setIsSubmitting(true);
