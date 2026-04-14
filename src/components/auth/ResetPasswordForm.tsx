@@ -47,6 +47,11 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
       });
       setIsSuccess(true);
       
+      // Limpa dados de usuário local para garantir que não caia em fluxos de verificação antigos
+      // já que a senha mudou e o email foi validado automaticamente no backend
+      localStorage.removeItem('user');
+      localStorage.removeItem('authToken');
+      
       // Redireciona após 3 segundos
       setTimeout(() => {
         router.push('/login');
