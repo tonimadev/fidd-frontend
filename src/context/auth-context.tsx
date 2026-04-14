@@ -30,8 +30,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         try {
           const parsedUser = JSON.parse(storedUser);
           
-          // Verificar se é um usuário lojista (tem storeId)
-          if (parsedUser.storeId) {
+          // Verificar se é um usuário lojista (tem storeId) ou administrador
+          if (parsedUser.storeId || parsedUser.role === 'ADMIN') {
             setToken(storedToken);
             setUser(parsedUser);
             setIsAuthenticated(!!storedToken && parsedUser.emailVerified !== false);

@@ -76,6 +76,17 @@ export const LoginForm: React.FC = () => {
       }
 
       reset();
+      
+      // Redirecionar baseado na role
+      const userJsonAfterLogin = localStorage.getItem('user');
+      if (userJsonAfterLogin) {
+        const userData = JSON.parse(userJsonAfterLogin);
+        if (userData.role === 'ADMIN') {
+          router.push('/admin/dashboard');
+          return;
+        }
+      }
+
       router.push('/dashboard');
     } catch (error) {
       analyticsService.track('login_failed', { method: 'email', error_type: 'bad_credentials' });
@@ -123,6 +134,17 @@ export const LoginForm: React.FC = () => {
         await login(loginCredentials.email, loginCredentials.password);
       }
       reset();
+      
+      // Redirecionar baseado na role
+      const userJsonAfterReactivate = localStorage.getItem('user');
+      if (userJsonAfterReactivate) {
+        const userData = JSON.parse(userJsonAfterReactivate);
+        if (userData.role === 'ADMIN') {
+          router.push('/admin/dashboard');
+          return;
+        }
+      }
+
       router.push('/dashboard');
     } catch {
       setErrorMessage('Conta reativada, mas erro ao fazer login automático. Por favor, entre manualmente.');
@@ -145,6 +167,17 @@ export const LoginForm: React.FC = () => {
         setIsSubmitting(true);
         await login(loginCredentials.email, loginCredentials.password);
         reset();
+        
+        // Redirecionar baseado na role
+        const userJsonAfterVerify = localStorage.getItem('user');
+        if (userJsonAfterVerify) {
+          const userData = JSON.parse(userJsonAfterVerify);
+          if (userData.role === 'ADMIN') {
+            router.push('/admin/dashboard');
+            return;
+          }
+        }
+
         router.push('/dashboard');
       }
     } catch {
@@ -229,6 +262,12 @@ export const LoginForm: React.FC = () => {
                   const userData = JSON.parse(userJson);
                   if (userData.isNewUser) {
                     router.push('/register');
+                    return;
+                  }
+
+                  // Redirecionar baseado na role
+                  if (userData.role === 'ADMIN') {
+                    router.push('/admin/dashboard');
                     return;
                   }
                 }
