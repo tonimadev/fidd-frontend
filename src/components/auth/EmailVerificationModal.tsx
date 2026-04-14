@@ -11,12 +11,14 @@ import { AxiosError } from 'axios';
 
 interface EmailVerificationModalProps {
   email: string;
+  userType?: 'STORE' | 'CUSTOMER';
   onSuccess: () => void;
   onCancel: () => void;
 }
 
 export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
   email,
+  userType = 'STORE',
   onSuccess,
   onCancel,
 }) => {
@@ -47,7 +49,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     try {
       setIsLoading(true);
       setErrorMessage('');
-      await authService.verifyEmail(email, code);
+      await authService.verifyEmail(email, code, userType);
       analyticsService.track('email_verification', { status: 'success' });
       setSuccessMessage('E-mail verificado com sucesso!');
       setTimeout(() => {
@@ -71,7 +73,7 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     try {
       setIsResending(true);
       setErrorMessage('');
-      await authService.requestEmailCode(email);
+      await authService.requestEmailCode(email, userType);
       setSuccessMessage('Novo código enviado para seu e-mail!');
       setTimer(60);
       setTimeout(() => setSuccessMessage(''), 3000);

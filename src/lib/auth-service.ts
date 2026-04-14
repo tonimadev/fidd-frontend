@@ -74,15 +74,15 @@ export const authService = {
   /**
    * Solicita um código de verificação de e-mail
    */
-  async requestEmailCode(email: string): Promise<void> {
-    await apiClient.post('/api/auth/email/request-code', { email });
+  async requestEmailCode(email: string, userType: 'STORE' | 'CUSTOMER' = 'STORE'): Promise<void> {
+    await apiClient.post('/api/auth/email/request-code', { email, userType });
   },
 
   /**
    * Verifica o e-mail utilizando o código
    */
-  async verifyEmail(email: string, code: string): Promise<void> {
-    await apiClient.post('/api/auth/email/verify', { email, code });
+  async verifyEmail(email: string, code: string, userType: 'STORE' | 'CUSTOMER' = 'STORE'): Promise<void> {
+    await apiClient.post('/api/auth/email/verify', { email, code, userType });
   },
 };
 

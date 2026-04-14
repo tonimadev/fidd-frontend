@@ -266,6 +266,7 @@ export const MobileRegisterForm: React.FC = () => {
       {showEmailVerificationModal && (
         <EmailVerificationModal
           email={userEmail}
+          userType="CUSTOMER"
           onSuccess={handleEmailVerificationSuccess}
           onCancel={() => setShowEmailVerificationModal(false)}
         />

@@ -266,6 +266,7 @@ export const LoginForm: React.FC = () => {
       {showEmailVerificationModal && (
         <EmailVerificationModal
           email={userEmail}
+          userType="STORE"
           onSuccess={handleEmailVerificationSuccess}
           onCancel={handleEmailVerificationCancel}
         />
