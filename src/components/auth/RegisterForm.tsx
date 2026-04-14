@@ -16,13 +16,18 @@ import { GoogleLogin } from '@react-oauth/google';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Eye, EyeOff } from 'lucide-react';
+import { EmailVerificationModal } from '@/components/auth/EmailVerificationModal';
+import axios from 'axios';
 
 export const RegisterForm: React.FC = () => {
   const router = useRouter();
-  const { register: registerUser, loginWithGoogle, user } = useAuth();
+  const { register: registerUser, loginWithGoogle, user, login } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [tempCredentials, setTempCredentials] = useState<{email: string, password: string} | null>(null);
 
   const {
     register,
@@ -66,7 +71,32 @@ export const RegisterForm: React.FC = () => {
       reset();
       router.push('/dashboard');
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        const apiMessage = error.response.data?.message || '';
+        if (apiMessage === 'authentication.email.not.verified' || apiMessage.toLowerCase().includes('e-mail não verificado')) {
+           setUserEmail(data.email);
+           setTempCredentials({ email: data.email, password: data.password });
+           setShowEmailVerificationModal(true);
+           return;
+        }
+      }
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao criar conta. Tente novamente.'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEmailVerificationSuccess = async () => {
+    setShowEmailVerificationModal(false);
+    try {
+      if (tempCredentials) {
+        setIsSubmitting(true);
+        await login(tempCredentials.email, tempCredentials.password);
+        reset();
+        router.push('/dashboard');
+      }
+    } catch {
+      setErrorMessage('E-mail verificado, mas erro ao fazer login automático. Por favor, entre manualmente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -299,6 +329,14 @@ export const RegisterForm: React.FC = () => {
           Fazer login
         </Link>
       </p>
+
+      {showEmailVerificationModal && (
+        <EmailVerificationModal
+          email={userEmail}
+          onSuccess={handleEmailVerificationSuccess}
+          onCancel={() => setShowEmailVerificationModal(false)}
+        />
+      )}
     </form>
   );
 };

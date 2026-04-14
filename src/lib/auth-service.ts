@@ -70,5 +70,19 @@ export const authService = {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   },
+
+  /**
+   * Solicita um código de verificação de e-mail
+   */
+  async requestEmailCode(email: string): Promise<void> {
+    await apiClient.post('/api/auth/email/request-code', { email });
+  },
+
+  /**
+   * Verifica o e-mail utilizando o código
+   */
+  async verifyEmail(email: string, code: string): Promise<void> {
+    await apiClient.post('/api/auth/email/verify', { email, code });
+  },
 };
 

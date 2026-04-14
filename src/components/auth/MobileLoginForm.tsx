@@ -16,6 +16,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { GoogleLogin } from '@react-oauth/google';
+import { EmailVerificationModal } from '@/components/auth/EmailVerificationModal';
+import axios from 'axios';
 
 export const MobileLoginForm: React.FC = () => {
   const router = useRouter();
@@ -24,6 +26,9 @@ export const MobileLoginForm: React.FC = () => {
   const { login, loginWithGoogle } = useMobileAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [tempCredentials, setTempCredentials] = useState<{email: string, password: string} | null>(null);
 
   const {
     register,
@@ -53,7 +58,37 @@ export const MobileLoginForm: React.FC = () => {
       reset();
       router.push('/app');
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        const apiMessage = error.response.data?.message || '';
+        if (apiMessage === 'authentication.email.not.verified' || apiMessage.toLowerCase().includes('e-mail não verificado')) {
+           setUserEmail(data.email);
+           setTempCredentials({ email: data.email, password: data.password });
+           setShowEmailVerificationModal(true);
+           return;
+        }
+      }
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao fazer login. Tente novamente.'));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEmailVerificationSuccess = async () => {
+    setShowEmailVerificationModal(false);
+    try {
+      if (tempCredentials) {
+        setIsSubmitting(true);
+        await login(tempCredentials.email, tempCredentials.password);
+        
+        if (inviteToken) {
+          await mobileCardService.redeemInvitation(inviteToken);
+        }
+
+        reset();
+        router.push('/app');
+      }
+    } catch {
+      setErrorMessage('E-mail verificado, mas erro ao fazer login automático. Por favor, entre manualmente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -167,6 +202,14 @@ export const MobileLoginForm: React.FC = () => {
           Criar conta de cliente
         </Link>
       </p>
+
+      {showEmailVerificationModal && (
+        <EmailVerificationModal
+          email={userEmail}
+          onSuccess={handleEmailVerificationSuccess}
+          onCancel={() => setShowEmailVerificationModal(false)}
+        />
+      )}
     </form>
   );
 };

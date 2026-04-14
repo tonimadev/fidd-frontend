@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import Link from 'next/link';
 import { ReactivateAccountModal } from '@/components/account/ReactivateAccountModal';
+import { EmailVerificationModal } from '@/components/auth/EmailVerificationModal';
 import { accountService } from '@/lib/account-service';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -27,6 +28,8 @@ export const LoginForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReactivateModal, setShowReactivateModal] = useState(false);
+  const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
   const [loginCredentials, setLoginCredentials] = useState<LoginRequest | undefined>();
 
   const {
@@ -64,15 +67,28 @@ export const LoginForm: React.FC = () => {
       router.push('/dashboard');
     } catch (error) {
       analyticsService.track('login_failed', { method: 'email', error_type: 'bad_credentials' });
-      // Cenário B: API retorna 400 se a conta estiver em processo de exclusão
+      // Cenário B: API retorna 400 se a conta estiver em processo de exclusão ou e-mail não verificado
       if (axios.isAxiosError(error) && error.response?.status === 400) {
         const apiMessage = error.response.data?.message || '';
+        
+        // Conta em exclusão
         if (
           apiMessage === 'account.deletion.pending.login' || 
           apiMessage.toLowerCase().includes('exclusão')
         ) {
           setLoginCredentials({ email: data.email, password: data.password });
           setShowReactivateModal(true);
+          return;
+        }
+
+        // E-mail não verificado
+        if (
+          apiMessage === 'authentication.email.not.verified' ||
+          apiMessage.toLowerCase().includes('e-mail não verificado')
+        ) {
+          setUserEmail(data.email);
+          setLoginCredentials({ email: data.email, password: data.password });
+          setShowEmailVerificationModal(true);
           return;
         }
       }
@@ -106,6 +122,28 @@ export const LoginForm: React.FC = () => {
   const handleReactivateCancel = () => {
     setShowReactivateModal(false);
     router.push('/login');
+  };
+
+  const handleEmailVerificationSuccess = async () => {
+    setShowEmailVerificationModal(false);
+    analyticsService.track('email_verification', { status: 'success' });
+
+    try {
+      if (loginCredentials) {
+        setIsSubmitting(true);
+        await login(loginCredentials.email, loginCredentials.password);
+        reset();
+        router.push('/dashboard');
+      }
+    } catch {
+      setErrorMessage('E-mail verificado, mas erro ao fazer login automático. Por favor, entre manualmente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEmailVerificationCancel = () => {
+    setShowEmailVerificationModal(false);
   };
 
   return (
@@ -222,6 +260,14 @@ export const LoginForm: React.FC = () => {
           onSuccess={handleReactivateSuccess}
           onCancel={handleReactivateCancel}
           credentials={loginCredentials}
+        />
+      )}
+
+      {showEmailVerificationModal && (
+        <EmailVerificationModal
+          email={userEmail}
+          onSuccess={handleEmailVerificationSuccess}
+          onCancel={handleEmailVerificationCancel}
         />
       )}
     </form>
