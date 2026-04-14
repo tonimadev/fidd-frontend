@@ -51,10 +51,16 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         try {
           const userData = await mobileAuthService.getCurrentUser();
           if (userData) {
+            const userId = userData.id || userData.userId;
+            
+            if (userId === undefined) {
+              throw new Error('User ID not found in profile response');
+            }
+
             const userObj: MobileUser = {
-              userId: userData.id || userData.userId,
-              name: userData.name,
-              email: userData.email,
+              userId: userId,
+              name: userData.name || '',
+              email: userData.email || '',
               role: 'ROLE_CUSTOMER',
               emailVerified: true, // Se conseguiu pegar o perfil, o email está verificado (regra do backend)
               isNewUser: false
