@@ -1,4 +1,6 @@
-import { api } from './api';
+import { apiClient as api } from './api-client';
+
+const ADMIN_BASE_URL = '/api/admin/v1';
 
 export interface AdminStats {
   totalStores: number;
@@ -26,16 +28,16 @@ export interface PagedResponse<T> {
 
 export const adminService = {
   getStats: async (): Promise<AdminStats> => {
-    const response = await api.get<AdminStats>('/admin/v1/stats');
+    const response = await api.get<AdminStats>(`${ADMIN_BASE_URL}/stats`);
     return response.data;
   },
 
   getStores: async (page = 0, size = 10): Promise<PagedResponse<AdminStore>> => {
-    const response = await api.get<PagedResponse<AdminStore>>(`/admin/v1/stores?page=${page}&size=${size}`);
+    const response = await api.get<PagedResponse<AdminStore>>(`${ADMIN_BASE_URL}/stores?page=${page}&size=${size}`);
     return response.data;
   },
 
   updateStoreStatus: async (id: number, isActive: boolean): Promise<void> => {
-    await api.patch(`/admin/v1/stores/${id}/status`, { isActive });
+    await api.patch(`${ADMIN_BASE_URL}/stores/${id}/status`, { isActive });
   },
 };
