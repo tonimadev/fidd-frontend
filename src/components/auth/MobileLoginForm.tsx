@@ -48,6 +48,19 @@ export const MobileLoginForm: React.FC = () => {
       await login(data.email, data.password);
       analyticsService.track('login', { method: 'email' });
       
+      // Verifica se o e-mail precisa ser verificado
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const userData = JSON.parse(userJson);
+        if (userData.emailVerified === false) {
+          setUserEmail(data.email);
+          setTempCredentials({ email: data.email, password: data.password });
+          setShowEmailVerificationModal(true);
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       // Resgatar convite se houver token
       if (inviteToken) {
         try {

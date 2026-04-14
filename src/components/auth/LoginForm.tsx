@@ -47,8 +47,20 @@ export const LoginForm: React.FC = () => {
       setIsSubmitting(true);
       setErrorMessage('');
       await login(data.email, data.password);
-
       analyticsService.track('login', { method: 'email' });
+
+      // Verifica se o e-mail precisa ser verificado
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const userData = JSON.parse(userJson);
+        if (userData.emailVerified === false) {
+          setUserEmail(data.email);
+          setLoginCredentials({ email: data.email, password: data.password });
+          setShowEmailVerificationModal(true);
+          setIsSubmitting(false);
+          return;
+        }
+      }
 
       // Verifica se a conta está marcada para deleção (Cenário onde o login ainda funciona)
       try {
