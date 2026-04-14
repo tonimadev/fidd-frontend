@@ -12,6 +12,7 @@ import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { analyticsService } from '@/lib/analytics';
+import { storage } from '@/lib/storage';
 import Link from 'next/link';
 import { GoogleLogin } from '@react-oauth/google';
 import { Input } from '@/components/ui/Input';
@@ -48,7 +49,7 @@ export const RegisterForm: React.FC = () => {
 
   // Verifica se já existe um usuário no localStorage pendente de verificação
   React.useEffect(() => {
-    const userJson = localStorage.getItem('user');
+    const userJson = storage.getItem('user');
     if (userJson) {
       const userData = JSON.parse(userJson);
       if (userData.emailVerified === false && userData.email) {
@@ -84,7 +85,7 @@ export const RegisterForm: React.FC = () => {
       analyticsService.track('registration', { method: 'email' });
       
       // Verifica se o e-mail precisa ser verificado
-      const userJson = localStorage.getItem('user');
+      const userJson = storage.getItem('user');
       if (userJson) {
         const userData = JSON.parse(userJson);
         if (userData.emailVerified === false) {
@@ -331,7 +332,7 @@ export const RegisterForm: React.FC = () => {
                 await loginWithGoogle(credentialResponse.credential);
                 
                 // Verifica se é novo usuário para decidir redirecionamento
-                const userJson = localStorage.getItem('user');
+                const userJson = storage.getItem('user');
                 if (userJson) {
                   const userData = JSON.parse(userJson);
                   if (!userData.isNewUser) {

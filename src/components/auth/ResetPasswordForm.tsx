@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/lib/validations';
+import { storage } from '@/lib/storage';
 import { authService } from '@/lib/auth-service';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { useRouter } from 'next/navigation';
@@ -49,8 +50,8 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
       
       // Limpa dados de usuário local para garantir que não caia em fluxos de verificação antigos
       // já que a senha mudou e o email foi validado automaticamente no backend
-      localStorage.removeItem('user');
-      localStorage.removeItem('authToken');
+      storage.removeItem('user');
+      storage.removeItem('authToken');
       
       // Redireciona após 3 segundos
       setTimeout(() => {

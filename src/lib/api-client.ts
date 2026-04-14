@@ -2,6 +2,7 @@
  * Configuração de cliente API
  */
 
+import { storage } from './storage';
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { ApiError } from '@/types/auth';
 
@@ -12,6 +13,7 @@ export const createApiClient = (): AxiosInstance => {
   // Usar URLs relativas para funcionar com o proxy do Next.js
   const client = axios.create({
     baseURL: '/',
+    withCredentials: true,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -23,7 +25,7 @@ export const createApiClient = (): AxiosInstance => {
   client.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       // Adicionar token de autenticação
-      const token = localStorage.getItem('authToken');
+      const token = storage.getItem('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -57,8 +59,8 @@ export const createApiClient = (): AxiosInstance => {
     (error: AxiosError<ApiError>) => {
       if (error.response?.status === 401) {
         // Token expirado ou inválido
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
+        storage.removeItem('authToken');
+        storage.removeItem('user');
         window.location.href = '/login';
       }
       return Promise.reject(error);

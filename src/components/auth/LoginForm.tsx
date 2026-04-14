@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { ReactivateAccountModal } from '@/components/account/ReactivateAccountModal';
 import { EmailVerificationModal } from '@/components/auth/EmailVerificationModal';
 import { accountService } from '@/lib/account-service';
+import { storage } from '@/lib/storage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import axios from 'axios';
@@ -44,7 +45,7 @@ export const LoginForm: React.FC = () => {
 
   // Verifica se já existe um usuário no localStorage pendente de verificação
   React.useEffect(() => {
-    const userJson = localStorage.getItem('user');
+    const userJson = storage.getItem('user');
     if (userJson) {
       const userData = JSON.parse(userJson);
       if (userData.emailVerified === false && userData.email) {
@@ -62,7 +63,7 @@ export const LoginForm: React.FC = () => {
       analyticsService.track('login', { method: 'email' });
 
       // Verifica se o e-mail precisa ser verificado
-      const userJson = localStorage.getItem('user');
+      const userJson = storage.getItem('user');
       if (userJson) {
         const userData = JSON.parse(userJson);
         if (userData.emailVerified === false) {
@@ -90,7 +91,7 @@ export const LoginForm: React.FC = () => {
       reset();
       
       // Redirecionar baseado na role
-      const userJsonAfterLogin = localStorage.getItem('user');
+      const userJsonAfterLogin = storage.getItem('user');
       if (userJsonAfterLogin) {
         const userData = JSON.parse(userJsonAfterLogin);
         if (userData.role === 'ADMIN') {
@@ -148,7 +149,7 @@ export const LoginForm: React.FC = () => {
       reset();
       
       // Redirecionar baseado na role
-      const userJsonAfterReactivate = localStorage.getItem('user');
+      const userJsonAfterReactivate = storage.getItem('user');
       if (userJsonAfterReactivate) {
         const userData = JSON.parse(userJsonAfterReactivate);
         if (userData.role === 'ADMIN') {
@@ -181,7 +182,7 @@ export const LoginForm: React.FC = () => {
         reset();
         
         // Redirecionar baseado na role
-        const userJsonAfterVerify = localStorage.getItem('user');
+        const userJsonAfterVerify = storage.getItem('user');
         if (userJsonAfterVerify) {
           const userData = JSON.parse(userJsonAfterVerify);
           if (userData.role === 'ADMIN') {
@@ -269,7 +270,7 @@ export const LoginForm: React.FC = () => {
                 analyticsService.track('login', { method: 'google' });
                 
                 // Get user from localStorage to check if new user
-                const userJson = localStorage.getItem('user');
+                const userJson = storage.getItem('user');
                 if (userJson) {
                   const userData = JSON.parse(userJson);
                   if (userData.isNewUser) {

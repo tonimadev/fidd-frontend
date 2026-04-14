@@ -6,6 +6,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { authService } from '@/lib/auth-service';
+import { storage } from '@/lib/storage';
 import { AuthContext as AuthContextType, User } from '@/types/auth';
 import { analyticsService } from '@/lib/analytics';
 
@@ -23,8 +24,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
    */
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedToken = localStorage.getItem('authToken');
-      const storedUser = localStorage.getItem('user');
+      const storedToken = storage.getItem('authToken');
+      const storedUser = storage.getItem('user');
 
       if (storedToken && storedUser) {
         try {
@@ -50,11 +51,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               };
               setUser(updatedUser);
               setIsAuthenticated(!!storedToken && userData.emailVerified !== false);
-              localStorage.setItem('user', JSON.stringify(updatedUser));
+              storage.setItem('user', JSON.stringify(updatedUser));
             }
           }
         } catch (error) {
           console.error('Erro ao carregar autenticação:', error);
+        }
+      } else {
+        // Tentar autenticação via cookie HttpOnly
+        try {
+          const userData = await authService.getCurrentUser();
+          if (userData) {
+            const userObj = {
+              storeId: userData.storeId,
+              tradeName: userData.tradeName,
+              email: userData.email,
+              role: userData.role,
+              plan: userData.plan,
+              profilePictureUrl: userData.profilePictureUrl,
+              emailVerified: userData.emailVerified
+            };
+            setUser(userObj);
+            setIsAuthenticated(userData.emailVerified !== false);
+            storage.setItem('user', JSON.stringify(userObj));
+          }
+        } catch {
+          // Não autenticado via cookie também
         }
       }
       setIsLoading(false);
@@ -80,8 +102,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           emailVerified: userData.emailVerified
         };
         setUser(updatedUser);
-        setIsAuthenticated(!!localStorage.getItem('authToken') && userData.emailVerified !== false);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setIsAuthenticated(!!storage.getItem('authToken') && userData.emailVerified !== false);
+        storage.setItem('user', JSON.stringify(updatedUser));
       }
     } catch (error) {
       console.error('Erro ao atualizar dados do usuário:', error);
@@ -107,10 +129,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       if (response.token) {
-        localStorage.setItem('authToken', response.token);
+        storage.setItem('authToken', response.token);
         setToken(response.token);
       }
-      localStorage.setItem('user', JSON.stringify(userData));
+      storage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       setIsAuthenticated(!!response.token && response.emailVerified !== false);
@@ -141,10 +163,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       if (response.token) {
-        localStorage.setItem('authToken', response.token);
+        storage.setItem('authToken', response.token);
         setToken(response.token);
       }
-      localStorage.setItem('user', JSON.stringify(userData));
+      storage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       setIsAuthenticated(!!response.token && response.emailVerified !== false);
@@ -176,10 +198,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
 
       if (response.token) {
-        localStorage.setItem('authToken', response.token);
+        storage.setItem('authToken', response.token);
         setToken(response.token);
       }
-      localStorage.setItem('user', JSON.stringify(userData));
+      storage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       setIsAuthenticated(!!response.token && response.emailVerified !== false);

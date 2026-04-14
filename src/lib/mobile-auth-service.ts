@@ -2,6 +2,7 @@
  * Serviço de autenticação para clientes (mobile)
  */
 
+import { storage } from './storage';
 import { apiClient } from './api-client';
 import { MobileAuthResponse, MobileRegisterRequest } from '@/types/mobile-auth';
 import { LoginRequest, ForgotPasswordRequest, ResetPasswordRequest } from '@/types/auth';
@@ -57,10 +58,24 @@ export const mobileAuthService = {
   },
 
   /**
+   * Obtém dados do perfil do cliente atual (funciona como um "me")
+   */
+  async getCurrentUser(): Promise<Partial<MobileAuthResponse> & { id?: number }> {
+    const response = await apiClient.get<Partial<MobileAuthResponse> & { id?: number }>('/api/mobile/v1/profile');
+    return response.data;
+  },
+
+  /**
    * Faz logout do usuário cliente
    */
-  logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+  async logout(): Promise<void> {
+    try {
+      await apiClient.post(`${AUTH_BASE_URL}/logout`);
+    } catch (error) {
+      console.error('Erro ao fazer logout no servidor:', error);
+    } finally {
+      storage.removeItem('authToken');
+      storage.removeItem('user');
+    }
   },
 };

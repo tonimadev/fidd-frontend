@@ -4,6 +4,7 @@
 
 import { authService } from '@/lib/auth-service';
 import { apiClient } from '@/lib/api-client';
+import { storage } from '@/lib/storage';
 
 jest.mock('@/lib/api-client');
 
@@ -91,14 +92,27 @@ describe('authService', () => {
   });
 
   describe('logout', () => {
-    it('deve limpar dados do localStorage', () => {
-      localStorage.setItem('authToken', 'test-token');
-      localStorage.setItem('user', 'test-user');
+    it('deve chamar logout no servidor e limpar dados do storage', async () => {
+      storage.setItem('authToken', 'test-token');
+      storage.setItem('user', 'test-user');
+      
+      (apiClient.post as jest.Mock).mockResolvedValue({});
 
-      authService.logout();
+      await authService.logout();
+      
+      expect(apiClient.post).toHaveBeenCalledWith('/api/web/v1/auth/logout');
+      expect(storage.getItem('authToken')).toBeNull();
+      expect(storage.getItem('user')).toBeNull();
+    });
 
-      expect(localStorage.getItem('authToken')).toBeNull();
-      expect(localStorage.getItem('user')).toBeNull();
+    it('deve limpar storage mesmo que chamada ao servidor falhe', async () => {
+      storage.setItem('authToken', 'test-token');
+      
+      (apiClient.post as jest.Mock).mockRejectedValue(new Error('Server error'));
+
+      await authService.logout();
+      
+      expect(storage.getItem('authToken')).toBeNull();
     });
   });
 });

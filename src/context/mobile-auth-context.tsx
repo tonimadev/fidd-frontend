@@ -6,6 +6,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { mobileAuthService } from '@/lib/mobile-auth-service';
+import { storage } from '@/lib/storage';
 import { MobileUser, MobileRegisterRequest } from '@/types/mobile-auth';
 import { analyticsService } from '@/lib/analytics';
 
@@ -30,8 +31,8 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedToken = localStorage.getItem('authToken');
-      const storedUser = localStorage.getItem('user');
+      const storedToken = storage.getItem('authToken');
+      const storedUser = storage.getItem('user');
 
       if (storedToken && storedUser) {
         try {
@@ -44,6 +45,26 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
           }
         } catch (error) {
           console.error('Erro ao carregar autenticação mobile:', error);
+        }
+      } else {
+        // Tentar autenticação via cookie
+        try {
+          const userData = await mobileAuthService.getCurrentUser();
+          if (userData) {
+            const userObj: MobileUser = {
+              userId: userData.id || userData.userId,
+              name: userData.name,
+              email: userData.email,
+              role: 'ROLE_CUSTOMER',
+              emailVerified: true, // Se conseguiu pegar o perfil, o email está verificado (regra do backend)
+              isNewUser: false
+            };
+            setUser(userObj);
+            setIsAuthenticated(true);
+            storage.setItem('user', JSON.stringify(userObj));
+          }
+        } catch {
+          // Não autenticado
         }
       }
       setIsLoading(false);
@@ -68,10 +89,10 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
       };
 
       if (response.token) {
-        localStorage.setItem('authToken', response.token);
+        storage.setItem('authToken', response.token);
         setToken(response.token);
       }
-      localStorage.setItem('user', JSON.stringify(userData));
+      storage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       setIsAuthenticated(!!response.token && response.emailVerified !== false);
@@ -101,10 +122,10 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
       };
 
       if (response.token) {
-        localStorage.setItem('authToken', response.token);
+        storage.setItem('authToken', response.token);
         setToken(response.token);
       }
-      localStorage.setItem('user', JSON.stringify(userData));
+      storage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       setIsAuthenticated(!!response.token && response.emailVerified !== false);
@@ -134,10 +155,10 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
       };
 
       if (response.token) {
-        localStorage.setItem('authToken', response.token);
+        storage.setItem('authToken', response.token);
         setToken(response.token);
       }
-      localStorage.setItem('user', JSON.stringify(userData));
+      storage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       setIsAuthenticated(!!response.token && response.emailVerified !== false);

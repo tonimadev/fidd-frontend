@@ -2,6 +2,7 @@
  * Serviço de autenticação
  */
 
+import { storage } from './storage';
 import { apiClient } from './api-client';
 import { AuthResponse, LoginRequest, RegisterRequest, ForgotPasswordRequest, ResetPasswordRequest } from '@/types/auth';
 
@@ -66,9 +67,15 @@ export const authService = {
   /**
    * Faz logout do usuário
    */
-  logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+  async logout(): Promise<void> {
+    try {
+      await apiClient.post(`${AUTH_BASE_URL}/logout`);
+    } catch (error) {
+      console.error('Erro ao fazer logout no servidor:', error);
+    } finally {
+      storage.removeItem('authToken');
+      storage.removeItem('user');
+    }
   },
 
   /**

@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { mobileCardService } from '@/lib/mobile-card-service';
 import { analyticsService } from '@/lib/analytics';
+import { storage } from '@/lib/storage';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -43,7 +44,7 @@ export const MobileLoginForm: React.FC = () => {
 
   // Verifica se já existe um usuário no localStorage pendente de verificação
   React.useEffect(() => {
-    const userJson = localStorage.getItem('user');
+    const userJson = storage.getItem('user');
     if (userJson) {
       const userData = JSON.parse(userJson);
       if (userData.emailVerified === false && userData.email) {
@@ -61,7 +62,7 @@ export const MobileLoginForm: React.FC = () => {
       analyticsService.track('login', { method: 'email' });
       
       // Verifica se o e-mail precisa ser verificado
-      const userJson = localStorage.getItem('user');
+      const userJson = storage.getItem('user');
       if (userJson) {
         const userData = JSON.parse(userJson);
         if (userData.emailVerified === false) {
@@ -193,7 +194,7 @@ export const MobileLoginForm: React.FC = () => {
                 await loginWithGoogle(credentialResponse.credential);
                 
                 // Verifica se é novo usuário para decidir redirecionamento
-                const userJson = localStorage.getItem('user');
+                const userJson = storage.getItem('user');
                 if (userJson) {
                   const userData = JSON.parse(userJson);
                   if (userData.isNewUser) {
