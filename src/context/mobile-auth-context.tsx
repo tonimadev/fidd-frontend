@@ -40,7 +40,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
           if (parsedUser.userId && parsedUser.role === 'ROLE_CUSTOMER') {
             setToken(storedToken);
             setUser(parsedUser);
-            setIsAuthenticated(true);
+            setIsAuthenticated(!!storedToken && parsedUser.emailVerified !== false);
           }
         } catch (error) {
           console.error('Erro ao carregar autenticação mobile:', error);
@@ -63,15 +63,18 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         email: response.email,
         role: response.role,
         isNewUser: false,
+        emailVerified: response.emailVerified,
         linkedPunchesCount: response.linkedPunchesCount,
       };
 
-      localStorage.setItem('authToken', response.token);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        setToken(response.token);
+      }
       localStorage.setItem('user', JSON.stringify(userData));
 
-      setToken(response.token);
       setUser(userData);
-      setIsAuthenticated(true);
+      setIsAuthenticated(!!response.token && response.emailVerified !== false);
       analyticsService.track('login', { method: 'email' });
     } catch (error) {
       setIsAuthenticated(false);
@@ -93,15 +96,18 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         email: response.email,
         role: response.role,
         isNewUser: response.isNewUser,
+        emailVerified: response.emailVerified,
         linkedPunchesCount: response.linkedPunchesCount,
       };
 
-      localStorage.setItem('authToken', response.token);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        setToken(response.token);
+      }
       localStorage.setItem('user', JSON.stringify(userData));
 
-      setToken(response.token);
       setUser(userData);
-      setIsAuthenticated(true);
+      setIsAuthenticated(!!response.token && response.emailVerified !== false);
       analyticsService.track('login', { method: 'google' });
     } catch (error) {
       setIsAuthenticated(false);
@@ -123,15 +129,18 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         email: response.email,
         role: response.role,
         isNewUser: false,
+        emailVerified: response.emailVerified,
         linkedPunchesCount: response.linkedPunchesCount,
       };
 
-      localStorage.setItem('authToken', response.token);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        setToken(response.token);
+      }
       localStorage.setItem('user', JSON.stringify(userData));
 
-      setToken(response.token);
       setUser(userData);
-      setIsAuthenticated(true);
+      setIsAuthenticated(!!response.token && response.emailVerified !== false);
     } catch (error) {
       setIsAuthenticated(false);
       throw error;

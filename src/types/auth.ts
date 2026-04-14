@@ -12,6 +12,7 @@ export interface AuthResponse {
   plan?: string;
   profilePictureUrl?: string;
   isNewUser?: boolean;
+  emailVerified?: boolean;
 }
 
 export interface AuthContext {
@@ -35,6 +36,7 @@ export interface User {
   plan?: string;
   profilePictureUrl?: string;
   isNewUser?: boolean;
+  emailVerified?: boolean;
 }
 
 export interface LoginRequest {

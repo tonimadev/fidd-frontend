@@ -87,6 +87,18 @@ export const MobileRegisterForm: React.FC = () => {
         }
       }
 
+      // Verifica se o e-mail precisa ser verificado
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const userData = JSON.parse(userJson);
+        if (userData.emailVerified === false) {
+          setUserEmail(data.email);
+          setTempCredentials({ email: data.email, password: data.password });
+          setShowEmailVerificationModal(true);
+          return;
+        }
+      }
+
       reset();
       router.push('/app');
     } catch (error) {

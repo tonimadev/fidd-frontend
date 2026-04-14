@@ -70,6 +70,19 @@ export const RegisterForm: React.FC = () => {
       setErrorMessage('');
       await registerUser(data.tradeName, data.taxId, data.email, data.password);
       analyticsService.track('registration', { method: 'email' });
+      
+      // Verifica se o e-mail precisa ser verificado
+      const userJson = localStorage.getItem('user');
+      if (userJson) {
+        const userData = JSON.parse(userJson);
+        if (userData.emailVerified === false) {
+          setUserEmail(data.email);
+          setTempCredentials({ email: data.email, password: data.password });
+          setShowEmailVerificationModal(true);
+          return;
+        }
+      }
+
       reset();
       router.push('/dashboard');
     } catch (error) {

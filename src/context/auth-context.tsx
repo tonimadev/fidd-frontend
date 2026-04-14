@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           if (parsedUser.storeId) {
             setToken(storedToken);
             setUser(parsedUser);
-            setIsAuthenticated(true);
+            setIsAuthenticated(!!storedToken && parsedUser.emailVerified !== false);
 
             // Buscar dados atualizados do servidor sem disparar loop
             const userData = await authService.getCurrentUser();
@@ -45,7 +45,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 email: userData.email,
                 role: userData.role,
                 plan: userData.plan,
-                profilePictureUrl: userData.profilePictureUrl
+                profilePictureUrl: userData.profilePictureUrl,
+                emailVerified: userData.emailVerified
               };
               setUser(updatedUser);
               localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -74,7 +75,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           email: userData.email,
           role: userData.role,
           plan: userData.plan,
-          profilePictureUrl: userData.profilePictureUrl
+          profilePictureUrl: userData.profilePictureUrl,
+          emailVerified: userData.emailVerified
         };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -99,14 +101,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         role: response.role,
         plan: response.plan,
         profilePictureUrl: response.profilePictureUrl,
+        emailVerified: response.emailVerified,
       };
 
-      localStorage.setItem('authToken', response.token);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        setToken(response.token);
+      }
       localStorage.setItem('user', JSON.stringify(userData));
 
-      setToken(response.token);
       setUser(userData);
-      setIsAuthenticated(true);
+      setIsAuthenticated(!!response.token && response.emailVerified !== false);
     } catch (error) {
       setIsAuthenticated(false);
       throw error;
@@ -130,14 +135,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         role: response.role,
         plan: response.plan,
         isNewUser: response.isNewUser,
+        emailVerified: response.emailVerified,
       };
 
-      localStorage.setItem('authToken', response.token);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        setToken(response.token);
+      }
       localStorage.setItem('user', JSON.stringify(userData));
 
-      setToken(response.token);
       setUser(userData);
-      setIsAuthenticated(true);
+      setIsAuthenticated(!!response.token && response.emailVerified !== false);
     } catch (error) {
       setIsAuthenticated(false);
       throw error;
@@ -162,14 +170,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         role: response.role,
         plan: response.plan,
         isNewUser: false,
+        emailVerified: response.emailVerified,
       };
 
-      localStorage.setItem('authToken', response.token);
+      if (response.token) {
+        localStorage.setItem('authToken', response.token);
+        setToken(response.token);
+      }
       localStorage.setItem('user', JSON.stringify(userData));
 
-      setToken(response.token);
       setUser(userData);
-      setIsAuthenticated(true);
+      setIsAuthenticated(!!response.token && response.emailVerified !== false);
     } catch (error) {
       setIsAuthenticated(false);
       throw error;
