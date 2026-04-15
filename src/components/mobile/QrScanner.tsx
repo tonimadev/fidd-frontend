@@ -17,49 +17,89 @@ export const QrScanner: React.FC<QrScannerProps> = ({ onResult, onError }) => {
 
   useEffect(() => {
     let scanner: Html5Qrcode | null = null;
+    let isMounted = true;
 
     const startScanner = async () => {
+      // Pequeno delay para garantir que o elemento DOM com id={regionId} esteja renderizado
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      if (!isMounted) return;
+
       try {
-        const devices = await Html5Qrcode.getCameras();
-        if (devices && devices.length > 0) {
-          scanner = new Html5Qrcode(regionId);
-          scannerRef.current = scanner;
+        scanner = new Html5Qrcode(regionId);
+        scannerRef.current = scanner;
 
-          const config = {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-          };
+        const config = {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+        };
 
-          await scanner.start(
-            { facingMode: "environment" },
-            config,
-            (decodedText) => {
-              // Beep ou feedback visual aqui?
-              onResult(decodedText);
-            },
-            () => {
-              // Erros de frame são silenciosos para não poluir
-            }
-          );
-          setIsStarting(false);
-        } else {
-          setIsStarting(false);
-          setCameraError("Câmera não encontrada.");
-        }
+        // Tenta iniciar com a câmera traseira (environment)
+        // O método start aceita uma string de constraints ou um objeto
+        await scanner.start(
+          { facingMode: "environment" },
+          config,
+          (decodedText) => {
+            if (isMounted) onResult(decodedText);
+          },
+          () => {
+            // Erros de frame são silenciosos
+          }
+        );
+        
+        if (isMounted) setIsStarting(false);
       } catch (err) {
         console.error("Erro ao iniciar scanner:", err);
-        setIsStarting(false);
-        setCameraError("Permissão de câmera negada ou erro ao acessar.");
-        if (onError) onError(String(err));
+        
+        // Se falhar com environment, tenta sem restrições específicas (pode pegar a frontal)
+        try {
+          if (scanner && isMounted) {
+            await scanner.start(
+              {}, // Sem restrições de facingMode
+              { fps: 10, qrbox: { width: 250, height: 250 } },
+              (decodedText) => {
+                if (isMounted) onResult(decodedText);
+              },
+              () => {}
+            );
+            if (isMounted) setIsStarting(false);
+            return;
+          }
+        } catch (secondErr) {
+          console.error("Erro na segunda tentativa do scanner:", secondErr);
+        }
+
+        if (isMounted) {
+          setIsStarting(false);
+          setCameraError("Permissão de câmera negada ou erro ao acessar.");
+          if (onError) onError(String(err));
+        }
       }
     };
 
     startScanner();
 
     return () => {
-      if (scanner && scanner.isScanning) {
-        scanner.stop().catch(e => console.error("Erro ao parar scanner:", e));
+      isMounted = false;
+      if (scannerRef.current) {
+        if (scannerRef.current.isScanning) {
+          scannerRef.current.stop()
+            .then(() => {
+              if (scannerRef.current) {
+                scannerRef.current.clear();
+              }
+            })
+            .catch(e => console.error("Erro ao parar scanner:", e));
+        } else {
+          // Caso não tenha começado a scanear mas já tenha instanciado
+          try {
+            scannerRef.current.clear();
+          } catch {
+            // Ignora erro de clear se não foi renderizado
+          }
+        }
       }
     };
   }, [onResult, onError]);

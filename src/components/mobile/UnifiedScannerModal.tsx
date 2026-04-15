@@ -110,17 +110,17 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
             <X size={20} />
           </button>
 
-          <div className="mb-6 flex justify-between items-start">
+          <div className="mb-6 flex justify-between items-start pr-12">
             <div>
               <h2 className="text-2xl font-black tracking-tighter text-slate-800 uppercase italic flex items-center gap-2">
                 <QrCode size={24} className="text-primary" />
                 Validar
               </h2>
-              <p className="text-slate-500 text-sm font-medium">Use a câmera ou digite o código.</p>
+              <p className="text-slate-500 text-sm font-medium leading-tight">Use a câmera ou digite o código.</p>
             </div>
             
             {!successData && (
-              <div className="bg-slate-100 p-1 rounded-2xl flex gap-1">
+              <div className="bg-slate-100 p-1 rounded-2xl flex gap-1 shrink-0 ml-2">
                 <button
                   onClick={() => setMode('CAMERA')}
                   className={`p-2 rounded-xl transition-all ${mode === 'CAMERA' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`}
