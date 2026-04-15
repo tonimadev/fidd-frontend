@@ -177,11 +177,10 @@ export const CustomersList: React.FC = () => {
                   </div>
                 </div>
 
-                {customer.cards && customer.cards.length > 0 && (
+                {customer.ongoingCards && customer.ongoingCards.length > 0 && (
                   <div className="mt-4 space-y-3">
                     <p className="text-[10px] uppercase font-bold text-muted-foreground">Progresso dos Cartões</p>
-                    {customer.cards
-                      .filter(card => card.status === 'IN_PROGRESS')
+                    {customer.ongoingCards
                       .map(card => (
                         <div key={card.id} className="space-y-1">
                           <div className="flex justify-between text-[10px]">
@@ -190,8 +189,11 @@ export const CustomersList: React.FC = () => {
                           </div>
                           <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                             <div 
-                              className="bg-primary h-full transition-all duration-500" 
-                              style={{ width: `${(card.currentPoints / card.pointsRequired) * 100}%` }}
+                              className="h-full transition-all duration-500" 
+                              style={{ 
+                                width: `${(card.currentPoints / card.pointsRequired) * 100}%`,
+                                backgroundColor: card.highlightColor || 'var(--primary)'
+                              }}
                             />
                           </div>
                         </div>

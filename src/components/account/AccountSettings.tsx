@@ -29,6 +29,7 @@ export const AccountSettings: React.FC = () => {
   const [profile, setProfile] = useState<StoreProfile | null>(null);
   const [tradeName, setTradeName] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
+  const [highlightColor, setHighlightColor] = useState('#FF6B00');
   const [imgError, setImgError] = useState(false);
   
   // Security Modal
@@ -56,6 +57,7 @@ export const AccountSettings: React.FC = () => {
       setProfile(profileData);
       setTradeName(profileData.tradeName);
       setProfilePictureUrl(profileData.profilePictureUrl || '');
+      setHighlightColor(profileData.highlightColor || '#FF6B00');
     } catch (error) {
       setErrorMessage('Erro ao carregar dados da conta. Tente novamente.');
       console.error('Erro ao carregar dados:', error);
@@ -82,6 +84,7 @@ export const AccountSettings: React.FC = () => {
       await accountService.updateProfile({
         tradeName,
         profilePictureUrl,
+        highlightColor,
         currentPassword: password
       });
       
@@ -204,6 +207,36 @@ export const AccountSettings: React.FC = () => {
             />
           </div>
           <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Cor de Destaque (Identidade Visual)</label>
+            <div className="flex items-center gap-3">
+              <input 
+                type="color" 
+                value={highlightColor}
+                onChange={(e) => setHighlightColor(e.target.value)}
+                className="w-12 h-10 rounded border border-border cursor-pointer bg-transparent p-0"
+              />
+              <Input 
+                value={highlightColor.toUpperCase()}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val.match(/^#[0-9A-Fa-f]{0,6}$/)) {
+                    setHighlightColor(val);
+                  }
+                }}
+                placeholder="#FF6B00"
+                className="flex-1 font-mono uppercase"
+                maxLength={7}
+              />
+              <div 
+                className="w-10 h-10 rounded-full border border-border shadow-sm flex items-center justify-center text-[10px] font-bold"
+                style={{ backgroundColor: highlightColor, color: getContrastColor(highlightColor) }}
+              >
+                Abc
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Esta cor será usada nos cartões e elementos de progresso do seu cliente</p>
+          </div>
+          <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">E-mail de Contato</label>
             <Input 
               value={profile?.email || ''} 
@@ -316,4 +349,25 @@ export const AccountSettings: React.FC = () => {
     </div>
   );
 };
+
+/**
+ * Função utilitária para calcular a cor de contraste (preto ou branco) 
+ * com base na luminosidade da cor de fundo (Hex)
+ */
+function getContrastColor(hexColor: string) {
+  // Remover o # se presente
+  const hex = hexColor.replace('#', '');
+  
+  // Converter para RGB
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Calcular luminância relativa (fórmula padrão WCAG)
+  // 0.299*R + 0.587*G + 0.114*B
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  
+  // Se luminância for maior que 128, a cor é clara, usar texto preto. Caso contrário, usar branco.
+  return yiq >= 128 ? '#000000' : '#FFFFFF';
+}
 

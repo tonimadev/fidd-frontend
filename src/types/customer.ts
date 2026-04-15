@@ -12,6 +12,7 @@ export interface CustomerCard {
   pointsRequired: number;
   status: CardStatus;
   updatedAt: string;
+  highlightColor?: string | null;
   redeemedAt?: string;
   expiredAt?: string;
 }
@@ -24,5 +25,6 @@ export interface Customer {
   totalCards: number;
   activeCards: number;
   lastActivity: string;
+  ongoingCards?: CustomerCard[];
   cards?: CustomerCard[];
 }
