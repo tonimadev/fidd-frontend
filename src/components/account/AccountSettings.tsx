@@ -31,6 +31,7 @@ export const AccountSettings: React.FC = () => {
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
   const [highlightColor, setHighlightColor] = useState('#FF6B00');
   const [imgError, setImgError] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Security Modal
   const [showSecurityModal, setShowSecurityModal] = useState(false);
@@ -63,6 +64,34 @@ export const AccountSettings: React.FC = () => {
       console.error('Erro ao carregar dados:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setErrorMessage('Por favor, selecione uma imagem válida.');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrorMessage('A imagem deve ter no máximo 5MB.');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      setErrorMessage('');
+      const url = await accountService.uploadProfilePicture(file);
+      setProfilePictureUrl(url);
+      setImgError(false);
+    } catch (error) {
+      console.error('Erro ao fazer upload da imagem:', error);
+      setErrorMessage('Erro ao fazer upload da imagem. Tente novamente.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -167,15 +196,24 @@ export const AccountSettings: React.FC = () => {
 
         <div className="space-y-4 max-w-md">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Imagem do Estabelecimento (URL)</label>
+            <label className="text-sm font-medium text-foreground">Imagem do Estabelecimento</label>
             <div className="flex gap-4 items-start">
               <div className="flex-1 space-y-2">
-                <Input 
-                  value={profilePictureUrl}
-                  onChange={(e) => setProfilePictureUrl(e.target.value)}
-                  placeholder="https://exemplo.com/foto.jpg"
-                />
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Insira a URL de uma imagem quadrada (Ex: 512x512)</p>
+                <div className="relative">
+                  <Input 
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    disabled={isUploading}
+                    className="cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                  />
+                  {isUploading && (
+                    <div className="absolute inset-y-0 right-3 flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    </div>
+                  )}
+                </div>
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Selecione uma imagem quadrada (Ex: 512x512). Máximo 5MB.</p>
               </div>
               <div className="w-16 h-16 rounded-lg border border-border bg-muted flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
                 {profilePictureUrl ? (

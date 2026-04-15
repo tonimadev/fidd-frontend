@@ -34,6 +34,20 @@ export const accountService = {
   },
 
   /**
+   * Faz upload de uma nova imagem de perfil
+   */
+  async uploadProfilePicture(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<{ url: string }>(`${PROFILE_BASE_URL}/upload-picture`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.url;
+  },
+
+  /**
    * Verifica o status de deleção da conta
    */
   async getDeleteStatus(): Promise<DeleteAccountStatus> {
