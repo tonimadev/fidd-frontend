@@ -14,6 +14,8 @@ export const createApiClient = (): AxiosInstance => {
   const client = axios.create({
     baseURL: '/',
     withCredentials: true,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
     headers: {
       'Content-Type': 'application/json',
     },
