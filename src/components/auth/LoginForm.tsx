@@ -43,17 +43,6 @@ export const LoginForm: React.FC = () => {
     mode: 'onBlur',
   });
 
-  // Verifica se já existe um usuário no localStorage pendente de verificação
-  React.useEffect(() => {
-    const userJson = storage.getItem('user');
-    if (userJson) {
-      const userData = JSON.parse(userJson);
-      if (userData.emailVerified === false && userData.email) {
-        setUserEmail(userData.email);
-        setShowEmailVerificationModal(true);
-      }
-    }
-  }, []);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -174,6 +163,18 @@ export const LoginForm: React.FC = () => {
   const handleEmailVerificationSuccess = async () => {
     setShowEmailVerificationModal(false);
     analyticsService.track('email_verification', { status: 'success' });
+
+    // Atualiza o status de verificação no storage local para evitar re-abertura do modal por useEffect
+    const storedUser = storage.getItem('user');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        userData.emailVerified = true;
+        storage.setItem('user', JSON.stringify(userData));
+      } catch (e) {
+        console.error('Erro ao atualizar storage local:', e);
+      }
+    }
 
     try {
       if (loginCredentials) {

@@ -61,7 +61,18 @@ export const createApiClient = (): AxiosInstance => {
         // Token expirado ou inválido
         storage.removeItem('authToken');
         storage.removeItem('user');
-        window.location.href = '/login';
+        
+        // Só redirecionar se não for a chamada inicial de perfil e não estivermos no login/register
+        const isAuthCheck = error.config?.url?.endsWith('/me');
+        const isAuthPage = typeof window !== 'undefined' && 
+          (window.location.pathname === '/login' || 
+           window.location.pathname === '/register' ||
+           window.location.pathname === '/forgot-password' ||
+           window.location.pathname === '/reset-password');
+
+        if (!isAuthCheck && !isAuthPage) {
+          window.location.href = '/login';
+        }
       }
       return Promise.reject(error);
     }

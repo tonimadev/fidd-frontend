@@ -13,14 +13,30 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+let app;
+try {
+  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  } else {
+    // Em desenvolvimento, se não houver config, não inicializa Firebase ou inicializa um dummy
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[Firebase] Configuração ausente. Algumas funcionalidades (Analytics/Performance) podem não funcionar.');
+    }
+  }
+} catch (error) {
+  console.error('[Firebase] Erro ao inicializar:', error);
+}
 
 let analytics: Analytics | null = null;
 let performance: FirebasePerformance | null = null;
 
-if (typeof window !== "undefined") {
-  analytics = getAnalytics(app);
-  performance = getPerformance(app);
+if (typeof window !== "undefined" && app) {
+  try {
+    analytics = getAnalytics(app);
+    performance = getPerformance(app);
+  } catch (error) {
+    console.warn('[Firebase] Erro ao carregar serviços extras:', error);
+  }
 }
 
 export { app, analytics, performance };

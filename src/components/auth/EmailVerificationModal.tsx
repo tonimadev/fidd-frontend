@@ -41,6 +41,8 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading || successMessage) return;
+
     if (code.length !== 6) {
       setErrorMessage('O código deve ter 6 dígitos.');
       return;
@@ -49,23 +51,44 @@ export const EmailVerificationModal: React.FC<EmailVerificationModalProps> = ({
     try {
       setIsLoading(true);
       setErrorMessage('');
+      console.log(`[EmailVerification] Tentando verificar e-mail: ${email} (${userType}) com código: ${code}`);
+      
       await authService.verifyEmail(email, code, userType);
+      
+      console.log('[EmailVerification] Verificação bem-sucedida!');
       analyticsService.track('email_verification', { status: 'success' });
       setSuccessMessage('E-mail verificado com sucesso!');
+      
       setTimeout(() => {
+        console.log('[EmailVerification] Chamando callback onSuccess');
         onSuccess();
       }, 1500);
     } catch (error) {
-      analyticsService.track('email_verification', { status: 'failed' });
-      const axiosError = error as AxiosError<{ message?: string }>;
-      const message = axiosError.response?.data?.message === 'validation.invalid.verification.code'
-        ? 'Código inválido. Verifique e tente novamente.'
-        : axiosError.response?.data?.message === 'validation.verification.code.expired'
-        ? 'Código expirado. Solicite um novo código.'
-        : 'Erro ao verificar e-mail. Tente novamente.';
-      setErrorMessage(message);
-    } finally {
       setIsLoading(false);
+      analyticsService.track('email_verification', { status: 'failed' });
+      
+      const axiosError = error as AxiosError<{ message?: string }>;
+      console.error('[EmailVerification] Erro na verificação:', axiosError.response?.data || axiosError.message);
+      
+      const apiMessage = axiosError.response?.data?.message || '';
+      const lowerMessage = apiMessage.toLowerCase();
+      
+      // Tenta identificar o erro pela chave ou por fragmentos da mensagem traduzida
+      let message = 'Erro ao verificar e-mail. Tente novamente.';
+      
+      if (apiMessage === 'validation.invalid.verification.code' || 
+          lowerMessage.includes('inválido') || 
+          lowerMessage.includes('invalido')) {
+        message = 'Código inválido. Verifique e tente novamente.';
+      } else if (apiMessage === 'validation.verification.code.expired' || 
+                 lowerMessage.includes('expirado')) {
+        message = 'Código expirado. Solicite um novo código.';
+      } else if (apiMessage) {
+        // Se houver uma mensagem da API mas não for uma das conhecidas, mostra a mensagem da API (se amigável)
+        message = apiMessage.length < 100 ? apiMessage : message;
+      }
+      
+      setErrorMessage(message);
     }
   };
 

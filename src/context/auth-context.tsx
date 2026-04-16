@@ -7,6 +7,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { authService } from '@/lib/auth-service';
 import { storage } from '@/lib/storage';
+import axios from 'axios';
 import { AuthContext as AuthContextType, User } from '@/types/auth';
 import { analyticsService } from '@/lib/analytics';
 
@@ -55,7 +56,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             }
           }
         } catch (error) {
-          console.error('Erro ao carregar autenticação:', error);
+          // Só logar erro se não for 401 ou 403 (falta de autenticação esperada se não logado)
+          if (axios.isAxiosError(error)) {
+            if (error.response?.status !== 401 && error.response?.status !== 403) {
+              console.error('Erro ao carregar autenticação:', error);
+            }
+          } else {
+            console.error('Erro ao carregar autenticação:', error);
+          }
         }
       } else {
         // Tentar autenticação via cookie HttpOnly
