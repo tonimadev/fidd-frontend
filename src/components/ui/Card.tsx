@@ -7,7 +7,7 @@ type CardDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;
 export const Card: React.FC<CardProps> = ({ children, className = '', ...props }) => {
   return (
     <div
-      className={`rounded-xl border border-border bg-card text-card-foreground shadow-sm ${className}`}
+      className={`rounded-m3-l bg-surface text-on-surface shadow-m3-1 hover:shadow-m3-2 transition-shadow duration-300 ${className}`}
       {...props}
     >
       {children}
