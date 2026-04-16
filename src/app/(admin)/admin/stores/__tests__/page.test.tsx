@@ -49,8 +49,9 @@ describe('AdminStoresPage', () => {
     expect(screen.getByText(/gerenciamento de lojistas/i)).toBeInTheDocument();
     
     await waitFor(() => {
-      expect(screen.getByText('Store One')).toBeInTheDocument();
-      expect(screen.getByText('one@example.com')).toBeInTheDocument();
+      // Store One aparece no card mobile e na linha da tabela desktop simultaneamente (ocultos por CSS)
+      expect(screen.getAllByText('Store One').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('one@example.com').length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -60,16 +61,48 @@ describe('AdminStoresPage', () => {
     render(<AdminStoresPage />);
 
     await waitFor(() => {
-      expect(screen.getByText('Store One')).toBeInTheDocument();
+      expect(screen.getAllByText('Store One').length).toBeGreaterThanOrEqual(1);
     });
 
-    const toggleButton = screen.getByRole('button', { name: /desativar/i });
-    fireEvent.click(toggleButton);
+    const toggleButtons = screen.getAllByRole('button', { name: /desativar lojista/i });
+    fireEvent.click(toggleButtons[0]);
 
     expect(adminService.updateStoreStatus).toHaveBeenCalledWith(1, false);
     
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /ativar/i })).toBeInTheDocument();
+      expect(screen.getAllByRole('button', { name: /ativar lojista/i }).length).toBeGreaterThanOrEqual(1);
     });
+  });
+
+  it('deve exibir erro e permitir tentar novamente ao falhar no carregamento', async () => {
+    (adminService.getStores as jest.Mock)
+      .mockRejectedValueOnce(new Error('falha'))
+      .mockResolvedValueOnce(mockStores);
+
+    render(<AdminStoresPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/não foi possível carregar os lojistas/i)).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /tentar novamente/i }));
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Store One').length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('deve filtrar os lojistas da página atual pela busca', async () => {
+    render(<AdminStoresPage />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText('Store One').length).toBeGreaterThanOrEqual(1);
+    });
+
+    fireEvent.change(screen.getByPlaceholderText(/buscar por nome, email ou documento/i), {
+      target: { value: 'xpto' },
+    });
+
+    expect(screen.getAllByText(/nenhum lojista desta página corresponde à busca atual/i).length).toBeGreaterThanOrEqual(1);
   });
 });

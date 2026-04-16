@@ -27,6 +27,7 @@ jest.mock('next/navigation', () => ({
 
 describe('AdminSidebar', () => {
   const mockLogout = jest.fn();
+  const mockOnClose = jest.fn();
   const mockUser = { email: 'admin@fidd.com.br', role: 'ADMIN' };
 
   beforeEach(() => {
@@ -68,5 +69,23 @@ describe('AdminSidebar', () => {
     fireEvent.click(logoutButton);
 
     expect(mockLogout).toHaveBeenCalledTimes(1);
+  });
+
+  it('deve marcar campanhas como ativa mesmo na rota legada com typo', () => {
+    (usePathname as jest.Mock).mockReturnValue('/admin/campaings');
+
+    render(<AdminSidebar />);
+
+    const campaignsLink = screen.getByRole('link', { name: /campanhas/i });
+    expect(campaignsLink).toHaveClass('bg-blue-50');
+    expect(campaignsLink).toHaveClass('text-blue-600');
+  });
+
+  it('deve fechar o drawer ao clicar em um item do menu quando onClose for fornecido', () => {
+    render(<AdminSidebar isOpen onClose={mockOnClose} />);
+
+    fireEvent.click(screen.getByRole('link', { name: /lojistas/i }));
+
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 });
