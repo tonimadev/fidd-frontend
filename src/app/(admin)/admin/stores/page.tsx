@@ -169,12 +169,15 @@ export default function AdminStoresPage() {
       });
     } catch (error: unknown) {
       console.error('Erro ao atualizar loja:', error);
-      const message =
+      const responseMessage =
         typeof error === 'object' &&
         error !== null &&
-        'response' in error &&
-        typeof (error as { response?: { data?: { message?: unknown } } }).response?.data?.message === 'string'
-          ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
+        'response' in error
+          ? (error as { response?: { data?: { message?: unknown } } }).response?.data?.message
+          : undefined;
+      const message =
+        typeof responseMessage === 'string' && responseMessage.trim().length > 0
+          ? responseMessage
           : 'Erro ao atualizar loja. Verifique a senha do administrador.';
       showNotice({
         type: 'error',
