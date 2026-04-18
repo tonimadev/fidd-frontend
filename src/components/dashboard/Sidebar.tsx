@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import Image from 'next/image';
 import { DashboardTab } from '@/types/dashboard';
+import { BadgeCheck } from 'lucide-react';
 
 interface SidebarProps {
   activeTab: DashboardTab;
@@ -37,6 +38,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'insights', label: 'Insights PRO', icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    )},
+    { id: 'automations', label: 'Automações PRO', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    )},
+    { id: 'referrals', label: 'Indicações PRO', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    )},
+    { id: 'history', label: 'Histórico PRO', icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     )},
     { id: 'campaigns', label: 'Campanhas', icon: (
@@ -219,7 +235,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate text-foreground">{user?.tradeName}</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-semibold truncate text-foreground">{user?.tradeName}</p>
+              {user?.plan === 'Pro' && (
+                <BadgeCheck className="w-3.5 h-3.5 text-[#FFD700] fill-[#FFD700]/10 shrink-0" />
+              )}
+            </div>
             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
           </div>
         </div>

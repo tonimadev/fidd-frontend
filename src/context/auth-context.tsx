@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const parsedUser = JSON.parse(storedUser);
           
           // Verificar se é um usuário lojista (tem storeId) ou administrador
-          if (parsedUser.storeId || parsedUser.role === 'ADMIN') {
+          if (parsedUser.storeId || parsedUser.id || parsedUser.role === 'ADMIN') {
             setToken(storedToken);
             setUser(parsedUser);
             setIsAuthenticated(!!storedToken && parsedUser.emailVerified !== false);
@@ -42,6 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             const userData = await authService.getCurrentUser();
             if (userData) {
               const updatedUser = {
+                id: userData.id,
                 storeId: userData.storeId,
                 tradeName: userData.tradeName,
                 email: userData.email,
@@ -71,6 +72,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           const userData = await authService.getCurrentUser();
           if (userData) {
             const userObj = {
+              id: userData.id,
               storeId: userData.storeId,
               tradeName: userData.tradeName,
               email: userData.email,
@@ -101,6 +103,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const userData = await authService.getCurrentUser();
       if (userData) {
         const updatedUser = {
+          id: userData.id,
           storeId: userData.storeId,
           tradeName: userData.tradeName,
           email: userData.email,

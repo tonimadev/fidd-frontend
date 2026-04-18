@@ -9,6 +9,12 @@ jest.mock('@/lib/redemption-service', () => ({
   },
 }));
 
+jest.mock('@/context/auth-context', () => ({
+  useAuth: () => ({
+    user: { plan: 'Pro' }
+  }),
+}));
+
 describe('RedemptionForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();

@@ -2,7 +2,7 @@
  * Tipos relacionados ao dashboard
  */
 
-export type DashboardTab = 'home' | 'insights' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions' | 'developers' | 'simulator' | 'admin-panel' | 'nfc';
+export type DashboardTab = 'home' | 'insights' | 'campaigns' | 'customers' | 'redemptions' | 'settings' | 'subscriptions' | 'developers' | 'simulator' | 'admin-panel' | 'nfc' | 'automations' | 'referrals' | 'history';
 
 export interface DashboardMetrics {
   activeCampaigns: number;
@@ -34,5 +34,10 @@ export interface StoreInsights {
   averageReturnTimeDays: number;
   totalActiveCustomers: number;
   totalPunchesToday: number;
+  ltv?: number;
+  churnRate?: number;
+  retentionRate?: number;
+  redemptionRate?: number;
+  revenueForecast?: number;
 }
 

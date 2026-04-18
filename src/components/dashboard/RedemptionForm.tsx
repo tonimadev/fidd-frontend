@@ -15,8 +15,11 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { CheckCircle2, Ticket, AlertCircle } from 'lucide-react';
+import { triggerConfetti } from '@/lib/confetti';
+import { useAuth } from '@/context/auth-context';
 
 export const RedemptionForm: React.FC = () => {
+  const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [successData, setSuccessData] = useState<RedemptionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,6 +50,9 @@ export const RedemptionForm: React.FC = () => {
       });
 
       setSuccessData(response);
+      if (user?.plan === 'Pro') {
+        triggerConfetti();
+      }
       reset();
     } catch (error) {
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao validar código. Tente novamente.'));

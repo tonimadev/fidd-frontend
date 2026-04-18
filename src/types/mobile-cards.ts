@@ -2,6 +2,14 @@
  * Tipos de cartões para o cliente (mobile)
  */
 
+export interface CampaignReward {
+  id: number;
+  name: string;
+  pointsRequired: number;
+  isRedeemed: boolean;
+  canRedeem: boolean;
+}
+
 export interface MobileCardResponse {
   id: number;
   campaignName: string;
@@ -14,6 +22,7 @@ export interface MobileCardResponse {
   campaignDescription?: string;
   expirationDate?: string;
   redeemedAt?: string;
+  rewards: CampaignReward[];
 }
 
 export interface PunchCollectRequest {

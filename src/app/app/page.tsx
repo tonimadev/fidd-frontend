@@ -16,9 +16,12 @@ import { MobileStore } from '@/components/mobile/MobileStore';
 import { DownloadButtons } from '@/components/mobile/DownloadButtons';
 import { AlertCircle, PlusCircle, PartyPopper, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useSearchParams } from 'next/navigation';
+import { apiClient } from '@/lib/api-client';
 
 export default function CustomerDashboard() {
   const { user } = useMobileAuth();
+  const searchParams = useSearchParams();
   const [cards, setCards] = useState<MobileCardResponse[]>([]);
   const [stores, setStores] = useState<MobileStoreNearbyResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,6 +35,26 @@ export default function CustomerDashboard() {
       setShowRetroactiveAlert(true);
     }
   }, [user]);
+
+  // Capturar indicação (Referral)
+  useEffect(() => {
+    const refId = searchParams.get('ref');
+    const storeId = searchParams.get('storeId');
+
+    if (refId && storeId && user) {
+      const registerReferral = async () => {
+        try {
+          await apiClient.post('/api/mobile/v1/referrals/register', null, {
+            params: { referrerId: refId, storeId: storeId }
+          });
+          console.log('Referral registered successfully');
+        } catch (err) {
+          console.error('Error registering referral:', err);
+        }
+      };
+      registerReferral();
+    }
+  }, [searchParams, user]);
 
   useEffect(() => {
     const fetchData = async () => {

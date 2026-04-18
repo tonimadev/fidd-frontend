@@ -5,7 +5,8 @@
 export interface AuthResponse {
   token: string;
   type: string;
-  storeId: number;
+  id: number;
+  storeId?: number;
   tradeName: string;
   email: string;
   role: string;
@@ -29,7 +30,8 @@ export interface AuthContext {
 }
 
 export interface User {
-  storeId: number;
+  id: number;
+  storeId?: number;
   tradeName: string;
   email: string;
   role: string;

@@ -1,7 +1,23 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { X, CheckCircle, AlertCircle, QrCode, Ticket, Loader2, Camera, Keyboard } from 'lucide-react';
+import { X, AlertCircle, QrCode, Ticket, Loader2, Camera, Keyboard, CheckCircle2 } from 'lucide-react';
+import { triggerSuccessConfetti } from '@/lib/confetti';
+
+const StampSuccess = () => (
+  <div className="flex flex-col items-center justify-center py-8 animate-in zoom-in-95 duration-300">
+    <div className="relative">
+      <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping duration-1000" />
+      <div className="relative bg-primary text-white p-6 rounded-full shadow-xl shadow-primary/30 border-4 border-white animate-in zoom-in-50 duration-500">
+        <CheckCircle2 size={48} strokeWidth={3} />
+      </div>
+    </div>
+    <div className="mt-6 text-center">
+      <h3 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Carimbo Aplicado!</h3>
+      <p className="text-slate-500 font-bold text-sm mt-1">Sua recompensa está mais próxima.</p>
+    </div>
+  </div>
+);
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { mobileCardService } from '@/lib/mobile-card-service';
@@ -59,6 +75,10 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
           });
           if (res.success) {
             setSuccessData({ message: res.message, type: 'PUNCH', newScore: res.newScore });
+            triggerSuccessConfetti();
+            if (typeof window !== 'undefined' && window.navigator.vibrate) {
+              window.navigator.vibrate([100, 50, 100]);
+            }
             finalize();
             return;
           }
@@ -77,6 +97,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
             type: 'INVITATION', 
             campaignName: res.campaignName 
           });
+          triggerSuccessConfetti();
           finalize();
           return;
         }
@@ -140,25 +161,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
           </div>
 
           {successData ? (
-            <div className="py-8 flex flex-col items-center text-center gap-4 animate-in zoom-in duration-300">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-500">
-                <CheckCircle size={40} />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-800">Sucesso!</h3>
-                <p className="text-slate-500 font-medium">{successData.message}</p>
-                {successData.type === 'PUNCH' && (
-                  <div className="mt-4 bg-primary/10 px-6 py-2 rounded-full inline-block">
-                    <span className="text-primary font-black uppercase text-xs tracking-widest">Saldo: {successData.newScore}</span>
-                  </div>
-                )}
-                {successData.type === 'INVITATION' && (
-                  <div className="mt-4 bg-secondary/20 px-6 py-2 rounded-full inline-block border border-secondary/20">
-                    <span className="text-secondary-foreground font-black uppercase text-xs tracking-widest">{successData.campaignName}</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            <StampSuccess />
           ) : (
             <div className="space-y-4">
               {mode === 'CAMERA' ? (

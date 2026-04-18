@@ -43,8 +43,10 @@ export const mobileCardService = {
   /**
    * Resgata recompensa
    */
-  async redeemReward(cardId: number): Promise<MobileRedemptionResponse> {
-    const response = await apiClient.post<MobileRedemptionResponse>(`${BASE_URL}/cards/${cardId}/redeem`);
+  async redeemReward(cardId: number, rewardId?: number): Promise<MobileRedemptionResponse> {
+    const response = await apiClient.post<MobileRedemptionResponse>(`${BASE_URL}/cards/${cardId}/redeem`, null, {
+      params: { rewardId }
+    });
     return response.data;
   },
 

@@ -19,6 +19,22 @@ jest.mock('@/lib/campaign-service', () => ({
   },
 }));
 
+jest.mock('@/context/auth-context', () => ({
+  useAuth: () => ({
+    user: { plan: 'Pro' }
+  }),
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+  }),
+  useSearchParams: () => ({
+    get: jest.fn(),
+  }),
+}));
+
 describe('CreateCampaignForm', () => {
   it('deve renderizar formulário de criação de campanha', () => {
     render(<CreateCampaignForm onSuccess={jest.fn()} />);

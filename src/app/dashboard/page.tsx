@@ -24,11 +24,13 @@ import { CustomersList } from '@/components/dashboard/CustomersList';
 import { DeletionBanner } from '@/components/dashboard/DeletionBanner';
 import { DeveloperGuide } from '@/components/dashboard/DeveloperGuide';
 import { InsightsDashboard } from '@/components/dashboard/InsightsDashboard';
+import { AutomationsDashboard } from '@/components/dashboard/AutomationsDashboard';
+import { ReferralsDashboard } from '@/components/dashboard/ReferralsDashboard';
+import { CampaignHistory } from '@/components/dashboard/CampaignHistory';
 import { RoiSimulator } from '@/components/RoiSimulator';
 import { NfcIssuer } from '@/components/dashboard/NfcIssuer';
 import { NfcRedeemer } from '@/components/dashboard/NfcRedeemer';
 import { DashboardTab } from '@/types/dashboard';
-
 
 function DashboardContent() {
   const { logout, refreshUser } = useAuth();
@@ -256,6 +258,12 @@ function DashboardContent() {
         );
       case 'insights':
         return <InsightsDashboard />;
+      case 'automations':
+        return <AutomationsDashboard />;
+      case 'referrals':
+        return <ReferralsDashboard />;
+      case 'history':
+        return <CampaignHistory />;
       case 'campaigns':
         return <CampaignsList onOpenHelp={openHelp} />;
       case 'customers':

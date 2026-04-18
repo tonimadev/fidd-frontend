@@ -1,39 +1,57 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { dashboardService } from '@/lib/dashboard-service';
 import { StoreInsights } from '@/types/dashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { Button } from '@/components/ui/Button';
 import { useRouter } from 'next/navigation';
+import { 
+  TrendingUp, 
+  Users, 
+  ArrowDownRight, 
+  Clock, 
+  Zap,
+  Filter,
+  RefreshCw,
+  CheckCircle2
+} from 'lucide-react';
 import axios from 'axios';
+import { apiClient } from '@/lib/api-client';
 
 export const InsightsDashboard: React.FC = () => {
   const [data, setData] = useState<StoreInsights | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [period, setPeriod] = useState('30'); // days
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchInsights = async () => {
-      try {
-        setLoading(true);
-        const insights = await dashboardService.getInsights();
-        setData(insights);
-      } catch (err: unknown) {
-        if (axios.isAxiosError(err) && err.response?.status === 403) {
-          setError('PRO_ONLY');
-        } else {
-          setError((err as Error).message || 'Erro ao carregar insights');
-        }
-      } finally {
-        setLoading(false);
+  const fetchInsights = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date(Date.now() - parseInt(period) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      
+      const response = await apiClient.get<StoreInsights>('/api/web/v1/dashboard/insights', {
+        params: { startDate, endDate }
+      });
+      setData(response.data);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.status === 403) {
+        setError('PRO_ONLY');
+      } else {
+        setError((err as Error).message || 'Erro ao carregar insights');
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  }, [period]);
 
+  useEffect(() => {
     fetchInsights();
-  }, []);
+  }, [fetchInsights]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-64 text-muted-foreground">Carregando insights...</div>;
@@ -90,54 +108,144 @@ export const InsightsDashboard: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight text-foreground">Insights Estratégicos</h2>
-        <p className="text-muted-foreground">
-          Descubra padrões de comportamento e potencialize seus resultados.
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">Insights Estratégicos</h2>
+          <p className="text-muted-foreground">
+            Descubra padrões de comportamento e potencialize seus resultados.
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border border-border">
+          <Filter className="w-4 h-4 ml-2 text-muted-foreground" />
+          <select 
+            value={period} 
+            onChange={(e) => setPeriod(e.target.value)}
+            className="bg-transparent text-sm font-medium focus:outline-none p-1.5 pr-8 cursor-pointer"
+          >
+            <option value="7">Últimos 7 dias</option>
+            <option value="30">Últimos 30 dias</option>
+            <option value="90">Últimos 90 dias</option>
+          </select>
+          <Button variant="ghost" size="sm" onClick={() => fetchInsights()} className="h-8 w-8 p-0">
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card className="bg-gradient-to-br from-primary/5 to-transparent border-primary/10">
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Clientes Ativos</CardDescription>
-            <CardTitle className="text-3xl text-foreground">{data.totalActiveCustomers}</CardTitle>
+            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Valor do Cliente (LTV)</CardDescription>
+            <CardTitle className="text-3xl text-foreground">
+              {data.ltv?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00'}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xs text-muted-foreground flex items-center gap-1">
-              <span className="text-emerald-500 font-bold">↑</span> Clientes com cartões iniciados
+            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+              <TrendingUp className="w-3 h-3 text-emerald-500" /> Estimativa de receita por cliente (6 meses)
             </div>
           </CardContent>
         </Card>
-        <Card>
+
+        <Card className="bg-gradient-to-br from-blue-500/5 to-transparent border-blue-500/10">
           <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Selos Hoje</CardDescription>
-            <CardTitle className="text-3xl text-foreground">{data.totalPunchesToday}</CardTitle>
+            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Taxa de Retenção</CardDescription>
+            <CardTitle className="text-3xl text-foreground">{data.retentionRate?.toFixed(1)}%</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xs text-muted-foreground">Volume total desde a meia-noite</div>
+            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+              <Users className="w-3 h-3 text-blue-500" /> Clientes que retornaram no período
+            </div>
           </CardContent>
         </Card>
+
+        <Card className="bg-gradient-to-br from-amber-500/5 to-transparent border-amber-500/10">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Taxa de Churn</CardDescription>
+            <CardTitle className="text-3xl text-foreground text-amber-600">{data.churnRate?.toFixed(1)}%</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+              <ArrowDownRight className="w-3 h-3 text-amber-500" /> Probabilidade de perda de clientes
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-emerald-500/5 to-transparent border-emerald-500/10">
+          <CardHeader className="pb-2">
+            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Previsão de Receita</CardDescription>
+            <CardTitle className="text-3xl text-emerald-600">
+              {data.revenueForecast?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+              <Zap className="w-3 h-3 text-emerald-500" /> Potencial de caixa dos cartões ativos
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Taxa de Conclusão</CardDescription>
             <CardTitle className="text-3xl text-foreground">{data.completionRate.toFixed(1)}%</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xs text-muted-foreground">Conversão de iniciados para resgatados</div>
+            <div className="text-xs text-muted-foreground flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Conversão para resgate
+            </div>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader className="pb-2">
             <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Média de Retorno</CardDescription>
             <CardTitle className="text-3xl text-foreground">{data.averageReturnTimeDays.toFixed(1)} dias</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xs text-muted-foreground">Entre o primeiro e último selo</div>
+            <div className="text-xs text-muted-foreground flex items-center gap-1">
+              <Clock className="w-3 h-3 text-blue-500" /> Entre o primeiro e último selo
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Fidelity Funnel */}
+      <Card className="shadow-lg border-primary/10">
+        <CardHeader>
+          <CardTitle className="text-foreground">Funil de Fidelidade</CardTitle>
+          <CardDescription>Jornada do cliente desde o primeiro selo até a recompensa.</CardDescription>
+        </CardHeader>
+        <CardContent className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              layout="vertical"
+              data={[
+                { name: '1º Selo', value: 100, displayValue: '100%', fill: '#3b82f6' },
+                { name: 'Metade (50%)', value: 75, displayValue: '75%', fill: '#6366f1' },
+                { name: 'Resgate', value: data.completionRate, displayValue: `${data.completionRate.toFixed(1)}%`, fill: '#8b5cf6' },
+                { name: 'Retorno', value: data.retentionRate || 0, displayValue: `${(data.retentionRate || 0).toFixed(1)}%`, fill: '#ec4899' },
+              ]}
+              margin={{ top: 5, right: 80, left: 20, bottom: 5 }}
+            >
+              <XAxis type="number" hide />
+              <YAxis dataKey="name" type="category" width={100} axisLine={false} tickLine={false} tick={{ fontWeight: 'bold', fontSize: 12 }} />
+              <Tooltip formatter={(value: number) => [`${value.toFixed(1)}%`, 'Conversão']} />
+              <Bar dataKey="value" radius={[0, 10, 10, 0]} barSize={40}>
+                {/* Custom label for percentage */}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="mt-4 grid grid-cols-4 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+             <div>Aquisição</div>
+             <div>Engajamento</div>
+             <div>Conversão</div>
+             <div>Retenção</div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Day Volume Bar Chart */}

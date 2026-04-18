@@ -11,12 +11,15 @@ import { MobileCardResponse } from '@/types/mobile-cards';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { useParams, useRouter } from 'next/navigation';
-import { ChevronLeft, QrCode, Info, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
+import { ChevronLeft, QrCode, Info, CheckCircle2, AlertTriangle, Calendar, Share2 } from 'lucide-react';
 import { UnifiedScannerModal } from '@/components/mobile/UnifiedScannerModal';
+import { useAuth } from '@/context/auth-context';
+import { triggerConfetti } from '@/lib/confetti';
 
 export default function CardDetailPage() {
   const { id } = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const [card, setCard] = useState<MobileCardResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRedeeming, setIsRedeeming] = useState(false);
@@ -41,13 +44,14 @@ export default function CardDetailPage() {
     if (id) fetchCard();
   }, [id]);
 
-  const handleRedeem = async () => {
+  const handleRedeem = async (rewardId?: number) => {
     try {
       setIsRedeeming(true);
       setError(null);
-      const result = await mobileCardService.redeemReward(Number(id));
+      const result = await mobileCardService.redeemReward(Number(id), rewardId);
       if (result.success) {
         setRedemptionCode(result.redemptionCode);
+        triggerConfetti();
         // Atualizar os dados do cartão após resgate
         const updatedCard = await mobileCardService.getCardById(Number(id));
         setCard(updatedCard);
@@ -60,6 +64,16 @@ export default function CardDetailPage() {
     } finally {
       setIsRedeeming(false);
     }
+  };
+
+  const handleShare = () => {
+    const refId = user?.id;
+    if (!refId || !card) return;
+
+    const shareUrl = `${window.location.origin}/app/stores/${card.storeId}?ref=${refId}`;
+    const text = `Ganhe prêmios na ${card.storeName}! Use meu link para começar a colecionar selos: ${shareUrl}`;
+    
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   if (isLoading) {
@@ -131,6 +145,18 @@ export default function CardDetailPage() {
           <p className="text-lg font-bold text-primary uppercase tracking-widest">
             {card.storeName}
           </p>
+          
+          {/* Share Button */}
+          <div className="pt-2">
+            <button 
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-xs font-black uppercase tracking-widest transition-colors shadow-md shadow-emerald-200 active:scale-95"
+            >
+              <Share2 size={14} />
+              Indicar Amigo
+            </button>
+          </div>
+
           {card.expirationDate && (
             <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground font-medium pt-1">
               <Calendar size={14} />
@@ -180,6 +206,56 @@ export default function CardDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* Intermediate Rewards */}
+        {card.rewards && card.rewards.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest px-1">Prêmios pelo Caminho</h3>
+            <div className="space-y-3">
+              {card.rewards.map((reward) => (
+                <div 
+                  key={reward.id} 
+                  className={`p-4 rounded-2xl flex items-center justify-between border-2 transition-all ${
+                    reward.isRedeemed 
+                      ? 'bg-slate-50 border-slate-100 opacity-60' 
+                      : reward.canRedeem 
+                        ? 'bg-amber-50 border-amber-200 shadow-md shadow-amber-100' 
+                        : 'bg-white border-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl ${reward.isRedeemed ? 'bg-slate-200 text-slate-500' : 'bg-amber-100 text-amber-600'}`}>
+                      <CheckCircle2 size={20} />
+                    </div>
+                    <div>
+                      <p className={`text-sm font-black ${reward.isRedeemed ? 'text-slate-500 line-through' : 'text-slate-800'}`}>
+                        {reward.name}
+                      </p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase">
+                        {reward.pointsRequired} selos
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {reward.canRedeem && !reward.isRedeemed && (
+                    <Button 
+                      size="sm" 
+                      onClick={() => handleRedeem(reward.id)}
+                      disabled={isRedeeming}
+                      className="bg-amber-500 hover:bg-amber-600 text-white font-black text-[10px] uppercase h-8 px-4 rounded-xl shadow-sm"
+                    >
+                      Resgatar
+                    </Button>
+                  )}
+                  
+                  {reward.isRedeemed && (
+                    <span className="text-[10px] font-black text-slate-400 uppercase italic">Resgatado</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Description */}
         {card.campaignDescription && (
