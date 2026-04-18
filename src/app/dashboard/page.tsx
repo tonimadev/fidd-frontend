@@ -26,6 +26,7 @@ import { DeveloperGuide } from '@/components/dashboard/DeveloperGuide';
 import { InsightsDashboard } from '@/components/dashboard/InsightsDashboard';
 import { RoiSimulator } from '@/components/RoiSimulator';
 import { NfcIssuer } from '@/components/dashboard/NfcIssuer';
+import { NfcRedeemer } from '@/components/dashboard/NfcRedeemer';
 import { DashboardTab } from '@/types/dashboard';
 
 
@@ -268,7 +269,10 @@ function DashboardContent() {
                 Valide os códigos de resgate apresentados pelos seus clientes.
               </p>
             </div>
-            <RedemptionForm />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <RedemptionForm />
+              <NfcRedeemer />
+            </div>
           </div>
         );
       case 'nfc':

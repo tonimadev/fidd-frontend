@@ -210,18 +210,18 @@ export default function HomePage() {
 
           {/* Feature 5 */}
           <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <div className="text-4xl mb-4" role="img" aria-label="Alvo">🎯</div>
+            <div className="text-4xl mb-4" role="img" aria-label="Tecnologia">⚡</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Fácil de Implementar
+              NFC & QR Code
             </h3>
             <p className="text-muted-foreground">
-              Comece a distribuir selos hoje mesmo. Sem necessidade de equipamentos caros ou integração complexa.
+              Pontue clientes em segundos via aproximação (NFC) ou leitura de QR Code. Modernidade e agilidade no seu balcão.
             </p>
           </div>
 
           {/* Feature 6 */}
           <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-            <div className="text-4xl mb-4" role="img" aria-label="Velocidade">⚡</div>
+            <div className="text-4xl mb-4" role="img" aria-label="Suporte">🎧</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
               Suporte Prioritário
             </h3>

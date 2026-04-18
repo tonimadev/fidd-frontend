@@ -65,7 +65,22 @@ export default function DocsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-foreground mb-4">4. Como Gerar Convites e Atrair Novos Clientes</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-4">4. Inovação: Uso do NFC</h2>
+              <p>O FIDD utiliza a tecnologia NFC (Near Field Communication) para tornar a experiência ainda mais fluida:</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+                  <h3 className="font-bold text-primary mb-2">Emissão por Aproximação</h3>
+                  <p className="text-sm">Em vez de QR Code, você pode simplesmente encostar o celular do cliente no seu tablet ou celular para entregar os selos.</p>
+                </div>
+                <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+                  <h3 className="font-bold text-primary mb-2">Resgate por Toque</h3>
+                  <p className="text-sm">Para trocar prêmios, o cliente aproxima o celular e o resgate é validado instantaneamente sem digitação de códigos.</p>
+                </div>
+              </div>
+            </section>
+            
+            <section>
+              <h2 className="text-2xl font-bold text-foreground mb-4">5. Como Gerar Convites e Atrair Novos Clientes</h2>
               <p>Crie códigos de 6 caracteres para distribuir em redes sociais ou WhatsApp:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>No menu <strong>&apos;Convites&apos;</strong>, selecione a campanha desejada.</li>
@@ -76,7 +91,7 @@ export default function DocsPage() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-foreground mb-4">5. Análise de Resultados</h2>
+              <h2 className="text-2xl font-bold text-foreground mb-4">6. Análise de Resultados</h2>
               <p>No Dashboard principal, você pode acompanhar o desempenho do seu programa:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Total de cartelas emitidas e completadas.</li>
