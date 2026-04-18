@@ -6,11 +6,13 @@ import { publicService, PublicStore } from '@/lib/public-service';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Star, Calendar, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function PublicStorePage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const slug = params.slug as string;
   const refId = searchParams.get('ref');
 
@@ -49,8 +51,8 @@ export default function PublicStorePage() {
         <div className="text-center space-y-4 max-w-md">
           <h1 className="text-2xl font-black text-slate-800">Ops! Algo deu errado.</h1>
           <p className="text-slate-600">{error || 'Não conseguimos encontrar esta loja.'}</p>
-          <Button asChild className="w-full">
-            <Link href="/">Voltar para a Home</Link>
+          <Button onClick={() => router.push('/')} className="w-full">
+            Voltar para a Home
           </Button>
         </div>
       </div>
@@ -66,9 +68,12 @@ export default function PublicStorePage() {
       <header className="bg-white border-b border-slate-100 py-12 px-6">
         <div className="max-w-2xl mx-auto flex flex-col items-center text-center space-y-6">
           {store.logoUrl ? (
-            <img 
+            <Image 
               src={store.logoUrl} 
               alt={store.name} 
+              width={96}
+              height={96}
+              unoptimized
               className="w-24 h-24 rounded-3xl shadow-xl border-4 border-white object-cover"
             />
           ) : (
@@ -91,8 +96,8 @@ export default function PublicStorePage() {
             )}
           </div>
           
-          <Button asChild size="lg" className="px-12 font-black rounded-full shadow-lg" style={{ backgroundColor: highlightColor }}>
-            <Link href={registerUrl}>COMEÇAR A GANHAR SELOS</Link>
+          <Button onClick={() => router.push(registerUrl)} size="lg" className="px-12 font-black rounded-full shadow-lg" style={{ backgroundColor: highlightColor }}>
+            COMEÇAR A GANHAR SELOS
           </Button>
         </div>
       </header>
@@ -110,7 +115,15 @@ export default function PublicStorePage() {
               {store.activeCampaigns.map((campaign) => (
                 <Card key={campaign.id} className="overflow-hidden border-none shadow-md">
                   {campaign.imageUrl && (
-                    <img src={campaign.imageUrl} alt={campaign.name} className="w-full h-40 object-cover" />
+                    <div className="relative w-full h-40">
+                      <Image 
+                        src={campaign.imageUrl} 
+                        alt={campaign.name} 
+                        fill
+                        unoptimized
+                        className="object-cover" 
+                      />
+                    </div>
                   )}
                   <div className="p-6 space-y-4">
                     <div className="space-y-1">

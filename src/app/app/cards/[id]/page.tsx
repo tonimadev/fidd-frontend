@@ -67,7 +67,7 @@ export default function CardDetailPage() {
   };
 
   const handleShare = () => {
-    const refId = user?.publicId || user?.userId;
+    const refId = user?.publicId || user?.id;
     if (!refId || !card) return;
 
     const shareUrl = `${window.location.origin}/loja/${card.storeSlug}?ref=${refId}`;
