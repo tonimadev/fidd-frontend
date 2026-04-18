@@ -47,6 +47,14 @@ export const registerSchema = z.object({
   }),
   taxId: z.string().trim().min(1, 'Documento obrigatório').max(18, 'Documento inválido'),
   email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
+  description: z.string()
+    .transform(sanitizeString)
+    .pipe(
+      z.string()
+        .max(300, 'A descrição não pode exceder 300 caracteres')
+    )
+    .optional()
+    .or(z.literal('')),
   password: z.string()
     .min(8, 'Senha deve ter pelo menos 8 caracteres')
     .max(100, 'Senha muito longa')

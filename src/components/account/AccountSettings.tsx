@@ -13,6 +13,7 @@ import { DeleteAccountModal } from './DeleteAccountModal';
 import { ApiKeysSettings } from './ApiKeysSettings';
 import { AddressSettings } from './AddressSettings';
 import { Input } from '@/components/ui/Input';
+import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
 import { SecurityConfirmationModal } from './SecurityConfirmationModal';
 import { ImageCropperModal } from './ImageCropperModal';
@@ -29,6 +30,7 @@ export const AccountSettings: React.FC = () => {
   // Profile fields
   const [profile, setProfile] = useState<StoreProfile | null>(null);
   const [tradeName, setTradeName] = useState('');
+  const [description, setDescription] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
   const [highlightColor, setHighlightColor] = useState('#FF6B00');
   const [imgError, setImgError] = useState(false);
@@ -63,6 +65,7 @@ export const AccountSettings: React.FC = () => {
       setDeleteStatus(status);
       setProfile(profileData);
       setTradeName(profileData.tradeName);
+      setDescription(profileData.description || '');
       setProfilePictureUrl(profileData.profilePictureUrl || '');
       setHighlightColor(profileData.highlightColor || '#FF6B00');
     } catch (error) {
@@ -139,6 +142,7 @@ export const AccountSettings: React.FC = () => {
       
       await accountService.updateProfile({
         tradeName,
+        description,
         profilePictureUrl,
         highlightColor,
         currentPassword: password
@@ -271,6 +275,17 @@ export const AccountSettings: React.FC = () => {
               onChange={(e) => setTradeName(e.target.value)}
               placeholder="Ex: Pizzaria do Zé"
             />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">Descrição (Bio da Loja)</label>
+            <TextArea 
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Fale um pouco sobre o seu estabelecimento e o que seus clientes encontrarão."
+              maxLength={300}
+              className="resize-none h-24"
+            />
+            <p className="text-[10px] text-muted-foreground text-right">{description.length}/300</p>
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Cor de Destaque (Identidade Visual)</label>

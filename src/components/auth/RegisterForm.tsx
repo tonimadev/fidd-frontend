@@ -16,6 +16,7 @@ import { storage } from '@/lib/storage';
 import Link from 'next/link';
 import { GoogleLogin } from '@react-oauth/google';
 import { Input } from '@/components/ui/Input';
+import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
 import { Eye, EyeOff } from 'lucide-react';
 import { EmailVerificationModal } from '@/components/auth/EmailVerificationModal';
@@ -70,7 +71,7 @@ export const RegisterForm: React.FC = () => {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
-      await registerUser(data.tradeName, data.taxId, data.email, data.password);
+      await registerUser(data.tradeName, data.taxId, data.email, data.password, data.description);
       analyticsService.track('registration', { method: 'email' });
       
       // Verifica se o e-mail precisa ser verificado
@@ -239,6 +240,22 @@ export const RegisterForm: React.FC = () => {
         error={errors.email?.message}
         {...register('email')}
       />
+
+      {/* Descrição da Loja */}
+      <div className="space-y-1">
+        <TextArea
+          label="Descrição da Loja (Bio)"
+          id="description"
+          placeholder="Fale brevemente sobre o seu estabelecimento para seus clientes."
+          maxLength={300}
+          error={errors.description?.message}
+          className="resize-none h-24"
+          {...register('description')}
+        />
+        <p className="text-[10px] text-muted-foreground text-right px-1">
+          {watch('description')?.length || 0}/300 caracteres
+        </p>
+      </div>
 
       {/* Senha */}
       <div className="space-y-1.5 relative">

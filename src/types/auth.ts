@@ -12,6 +12,7 @@ export interface AuthResponse {
   role: string;
   plan?: string;
   profilePictureUrl?: string;
+  description?: string;
   isNewUser?: boolean;
   emailVerified?: boolean;
 }
@@ -24,7 +25,7 @@ export interface AuthContext {
   isAccountPendingDeletion: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: (idToken: string) => Promise<void>;
-  register: (tradeName: string, taxId: string, email: string, password: string) => Promise<void>;
+  register: (tradeName: string, taxId: string, email: string, password: string, description?: string) => Promise<void>;
   refreshUser: () => Promise<void>;
   logout: () => void;
 }
@@ -37,6 +38,7 @@ export interface User {
   role: string;
   plan?: string;
   profilePictureUrl?: string;
+  description?: string;
   isNewUser?: boolean;
   emailVerified?: boolean;
 }
@@ -60,6 +62,7 @@ export interface RegisterRequest {
   taxId: string; // CNPJ ou CPF (14 ou 11 dígitos)
   taxIdType: 'CNPJ' | 'CPF'; // Tipo de documento
   email: string;
+  description?: string;
   password: string;
 }
 

@@ -194,11 +194,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   /**
    * Realiza registro
    */
-  const register = useCallback(async (tradeName: string, taxId: string, email: string, password: string) => {
+  const register = useCallback(async (tradeName: string, taxId: string, email: string, password: string, description?: string) => {
     try {
       setIsLoading(true);
       const taxIdType = taxId.length === 14 ? 'CNPJ' : 'CPF';
-      const response = await authService.register({ tradeName, taxId, email, password, taxIdType });
+      const response = await authService.register({ tradeName, taxId, email, password, taxIdType, description });
 
       const userData = {
         id: response.id,
