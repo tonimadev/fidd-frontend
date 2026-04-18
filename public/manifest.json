@@ -1,7 +1,7 @@
 {
-  "name": "FIDD - Cartões de Fidelidade Virtuais",
+  "name": "FIDD - Clube de selos",
   "short_name": "FIDD",
-  "description": "Plataforma de gerenciamento de campanhas de fidelização para lojas",
+  "description": "Plataforma de gerenciamento de cartões e selos virtuais para lojas",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -17,7 +17,7 @@ const jsonLd = {
     "price": "0",
     "priceCurrency": "BRL"
   },
-  "description": "Plataforma de gerenciamento de campanhas de fidelização para lojas e estabelecimentos comerciais."
+  "description": "Plataforma de gerenciamento de clube de selos para lojas e estabelecimentos comerciais."
 };
 
 export default function HomePage() {
@@ -82,60 +82,79 @@ export default function HomePage() {
 
           <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
             {userType === 'merchant' ? (
-              <>Cartões de Selos <span className="text-primary">Virtuais</span></>
+              <>Transforme Clientes em Fãs com seu <span className="text-primary">Clube de Selos</span></>
             ) : (
-              <>Seus Pontos e Prêmios em <span className="text-primary">um só lugar</span></>
+              <>Ganhe Prêmios e Benefícios Exclusivos em <span className="text-primary">suas lojas favoritas</span></>
             )}
           </h1>
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             {userType === 'merchant' 
-              ? 'Aumentar o engajamento de seus clientes no seu Clube de Selos nunca foi tão fácil. Gerencie campanhas de pontos e recompensas.'
-              : 'Acompanhe seus cartões de selos, descubra novos clubes e resgate seus prêmios direto no seu navegador.'
+              ? 'Aumente seu faturamento em até 30% com um Clube de Selos digital que seus clientes realmente amam usar.'
+              : 'Acumule selos, acompanhe seus cartões e resgate prêmios de forma simples e 100% digital. Sem papel, sem complicação.'
             }
           </p>
           <div className="flex gap-4 justify-center">
             <Link
               href={userType === 'merchant' ? "/register" : "/app"}
-              className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-semibold text-lg shadow-lg shadow-primary/20"
+              className="px-8 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all hover:scale-105 font-semibold text-lg shadow-lg shadow-primary/20"
             >
-              {userType === 'merchant' ? 'Começar Agora' : 'Acessar meus Cartões'}
+              {userType === 'merchant' ? 'Começar Grátis Agora' : 'Quero Meus Prêmios'}
             </Link>
             <Link
               href="#features"
-              className="px-8 py-3 border-2 border-primary text-primary rounded-lg hover:bg-primary/5 transition-colors font-semibold text-lg"
+              className="px-8 py-3 border-2 border-primary text-primary rounded-lg hover:bg-primary/5 transition-all font-semibold text-lg"
             >
-              Como funciona?
+              Ver Como Funciona
             </Link>
+          </div>
+
+          {/* Social Proof Banner */}
+          <div className="mt-20 pt-10 border-t border-border/50">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
+              Mais de <span className="text-primary">100 lojas</span> e milhares de clientes já confiam no FIDD
+            </p>
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+              <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Café <span className="text-slate-500">Express</span></div>
+              <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Burger <span className="text-slate-500">House</span></div>
+              <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Estilo <span className="text-slate-500">Moda</span></div>
+              <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Pet <span className="text-slate-500">Love</span></div>
+              <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Academia <span className="text-slate-500">FIT</span></div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section id="features" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <h2 className="text-4xl font-bold text-foreground text-center mb-16">
-          Recursos Principais
-        </h2>
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-foreground mb-4">
+            Tudo que você precisa para <span className="text-primary">crescer</span>
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Uma plataforma completa para criar, gerenciar e escalar seu Clube de Selos sem complicações técnicas.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Feature 1 */}
-          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4" role="img" aria-label="Análise">📊</div>
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="text-4xl mb-4" role="img" aria-label="Análise">📈</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Campanhas Inteligentes
+              Recorrência Garantida
             </h3>
             <p className="text-muted-foreground">
-              Crie e gerencie campanhas de fidelização personalizadas com metas de pontos e recompensas.
+              Clientes fiéis compram até 67% mais. Crie motivos reais para eles voltarem sempre à sua loja.
             </p>
           </div>
 
           {/* Feature 2 */}
-          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div className="text-4xl mb-4" role="img" aria-label="Celular">📱</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Integração Mobile
+              Seu App Próprio
             </h3>
               <p className="text-muted-foreground">
-                Seus clientes acessam cartões de selos virtuais pelo app mobile de forma simples e segura.
+                Sua marca no bolso do cliente. Interface moderna e intuitiva que substitui os antigos cartões de papel.
               </p>
               <div className="mt-6 flex flex-wrap gap-4">
                 <a 
@@ -168,46 +187,46 @@ export default function HomePage() {
           </div>
 
           {/* Feature 3 */}
-          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div className="text-4xl mb-4" role="img" aria-label="Segurança">🔐</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Segurança Garantida
+              Segurança de Elite
             </h3>
             <p className="text-muted-foreground">
-              Autenticação JWT, tokens seguros e conformidade total com padrões de segurança.
+              Proteção total de dados e transações. Fique tranquilo com nossa infraestrutura robusta e segura.
             </p>
           </div>
 
           {/* Feature 4 */}
-          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-            <div className="text-4xl mb-4" role="img" aria-label="Crescimento">📈</div>
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className="text-4xl mb-4" role="img" aria-label="Crescimento">💎</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Análise em Tempo Real
+              ROI Comprovado
             </h3>
             <p className="text-muted-foreground">
-              Acompanhe métricas detalhadas de engajamento e conversão de suas campanhas.
+              Nossa calculadora mostra exatamente o quanto você deixa de ganhar sem um Clube de Selos.
             </p>
           </div>
 
           {/* Feature 5 */}
-          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div className="text-4xl mb-4" role="img" aria-label="Alvo">🎯</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              QR Codes Dinâmicos
+              Fácil de Implementar
             </h3>
             <p className="text-muted-foreground">
-              Gere QR codes com tokens seguros para resgate rápido e verificação de pontos.
+              Comece a distribuir selos hoje mesmo. Sem necessidade de equipamentos caros ou integração complexa.
             </p>
           </div>
 
           {/* Feature 6 */}
-          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow">
+          <div className="bg-card border border-border rounded-xl shadow-lg p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
             <div className="text-4xl mb-4" role="img" aria-label="Velocidade">⚡</div>
             <h3 className="text-2xl font-bold text-foreground mb-3">
-              Rápido e Escalável
+              Suporte Prioritário
             </h3>
             <p className="text-muted-foreground">
-              Infraestrutura robusta que cresce com seu negócio, desde pequenas lojas até redes.
+              Não está sozinho. Nossa equipe de especialistas está pronta para ajudar seu negócio a decolar.
             </p>
           </div>
         </div>
@@ -247,20 +266,35 @@ export default function HomePage() {
       )}
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-primary to-accent py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-8">
+      <section className="bg-gradient-to-r from-primary to-accent py-20 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             {userType === 'merchant' 
-              ? 'Pronto para criar seu Clube de Selos e engajar seus clientes?'
-              : 'Pronto para começar a ganhar prêmios e pontos?'
+              ? 'Pare de perder clientes para a concorrência'
+              : 'Comece a ser recompensado pelos seus selos'
             }
           </h2>
+          <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+            {userType === 'merchant'
+              ? 'Junte-se a centenas de empresas que já modernizaram seu programa de selos.'
+              : 'Baixe o app e descubra um mundo de vantagens nas suas lojas favoritas.'
+            }
+          </p>
           <Link
             href={userType === 'merchant' ? "/register" : "/app"}
-            className="inline-block px-10 py-4 bg-card text-primary rounded-lg hover:bg-muted transition-colors font-bold text-lg shadow-xl"
+            className="inline-block px-10 py-4 bg-white text-primary rounded-lg hover:bg-muted transition-all hover:scale-105 font-bold text-xl shadow-2xl"
           >
-            {userType === 'merchant' ? 'Criar Conta Lojista' : 'Acessar meus Cartões'}
+            {userType === 'merchant' ? 'Criar Meu Clube Grátis' : 'Começar a Ganhar Agora'}
           </Link>
+          {userType === 'merchant' && (
+            <p className="mt-6 text-white/80 text-sm">
+              Não requer cartão de crédito • Setup em 2 minutos
+            </p>
+          )}
         </div>
       </section>
 

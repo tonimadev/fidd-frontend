@@ -20,7 +20,7 @@ function LoginContent() {
       <CardHeader className="px-0 pt-0">
         <CardTitle className="text-3xl font-bold tracking-tight">Bem-vindo de volta</CardTitle>
         <CardDescription className="text-base">
-          Acesse sua conta para gerenciar suas campanhas de fidelidade
+          Acesse sua conta para gerenciar suas campanhas de selos
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
@@ -78,7 +78,7 @@ export default function LoginPage() {
           <h1 className="text-6xl font-black tracking-tighter mb-6">FIDD</h1>
           <h2 className="text-3xl font-bold mb-4">Fidelize seus clientes com simplicidade.</h2>
           <p className="text-lg text-primary-foreground/80 leading-relaxed">
-            Crie cartões de fidelidade virtuais, acompanhe o engajamento e aumente o faturamento da sua loja com uma plataforma intuitiva e moderna.
+            Crie cartões de selos virtuais, acompanhe o engajamento e aumente o faturamento da sua loja com uma plataforma intuitiva e moderna.
           </p>
           
           <div className="mt-12 grid grid-cols-2 gap-6 text-left">

@@ -29,7 +29,13 @@ export default function RegisterPage() {
           {/* Título */}
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-foreground">Criar Conta</h2>
-            <p className="text-muted-foreground text-sm mt-1">Registre sua loja no sistema FIDD</p>
+            <p className="text-muted-foreground text-sm mt-1">Junte-se a mais de 100 lojistas de sucesso</p>
+            <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-emerald-600 bg-emerald-500/10 w-fit px-2 py-1 rounded-full uppercase tracking-wider">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+              </svg>
+              Não requer cartão de crédito
+            </div>
           </div>
 
           {/* Formulário */}

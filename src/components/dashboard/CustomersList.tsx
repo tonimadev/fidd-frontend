@@ -136,7 +136,7 @@ export const CustomersList: React.FC = () => {
             <p className="text-muted-foreground max-w-sm mt-2">
               {showOnlyActive 
                 ? "Nenhum cliente ativo nos últimos 30 dias foi encontrado. Tente ver todos os clientes." 
-                : "Seu estabelecimento ainda não possui clientes fidelizados."}
+                : "Seu estabelecimento ainda não possui clientes cadastrados."}
             </p>
             {showOnlyActive && (
               <Button size="sm" variant="outline" className="mt-6" onClick={() => setShowOnlyActive(false)}>

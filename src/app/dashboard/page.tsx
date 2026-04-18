@@ -104,7 +104,7 @@ function DashboardContent() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
               <p className="text-muted-foreground">
-                Visão geral do desempenho da sua fidelização.
+                Visão geral do desempenho dos seus selos.
               </p>
             </div>
 
@@ -221,7 +221,7 @@ function DashboardContent() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight">Simulador de ROI</h2>
               <p className="text-muted-foreground">
-                Calcule o retorno sobre o investimento do seu programa de fidelidade.
+                Calcule o retorno sobre o investimento do seu programa de selos.
               </p>
             </div>
             <RoiSimulator />
