@@ -16,9 +16,6 @@ export const createApiClient = (): AxiosInstance => {
     withCredentials: true,
     xsrfCookieName: 'XSRF-TOKEN',
     xsrfHeaderName: 'X-XSRF-TOKEN',
-    headers: {
-      'Content-Type': 'application/json',
-    },
   });
 
   /**
