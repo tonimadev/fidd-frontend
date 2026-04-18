@@ -15,6 +15,7 @@ import { AddressSettings } from './AddressSettings';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { SecurityConfirmationModal } from './SecurityConfirmationModal';
+import { ImageCropperModal } from './ImageCropperModal';
 import Image from 'next/image';
 
 export const AccountSettings: React.FC = () => {
@@ -32,6 +33,11 @@ export const AccountSettings: React.FC = () => {
   const [highlightColor, setHighlightColor] = useState('#FF6B00');
   const [imgError, setImgError] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Cropper
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [originalFileName, setOriginalFileName] = useState<string>('');
   
   // Security Modal
   const [showSecurityModal, setShowSecurityModal] = useState(false);
@@ -76,14 +82,34 @@ export const AccountSettings: React.FC = () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage('A imagem deve ter no máximo 5MB.');
+    if (file.size > 2 * 1024 * 1024) {
+      setErrorMessage('A imagem deve ter no máximo 2MB.');
       return;
     }
 
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result as string);
+      setOriginalFileName(file.name);
+      setShowCropper(true);
+    };
+    reader.readAsDataURL(file);
+    
+    // Reseta o input para permitir selecionar o mesmo arquivo novamente
+    e.target.value = '';
+  };
+
+  const handleCropComplete = async (croppedImageBlob: Blob) => {
+    setShowCropper(false);
+    
     try {
       setIsUploading(true);
       setErrorMessage('');
+      
+      // Converter Blob para File mantendo o nome original com extensão .jpg já que o crop gera jpeg
+      const safeName = (originalFileName || 'profile-picture.jpg').replace(/\.[^/.]+$/, "") + ".jpg";
+      const file = new File([croppedImageBlob], safeName, { type: 'image/jpeg' });
+      
       const url = await accountService.uploadProfilePicture(file);
       setProfilePictureUrl(url);
       setImgError(false);
@@ -92,6 +118,7 @@ export const AccountSettings: React.FC = () => {
       setErrorMessage('Erro ao fazer upload da imagem. Tente novamente.');
     } finally {
       setIsUploading(false);
+      setSelectedImage(null);
     }
   };
 
@@ -196,11 +223,12 @@ export const AccountSettings: React.FC = () => {
 
         <div className="space-y-4 max-w-md">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Imagem do Estabelecimento</label>
+            <label htmlFor="profile-picture" className="text-sm font-medium text-foreground">Imagem do Estabelecimento</label>
             <div className="flex gap-4 items-start">
               <div className="flex-1 space-y-2">
                 <div className="relative">
                   <Input 
+                    id="profile-picture"
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
@@ -213,7 +241,7 @@ export const AccountSettings: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Selecione uma imagem quadrada (Ex: 512x512). Máximo 5MB.</p>
+                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Selecione uma imagem quadrada (Ex: 512x512). Máximo 2MB.</p>
               </div>
               <div className="w-16 h-16 rounded-lg border border-border bg-muted flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
                 {profilePictureUrl ? (
@@ -384,6 +412,18 @@ export const AccountSettings: React.FC = () => {
         error={securityError}
         requirePasswordCreation={requirePasswordCreation}
       />
+
+      {/* Modal de Crop */}
+      {showCropper && selectedImage && (
+        <ImageCropperModal
+          image={selectedImage}
+          onCropComplete={handleCropComplete}
+          onCancel={() => {
+            setShowCropper(false);
+            setSelectedImage(null);
+          }}
+        />
+      )}
     </div>
   );
 };
