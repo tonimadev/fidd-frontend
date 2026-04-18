@@ -3,12 +3,13 @@
 import React, { useState, useCallback } from 'react';
 import { X, AlertCircle, QrCode, Ticket, Loader2, Camera, Keyboard, CheckCircle2 } from 'lucide-react';
 import { triggerSuccessConfetti } from '@/lib/confetti';
+import { playStampSound } from '@/lib/sounds';
 
 const StampSuccess = () => (
   <div className="flex flex-col items-center justify-center py-8 animate-in zoom-in-95 duration-300">
     <div className="relative">
       <div className="absolute inset-0 bg-primary/20 rounded-full animate-ping duration-1000" />
-      <div className="relative bg-primary text-white p-6 rounded-full shadow-xl shadow-primary/30 border-4 border-white animate-in zoom-in-50 duration-500">
+      <div className="relative bg-primary text-white p-6 rounded-full shadow-xl shadow-primary/30 border-4 border-white animate-in zoom-in-50 duration-500 hover:scale-105 active:scale-95 transition-transform cursor-pointer">
         <CheckCircle2 size={48} strokeWidth={3} />
       </div>
     </div>
@@ -76,6 +77,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
           if (res.success) {
             setSuccessData({ message: res.message, type: 'PUNCH', newScore: res.newScore });
             triggerSuccessConfetti();
+            playStampSound();
             if (typeof window !== 'undefined' && window.navigator.vibrate) {
               window.navigator.vibrate([100, 50, 100]);
             }
@@ -98,6 +100,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
             campaignName: res.campaignName 
           });
           triggerSuccessConfetti();
+          playStampSound();
           finalize();
           return;
         }

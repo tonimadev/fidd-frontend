@@ -5,9 +5,13 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { publicService, PublicStore } from '@/lib/public-service';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Star, Calendar, Loader2 } from 'lucide-react';
+import { Star, Calendar, Loader2, BadgeCheck } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+
+const VerifiedBadge = () => (
+  <BadgeCheck className="text-amber-400 fill-amber-400/20" size={24} />
+);
 
 export default function PublicStorePage() {
   const params = useParams();
@@ -86,8 +90,9 @@ export default function PublicStorePage() {
           )}
           
           <div className="space-y-2">
-            <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-2">
               {store.name}
+              {store.isPro && <VerifiedBadge />}
             </h1>
             {store.description && (
               <p className="text-slate-600 max-w-sm mx-auto leading-relaxed">

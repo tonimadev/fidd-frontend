@@ -24,6 +24,7 @@ export interface MobileCardResponse {
   campaignDescription?: string;
   imageUrl?: string;
   highlightColor?: string;
+  isStorePro: boolean;
   expirationDate?: string;
   redeemedAt?: string;
   rewards: CampaignReward[];

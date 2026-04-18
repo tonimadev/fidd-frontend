@@ -11,10 +11,14 @@ import { MobileCardResponse } from '@/types/mobile-cards';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { useParams, useRouter } from 'next/navigation';
-import { ChevronLeft, QrCode, Info, CheckCircle2, AlertTriangle, Calendar, Share2 } from 'lucide-react';
+import { ChevronLeft, QrCode, Info, CheckCircle2, AlertTriangle, Calendar, Share2, BadgeCheck } from 'lucide-react';
 import { UnifiedScannerModal } from '@/components/mobile/UnifiedScannerModal';
 import { useAuth } from '@/context/auth-context';
 import { triggerConfetti } from '@/lib/confetti';
+
+const VerifiedBadge = () => (
+  <BadgeCheck className="text-amber-400 fill-amber-400/20" size={20} />
+);
 
 export default function CardDetailPage() {
   const { id } = useParams();
@@ -142,8 +146,9 @@ export default function CardDetailPage() {
           <h2 className="text-3xl font-black tracking-tight text-slate-800 leading-tight">
             {card.campaignName}
           </h2>
-          <p className="text-lg font-bold text-primary uppercase tracking-widest">
+          <p className="text-lg font-bold text-primary uppercase tracking-widest flex items-center justify-center gap-2">
             {card.storeName}
+            {card.isStorePro && <VerifiedBadge />}
           </p>
           
           {/* Share Button */}

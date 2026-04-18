@@ -5,6 +5,7 @@ export interface PublicStore {
   logoUrl: string | null;
   description: string | null;
   highlightColor: string | null;
+  isPro: boolean;
   slug: string;
   activeCampaigns: PublicCampaign[];
 }

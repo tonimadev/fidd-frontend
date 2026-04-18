@@ -5,10 +5,14 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { MobileCardResponse } from '@/types/mobile-cards';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Store, CheckCircle2 } from 'lucide-react';
-import Link from 'next/link';
+import { Store, CheckCircle2, BadgeCheck } from 'lucide-react';
+
+const VerifiedBadge = () => (
+  <BadgeCheck className="text-amber-400 fill-amber-400/20" size={16} />
+);
 
 interface MobileCardProps {
   card: MobileCardResponse;
@@ -26,6 +30,7 @@ export const MobileCard: React.FC<MobileCardProps> = ({ card }) => {
             <div className="flex items-center gap-2 text-primary font-bold">
               <Store size={16} />
               <span className="text-sm uppercase tracking-wider">{card.storeName}</span>
+              {card.isStorePro && <VerifiedBadge />}
             </div>
             {isCompleted && (
               <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 uppercase tracking-tighter">

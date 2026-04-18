@@ -21,9 +21,12 @@ export const PublicPageManager: React.FC = () => {
     );
   }
 
-  const publicUrl = `${window.location.origin}/loja/${user?.slug}`;
+  const publicUrl = user?.slug 
+    ? `${window.location.origin}/loja/${user.slug}`
+    : '';
 
   const copyToClipboard = () => {
+    if (!publicUrl) return;
     navigator.clipboard.writeText(publicUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -41,7 +44,12 @@ export const PublicPageManager: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={() => window.open(publicUrl, '_blank')} className="gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => publicUrl && window.open(publicUrl, '_blank')} 
+            disabled={!publicUrl}
+            className="gap-2"
+          >
             <ExternalLink size={16} />
             Visualizar Página
           </Button>
@@ -61,15 +69,19 @@ export const PublicPageManager: React.FC = () => {
             </p>
             
             <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
-              <span className="text-xs font-bold text-slate-400 truncate flex-1">{publicUrl}</span>
+              <span className="text-xs font-bold text-slate-400 truncate flex-1">
+                {publicUrl || 'Carregando link...'}
+              </span>
               <button 
                 onClick={copyToClipboard}
-                className={`p-2 rounded-lg transition-all ${copied ? 'bg-green-500 text-white' : 'hover:bg-slate-200 text-slate-400'}`}
+                disabled={!publicUrl}
+                className={`p-2 rounded-lg transition-all ${copied ? 'bg-green-500 text-white' : 'hover:bg-slate-200 text-slate-400 disabled:opacity-50'}`}
               >
                 <Copy size={16} />
               </button>
             </div>
             {copied && <p className="text-[10px] font-black text-green-600 uppercase tracking-widest text-center">Copiado para a área de transferência!</p>}
+            {!publicUrl && <p className="text-[10px] font-medium text-amber-600 italic text-center">Identificador da loja não encontrado. Tente atualizar seu perfil.</p>}
           </Card>
 
           <Card className="p-6 bg-primary/5 border-primary/10 space-y-4">
