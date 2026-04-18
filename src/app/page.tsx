@@ -82,15 +82,15 @@ export default function HomePage() {
 
           <h1 className="text-5xl font-bold text-foreground mb-6 leading-tight">
             {userType === 'merchant' ? (
-              <>Cartões de Fidelidade <span className="text-primary">Virtuais</span></>
+              <>Cartões de Selos <span className="text-primary">Virtuais</span></>
             ) : (
               <>Seus Pontos e Prêmios em <span className="text-primary">um só lugar</span></>
             )}
           </h1>
           <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
             {userType === 'merchant' 
-              ? 'Aumentar a fidelidade de seus clientes nunca foi tão fácil. Gerencie campanhas de pontos e recompensas de forma completa e segura.'
-              : 'Acompanhe seus cartões de fidelidade, descubra novas lojas e resgate seus prêmios direto no seu navegador ou celular.'
+              ? 'Aumentar o engajamento de seus clientes no seu Clube de Selos nunca foi tão fácil. Gerencie campanhas de pontos e recompensas.'
+              : 'Acompanhe seus cartões de selos, descubra novos clubes e resgate seus prêmios direto no seu navegador.'
             }
           </p>
           <div className="flex gap-4 justify-center">
@@ -135,7 +135,7 @@ export default function HomePage() {
               Integração Mobile
             </h3>
               <p className="text-muted-foreground">
-                Seus clientes acessam cartões de fidelidade virtuais pelo app mobile de forma simples e segura.
+                Seus clientes acessam cartões de selos virtuais pelo app mobile de forma simples e segura.
               </p>
               <div className="mt-6 flex flex-wrap gap-4">
                 <a 
@@ -221,7 +221,7 @@ export default function HomePage() {
               O <span className="text-primary">App</span> na sua Mão
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Leve seus cartões de fidelidade para qualquer lugar. Interface intuitiva, rápida e segura para seus clientes.
+              Leve seus cartões de selos para qualquer lugar. Interface intuitiva, rápida e segura para seus clientes.
             </p>
           </div>
 
@@ -238,7 +238,7 @@ export default function HomePage() {
                 Simule seu <span className="text-primary">Lucro</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Veja na prática como um programa de fidelidade bem estruturado pode aumentar seu faturamento sem comprometer sua margem.
+                Veja na prática como um clube de selos bem estruturado pode aumentar seu faturamento sem comprometer sua margem.
               </p>
             </div>
             <RoiSimulator />
@@ -251,7 +251,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-white mb-8">
             {userType === 'merchant' 
-              ? 'Pronto para aumentar a fidelidade de seus clientes?'
+              ? 'Pronto para criar seu Clube de Selos e engajar seus clientes?'
               : 'Pronto para começar a ganhar prêmios e pontos?'
             }
           </h2>
@@ -273,7 +273,7 @@ export default function HomePage() {
                 <Image src="/fidd.png" alt="FIDD Logo" width={24} height={24} />
                 <h5 className="text-white font-bold">FIDD</h5>
               </div>
-              <p className="text-sm mb-4">Cartões de Fidelidade Virtuais para todos.</p>
+              <p className="text-sm mb-4">Cartões de Selos Virtuais para todos.</p>
               <div className="space-y-2">
                 <a 
                   href="https://play.google.com/store/apps/details?id=digital.tonima.fidd" 

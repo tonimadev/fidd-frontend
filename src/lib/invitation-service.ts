@@ -5,7 +5,7 @@
 import { apiClient } from './api-client';
 import { GenerateInvitationsRequest, GenerateInvitationsResponse } from '@/types/invitation';
 
-const INVITATIONS_BASE_URL = '/api/web/v1/invitations';
+const INVITATIONS_BASE_URL = '/api/web/v1/stamp-club';
 
 export const invitationService = {
   /**
