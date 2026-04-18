@@ -7,6 +7,9 @@ export interface PublicStore {
   highlightColor: string | null;
   isPro: boolean;
   slug: string;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   activeCampaigns: PublicCampaign[];
 }
 
