@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { StoreInsights } from '@/types/dashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { 
   TrendingUp, 
@@ -103,257 +104,403 @@ export const InsightsDashboard: React.FC = () => {
     { name: 'Em Aberto', value: Math.max(0, 100 - data.completionRate) }
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-8 pb-12"
+    >
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">Insights Estratégicos</h2>
-          <p className="text-muted-foreground">
-            Descubra padrões de comportamento e potencialize seus resultados.
+        <motion.div variants={itemVariants}>
+          <h2 className="text-3xl font-black tracking-tight text-foreground uppercase">Insights Estratégicos</h2>
+          <p className="text-muted-foreground font-medium">
+            Descubra padrões de comportamento e potencialize seus resultados com inteligência de dados.
           </p>
-        </div>
+        </motion.div>
         
-        <div className="flex items-center gap-2 bg-muted/50 p-1 rounded-lg border border-border">
-          <Filter className="w-4 h-4 ml-2 text-muted-foreground" />
+        <motion.div variants={itemVariants} className="flex items-center gap-2 bg-white/50 backdrop-blur-sm p-1 rounded-2xl border border-slate-200 shadow-sm">
+          <Filter className="w-4 h-4 ml-2 text-slate-400" />
           <select 
             value={period} 
             onChange={(e) => setPeriod(e.target.value)}
-            className="bg-transparent text-sm font-medium focus:outline-none p-1.5 pr-8 cursor-pointer"
+            className="bg-transparent text-sm font-bold focus:outline-none p-1.5 pr-8 cursor-pointer text-slate-600"
           >
             <option value="7">Últimos 7 dias</option>
             <option value="30">Últimos 30 dias</option>
             <option value="90">Últimos 90 dias</option>
           </select>
-          <Button variant="ghost" size="sm" onClick={() => fetchInsights()} className="h-8 w-8 p-0">
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <Button variant="ghost" size="sm" onClick={() => fetchInsights()} className="h-8 w-8 p-0 hover:bg-slate-100 rounded-xl">
+            <RefreshCw className={`w-4 h-4 text-primary ${loading ? 'animate-spin' : ''}`} />
           </Button>
-        </div>
+        </motion.div>
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card className="bg-gradient-to-br from-primary/5 to-transparent border-primary/10">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Valor do Cliente (LTV)</CardDescription>
-            <CardTitle className="text-3xl text-foreground">
-              {data.ltv?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-emerald-500" /> Estimativa de receita por cliente (6 meses)
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Valor do Cliente (LTV)</CardDescription>
+              <CardTitle className="text-4xl font-black text-slate-900">
+                {data.ltv?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
+                <div className="p-1 bg-emerald-50 rounded-lg">
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-500" /> 
+                </div>
+                <span>Estimativa de receita por cliente (6 meses)</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card className="bg-gradient-to-br from-blue-500/5 to-transparent border-blue-500/10">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Taxa de Retenção</CardDescription>
-            <CardTitle className="text-3xl text-foreground">{data.retentionRate?.toFixed(1)}%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <Users className="w-3 h-3 text-blue-500" /> Clientes que retornaram no período
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Taxa de Retenção</CardDescription>
+              <CardTitle className="text-4xl font-black text-slate-900">{data.retentionRate?.toFixed(1)}%</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
+                <div className="p-1 bg-blue-50 rounded-lg">
+                  <Users className="w-3.5 h-3.5 text-blue-500" />
+                </div>
+                <span>Clientes que retornaram no período</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card className="bg-gradient-to-br from-amber-500/5 to-transparent border-amber-500/10">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Taxa de Churn</CardDescription>
-            <CardTitle className="text-3xl text-foreground text-amber-600">{data.churnRate?.toFixed(1)}%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <ArrowDownRight className="w-3 h-3 text-amber-500" /> Probabilidade de perda de clientes
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Taxa de Churn</CardDescription>
+              <CardTitle className="text-4xl font-black text-amber-600">{data.churnRate?.toFixed(1)}%</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
+                <div className="p-1 bg-amber-50 rounded-lg">
+                  <ArrowDownRight className="w-3.5 h-3.5 text-amber-500" />
+                </div>
+                <span>Probabilidade de perda de clientes</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card className="bg-gradient-to-br from-emerald-500/5 to-transparent border-emerald-500/10">
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Previsão de Receita</CardDescription>
-            <CardTitle className="text-3xl text-emerald-600">
-              {data.revenueForecast?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-              <Zap className="w-3 h-3 text-emerald-500" /> Potencial de caixa dos cartões ativos
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Previsão de Receita</CardDescription>
+              <CardTitle className="text-4xl font-black text-emerald-600">
+                {data.revenueForecast?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) || 'R$ 0,00'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
+                <div className="p-1 bg-emerald-50 rounded-lg">
+                  <Zap className="w-3.5 h-3.5 text-emerald-500" />
+                </div>
+                <span>Potencial de caixa dos cartões ativos</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Taxa de Conclusão</CardDescription>
-            <CardTitle className="text-3xl text-foreground">{data.completionRate.toFixed(1)}%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xs text-muted-foreground flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Conversão para resgate
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Taxa de Conclusão</CardDescription>
+              <CardTitle className="text-4xl font-black text-slate-900">{data.completionRate.toFixed(1)}%</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
+                <div className="p-1 bg-purple-50 rounded-lg">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-purple-500" />
+                </div>
+                <span>Conversão para resgate de benefícios</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Média de Retorno</CardDescription>
-            <CardTitle className="text-3xl text-foreground">{data.averageReturnTimeDays.toFixed(1)} dias</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xs text-muted-foreground flex items-center gap-1">
-              <Clock className="w-3 h-3 text-blue-500" /> Entre o primeiro e último selo
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden group hover:shadow-2xl transition-all duration-500">
+            <CardHeader className="pb-2">
+              <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Média de Retorno</CardDescription>
+              <CardTitle className="text-4xl font-black text-slate-900">{data.averageReturnTimeDays.toFixed(1)} dias</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-[11px] font-bold text-slate-500 flex items-center gap-1.5">
+                <div className="p-1 bg-blue-50 rounded-lg">
+                  <Clock className="w-3.5 h-3.5 text-blue-500" />
+                </div>
+                <span>Tempo médio entre selos emitidos</span>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Fidelity Funnel */}
-      <Card className="shadow-lg border-primary/10">
-        <CardHeader>
-          <CardTitle className="text-foreground">Funil de Fidelidade</CardTitle>
-          <CardDescription>Jornada do cliente desde o primeiro selo até a recompensa.</CardDescription>
-        </CardHeader>
-        <CardContent className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              layout="vertical"
-              data={[
-                { name: '1º Selo', value: 100, displayValue: '100%', fill: '#3b82f6' },
-                { name: 'Metade (50%)', value: 75, displayValue: '75%', fill: '#6366f1' },
-                { name: 'Resgate', value: data.completionRate, displayValue: `${data.completionRate.toFixed(1)}%`, fill: '#8b5cf6' },
-                { name: 'Retorno', value: data.retentionRate || 0, displayValue: `${(data.retentionRate || 0).toFixed(1)}%`, fill: '#ec4899' },
-              ]}
-              margin={{ top: 5, right: 80, left: 20, bottom: 5 }}
-            >
-              <XAxis type="number" hide />
-              <YAxis dataKey="name" type="category" width={100} axisLine={false} tickLine={false} tick={{ fontWeight: 'bold', fontSize: 12 }} />
-              <Tooltip formatter={(value: number) => [`${value.toFixed(1)}%`, 'Conversão']} />
-              <Bar dataKey="value" radius={[0, 10, 10, 0]} barSize={40}>
-                {/* Custom label for percentage */}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-          <div className="mt-4 grid grid-cols-4 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-             <div>Aquisição</div>
-             <div>Engajamento</div>
-             <div>Conversão</div>
-             <div>Retenção</div>
-          </div>
-        </CardContent>
-      </Card>
+      <motion.div variants={itemVariants}>
+        <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-xl font-black text-slate-900 uppercase tracking-tight">Funil de Fidelidade</CardTitle>
+            <CardDescription className="text-sm font-bold text-slate-400">Jornada do cliente desde o primeiro selo até a recompensa.</CardDescription>
+          </CardHeader>
+          <CardContent className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                layout="vertical"
+                data={[
+                  { name: '1º Selo', value: 100, fill: 'url(#blueGradient)' },
+                  { name: 'Metade (50%)', value: 75, fill: 'url(#indigoGradient)' },
+                  { name: 'Resgate', value: data.completionRate, fill: 'url(#purpleGradient)' },
+                  { name: 'Retorno', value: data.retentionRate || 0, fill: 'url(#pinkGradient)' },
+                ]}
+                margin={{ top: 5, right: 80, left: 20, bottom: 5 }}
+              >
+                <defs>
+                  <linearGradient id="blueGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.7} />
+                  </linearGradient>
+                  <linearGradient id="indigoGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#6366f1" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#6366f1" stopOpacity={0.7} />
+                  </linearGradient>
+                  <linearGradient id="purpleGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.7} />
+                  </linearGradient>
+                  <linearGradient id="pinkGradient" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#ec4899" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#ec4899" stopOpacity={0.7} />
+                  </linearGradient>
+                </defs>
+                <XAxis type="number" hide />
+                <YAxis 
+                  dataKey="name" 
+                  type="category" 
+                  width={100} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fontWeight: 800, fontSize: 11, fill: '#64748b' }} 
+                />
+                <Tooltip 
+                  cursor={{ fill: '#f8fafc', radius: 8 }}
+                  contentStyle={{ 
+                    borderRadius: '16px', 
+                    border: 'none', 
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                  }}
+                  formatter={(value: number) => [`${value.toFixed(1)}%`, 'Conversão']} 
+                />
+                <Bar 
+                  dataKey="value" 
+                  radius={[0, 8, 8, 0]} 
+                  barSize={32}
+                  animationDuration={1500}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+            <div className="mt-4 grid grid-cols-4 text-center text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+               <div className="flex flex-col items-center gap-1">
+                 <div className="w-2 h-2 rounded-full bg-blue-500" />
+                 Aquisição
+               </div>
+               <div className="flex flex-col items-center gap-1">
+                 <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                 Engajamento
+               </div>
+               <div className="flex flex-col items-center gap-1">
+                 <div className="w-2 h-2 rounded-full bg-purple-500" />
+                 Conversão
+               </div>
+               <div className="flex flex-col items-center gap-1">
+                 <div className="w-2 h-2 rounded-full bg-pink-500" />
+                 Retenção
+               </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Day Volume Bar Chart */}
-        <Card className="shadow-lg border-primary/10">
-          <CardHeader>
-            <CardTitle className="text-foreground">Movimentação por Dia</CardTitle>
-            <CardDescription className="text-muted-foreground">Volume total de selos emitidos em cada dia da semana.</CardDescription>
-          </CardHeader>
-          <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dayVolume}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-muted/10" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor' }} className="text-muted-foreground" />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'currentColor' }} className="text-muted-foreground" />
-                <Tooltip 
-                  cursor={{ fill: 'var(--primary)', fillOpacity: 0.05 }}
-                  contentStyle={{ 
-                    borderRadius: '12px', 
-                    border: '1px solid var(--border)', 
-                    backgroundColor: 'var(--card)',
-                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
-                  }}
-                  itemStyle={{ color: 'var(--primary)', fontWeight: 'bold' }}
-                />
-                <Bar dataKey="volume" fill="var(--primary)" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden h-full">
+            <CardHeader>
+              <CardTitle className="text-xl font-black text-slate-900 uppercase tracking-tight">Movimentação por Dia</CardTitle>
+              <CardDescription className="text-sm font-bold text-slate-400">Volume total de selos emitidos em cada dia da semana.</CardDescription>
+            </CardHeader>
+            <CardContent className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dayVolume}>
+                  <defs>
+                    <linearGradient id="primaryGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="var(--primary)" stopOpacity={1} />
+                      <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.6} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 11, fontWeight: 800, fill: '#94a3b8' }} 
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 11, fontWeight: 800, fill: '#94a3b8' }} 
+                  />
+                  <Tooltip 
+                    cursor={{ fill: '#f8fafc', radius: 8 }}
+                    contentStyle={{ 
+                      borderRadius: '16px', 
+                      border: 'none', 
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="volume" 
+                    fill="url(#primaryGradient)" 
+                    radius={[6, 6, 0, 0]} 
+                    animationDuration={2000}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Completion Rate Chart */}
-        <Card className="shadow-lg border-primary/10">
-          <CardHeader>
-            <CardTitle className="text-foreground">Funil de Conclusão</CardTitle>
-            <CardDescription className="text-muted-foreground">Percentual de cartões que chegam ao resgate final.</CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center h-[300px]">
-             <div className="relative w-full h-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={completionData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={70}
-                      outerRadius={90}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {completionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--primary)' : 'var(--muted)'} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend verticalAlign="bottom" height={36}/>
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-                  <div className="text-3xl font-bold text-foreground">{data.completionRate.toFixed(1)}%</div>
-                  <div className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">Taxa Final</div>
-                </div>
-             </div>
-          </CardContent>
-        </Card>
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden h-full">
+            <CardHeader>
+              <CardTitle className="text-xl font-black text-slate-900 uppercase tracking-tight">Funil de Conclusão</CardTitle>
+              <CardDescription className="text-sm font-bold text-slate-400">Percentual de cartões que chegam ao resgate final.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex items-center justify-center h-[300px]">
+               <div className="relative w-full h-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={completionData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={80}
+                        outerRadius={105}
+                        paddingAngle={8}
+                        dataKey="value"
+                        animationDuration={1500}
+                      >
+                        {completionData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={index === 0 ? 'var(--primary)' : '#f1f5f9'} 
+                            stroke="none"
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ 
+                          borderRadius: '16px', 
+                          border: 'none', 
+                          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                          fontSize: '12px',
+                          fontWeight: 'bold'
+                        }}
+                      />
+                      <Legend 
+                        verticalAlign="bottom" 
+                        height={36} 
+                        iconType="circle"
+                        formatter={(value) => <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{value}</span>}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+                    <div className="text-4xl font-black text-slate-900">{data.completionRate.toFixed(1)}%</div>
+                    <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">Taxa Final</div>
+                  </div>
+               </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Top Customers Table */}
-      <Card className="shadow-lg border-primary/10">
-        <CardHeader>
-          <CardTitle className="text-foreground">Top Clientes da Fidelização</CardTitle>
-          <CardDescription className="text-muted-foreground">Os clientes mais engajados no último mês.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-border text-xs uppercase text-muted-foreground font-bold">
-                  <th className="pb-3 pl-2">Cliente</th>
-                  <th className="pb-3 text-center">Selos Acumulados</th>
-                  <th className="pb-3 text-center">Resgates Realizados</th>
-                  <th className="pb-3 text-right pr-2">Engajamento</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.topCustomers.map((customer, index) => (
-                  <tr key={index} className="border-b border-border/50 hover:bg-muted/30 transition-colors group">
-                    <td className="py-4 pl-2 flex items-center gap-3">
-                       <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-black border border-primary/20 group-hover:scale-110 transition-transform">
-                         {customer.customerName.charAt(0).toUpperCase()}
-                       </div>
-                       <span className="font-semibold text-foreground">{customer.customerName}</span>
-                    </td>
-                    <td className="py-4 text-center text-foreground font-medium">{customer.totalPunches}</td>
-                    <td className="py-4 text-center text-foreground font-medium">{customer.totalRedemptions}</td>
-                    <td className="py-4 text-right pr-2">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black tracking-tighter">
-                         ALTO
-                      </div>
-                    </td>
+      <motion.div variants={itemVariants}>
+        <Card className="bg-white rounded-[2rem] shadow-xl border-slate-100 overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-xl font-black text-slate-900 uppercase tracking-tight">Top Clientes da Fidelização</CardTitle>
+            <CardDescription className="text-sm font-bold text-slate-400">Os clientes mais engajados no último mês.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-100 text-[10px] uppercase text-slate-400 font-black tracking-widest">
+                    <th className="pb-4 pl-4">Cliente</th>
+                    <th className="pb-4 text-center">Selos Acumulados</th>
+                    <th className="pb-4 text-center">Resgates Realizados</th>
+                    <th className="pb-4 text-right pr-4">Engajamento</th>
                   </tr>
-                ))}
-                {data.topCustomers.length === 0 && (
-                   <tr>
-                     <td colSpan={4} className="py-12 text-center text-muted-foreground italic">Nenhum dado de cliente encontrado para este período.</td>
-                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                </thead>
+                <tbody>
+                  {data.topCustomers.map((customer, index) => (
+                    <tr key={index} className="border-b border-slate-50/50 hover:bg-slate-50/50 transition-colors group">
+                      <td className="py-4 pl-4 flex items-center gap-3">
+                         <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-sm font-black border border-primary/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
+                           {customer.customerName.charAt(0).toUpperCase()}
+                         </div>
+                         <span className="font-bold text-slate-700">{customer.customerName}</span>
+                      </td>
+                      <td className="py-4 text-center text-slate-600 font-black">{customer.totalPunches}</td>
+                      <td className="py-4 text-center text-slate-600 font-black">{customer.totalRedemptions}</td>
+                      <td className="py-4 text-right pr-4">
+                        <div className="inline-flex items-center px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 text-[10px] font-black tracking-widest">
+                           ALTO
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {data.topCustomers.length === 0 && (
+                     <tr>
+                       <td colSpan={4} className="py-12 text-center text-slate-400 italic font-medium">Nenhum dado de cliente encontrado para este período.</td>
+                     </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 };

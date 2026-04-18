@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { RoiSimulator } from '@/components/RoiSimulator';
-import { AppScreenshotsCarousel } from '@/components/AppScreenshotsCarousel';
+import { AnimatedStampCard } from '@/components/home/AnimatedStampCard';
+import { AnimatedCharts } from '@/components/home/AnimatedCharts';
+import { FeatureCarousel } from '@/components/home/FeatureCarousel';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -22,6 +25,53 @@ const jsonLd = {
 
 export default function HomePage() {
   const [userType, setUserType] = useState<'merchant' | 'customer'>('merchant');
+
+  const features = [
+    {
+      id: 1,
+      title: "Cartões de Selos Digitais",
+      description: "Acabe com o papel. Seus clientes acumulam selos de forma simples e divertida, direto no celular.",
+      render: () => <AnimatedStampCard />
+    },
+    {
+      id: 2,
+      title: "Gráficos e Insights",
+      description: "Acompanhe o crescimento do seu negócio com dados precisos sobre o engajamento dos seus clientes.",
+      render: () => <AnimatedCharts />
+    },
+    {
+      id: 3,
+      title: "Resgate via QR Code",
+      description: "Praticidade absoluta no balcão. O cliente apresenta o QR Code e o resgate é validado instantaneamente.",
+      render: () => (
+        <div className="flex flex-col items-center justify-center h-full p-6 text-center bg-white rounded-[2.5rem] shadow-xl">
+          <div className="w-48 h-48 bg-slate-50 border-8 border-slate-900 rounded-3xl p-4 flex items-center justify-center relative overflow-hidden group">
+            {/* Mock QR Code */}
+            <div className="grid grid-cols-5 gap-1 w-full h-full opacity-20">
+              {Array.from({ length: 25 }).map((_, i) => (
+                <div key={i} className={`aspect-square ${Math.random() > 0.5 ? 'bg-slate-900' : ''}`} />
+              ))}
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+               <div className="w-12 h-12 bg-white p-2 rounded-xl shadow-lg border border-slate-100">
+                  <Image src="/fidd.png" alt="FIDD" width={40} height={40} />
+               </div>
+            </div>
+            {/* Laser scan effect */}
+            <motion.div 
+              animate={{ top: ['0%', '100%', '0%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              className="absolute left-0 right-0 h-1 bg-primary shadow-[0_0_15px_rgba(59,130,246,0.8)] z-10"
+            />
+          </div>
+          <div className="mt-8 space-y-2">
+            <h4 className="text-xl font-black text-slate-800">Pronto para Validar</h4>
+            <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Aguardando Lojista</p>
+          </div>
+        </div>
+      )
+    }
+  ];
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10">
@@ -121,6 +171,22 @@ export default function HomePage() {
               <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Academia <span className="text-slate-500">FIT</span></div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* App Showcase Section */}
+      <section className="bg-muted/30 py-24 border-y border-border overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Experiência Digital <span className="text-primary">Poderosa</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Acompanhe cada selo, entenda seus clientes e cresça com dados reais. Interface intuitiva e visual em todos os dispositivos.
+            </p>
+          </div>
+
+          <FeatureCarousel features={features} />
         </div>
       </section>
 
@@ -229,22 +295,6 @@ export default function HomePage() {
               Não está sozinho. Nossa equipe de especialistas está pronta para ajudar seu negócio a decolar.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* App Showcase Section */}
-      <section className="bg-muted/30 py-24 border-y border-border overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              O <span className="text-primary">App</span> na sua Mão
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Leve seus cartões de selos para qualquer lugar. Interface intuitiva, rápida e segura para seus clientes.
-            </p>
-          </div>
-
-          <AppScreenshotsCarousel />
         </div>
       </section>
 
