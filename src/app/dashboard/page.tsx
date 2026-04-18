@@ -25,6 +25,7 @@ import { DeletionBanner } from '@/components/dashboard/DeletionBanner';
 import { DeveloperGuide } from '@/components/dashboard/DeveloperGuide';
 import { InsightsDashboard } from '@/components/dashboard/InsightsDashboard';
 import { RoiSimulator } from '@/components/RoiSimulator';
+import { NfcIssuer } from '@/components/dashboard/NfcIssuer';
 import { DashboardTab } from '@/types/dashboard';
 
 
@@ -116,6 +117,11 @@ function DashboardContent() {
     setActiveTab('redemptions');
   };
 
+  const handleQuickActionNfc = () => {
+    router.push('/dashboard?tab=nfc');
+    setActiveTab('nfc');
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
@@ -205,6 +211,22 @@ function DashboardContent() {
                       <div className="text-xs text-muted-foreground font-normal">Valide um código</div>
                     </div>
                   </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-auto py-4 flex-col gap-2 items-start border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+                    onClick={handleQuickActionNfc}
+                  >
+                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <div className="font-bold">Emitir via NFC</div>
+                      <div className="text-xs text-muted-foreground font-normal">Envie pontos por toque</div>
+                    </div>
+                  </Button>
                 </CardContent>
               </Card>
 
@@ -247,6 +269,18 @@ function DashboardContent() {
               </p>
             </div>
             <RedemptionForm />
+          </div>
+        );
+      case 'nfc':
+        return (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">Emissão NFC</h2>
+              <p className="text-muted-foreground">
+                Distribua pontos e selos aproximando o dispositivo do cliente.
+              </p>
+            </div>
+            <NfcIssuer />
           </div>
         );
       case 'settings':
