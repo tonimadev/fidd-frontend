@@ -67,10 +67,10 @@ export default function CardDetailPage() {
   };
 
   const handleShare = () => {
-    const refId = user?.id;
+    const refId = user?.publicId || user?.userId;
     if (!refId || !card) return;
 
-    const shareUrl = `${window.location.origin}/app/stores/${card.storeId}?ref=${refId}`;
+    const shareUrl = `${window.location.origin}/loja/${card.storeSlug}?ref=${refId}`;
     const text = `Ganhe prêmios na ${card.storeName}! Use meu link para começar a colecionar selos: ${shareUrl}`;
     
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');

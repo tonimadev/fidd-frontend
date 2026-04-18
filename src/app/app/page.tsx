@@ -40,13 +40,13 @@ function DashboardContent() {
   // Capturar indicação (Referral)
   useEffect(() => {
     const refId = searchParams.get('ref');
-    const storeId = searchParams.get('storeId');
+    const storeSlug = searchParams.get('store');
 
-    if (refId && storeId && user) {
+    if (refId && storeSlug && user) {
       const registerReferral = async () => {
         try {
           await apiClient.post('/api/mobile/v1/referrals/register', null, {
-            params: { referrerId: refId, storeId: storeId }
+            params: { referrerPublicId: refId, storeSlug: storeSlug }
           });
           console.log('Referral registered successfully');
         } catch (err) {

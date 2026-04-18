@@ -15,6 +15,7 @@ export interface MobileCardResponse {
   campaignName: string;
   storeName: string;
   storeId: number;
+  storeSlug: string;
   currentPoints: number;
   pointsRequired: number;
   progress: number;

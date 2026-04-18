@@ -6,6 +6,7 @@ export interface MobileAuthResponse {
   token: string;
   type: string;
   userId: number;
+  publicId?: string;
   name: string;
   email: string;
   role: string;
@@ -16,6 +17,7 @@ export interface MobileAuthResponse {
 
 export interface MobileUser {
   userId: number;
+  publicId?: string;
   name: string;
   email: string;
   role: string;

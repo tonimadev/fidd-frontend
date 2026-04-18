@@ -27,6 +27,7 @@ import { InsightsDashboard } from '@/components/dashboard/InsightsDashboard';
 import { AutomationsDashboard } from '@/components/dashboard/AutomationsDashboard';
 import { ReferralsDashboard } from '@/components/dashboard/ReferralsDashboard';
 import { CampaignHistory } from '@/components/dashboard/CampaignHistory';
+import { PublicPageManager } from '@/components/dashboard/PublicPageManager';
 import { RoiSimulator } from '@/components/RoiSimulator';
 import { NfcIssuer } from '@/components/dashboard/NfcIssuer';
 import { NfcRedeemer } from '@/components/dashboard/NfcRedeemer';
@@ -264,6 +265,8 @@ function DashboardContent() {
         return <ReferralsDashboard />;
       case 'history':
         return <CampaignHistory />;
+      case 'public-page':
+        return <PublicPageManager />;
       case 'campaigns':
         return <CampaignsList onOpenHelp={openHelp} />;
       case 'customers':

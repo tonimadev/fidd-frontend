@@ -59,6 +59,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 
             const userObj: MobileUser = {
               userId: userId,
+              publicId: userData.publicId,
               name: userData.name || '',
               email: userData.email || '',
               role: 'ROLE_CUSTOMER',
@@ -86,6 +87,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 
       const userData: MobileUser = {
         userId: response.userId,
+        publicId: response.publicId,
         name: response.name,
         email: response.email,
         role: response.role,
@@ -119,6 +121,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 
       const userData: MobileUser = {
         userId: response.userId,
+        publicId: response.publicId,
         name: response.name,
         email: response.email,
         role: response.role,
@@ -152,6 +155,7 @@ export const MobileAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 
       const userData: MobileUser = {
         userId: response.userId,
+        publicId: response.publicId,
         name: response.name,
         email: response.email,
         role: response.role,

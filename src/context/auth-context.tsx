@@ -43,6 +43,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             if (userData) {
               const updatedUser = {
                 id: userData.id,
+                publicId: userData.publicId,
+                slug: userData.slug,
                 storeId: userData.storeId,
                 tradeName: userData.tradeName,
                 email: userData.email,
@@ -73,6 +75,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           if (userData) {
             const userObj = {
               id: userData.id,
+              publicId: userData.publicId,
+              slug: userData.slug,
               storeId: userData.storeId,
               tradeName: userData.tradeName,
               email: userData.email,
@@ -104,6 +108,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (userData) {
         const updatedUser = {
           id: userData.id,
+          publicId: userData.publicId,
+          slug: userData.slug,
           storeId: userData.storeId,
           tradeName: userData.tradeName,
           email: userData.email,
@@ -131,6 +137,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const userData = {
         id: response.id,
+        publicId: response.publicId,
+        slug: response.slug,
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
@@ -166,6 +174,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const userData = {
         id: response.id,
+        publicId: response.publicId,
+        slug: response.slug,
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
@@ -202,6 +212,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const userData = {
         id: response.id,
+        publicId: response.publicId,
+        slug: response.slug,
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
