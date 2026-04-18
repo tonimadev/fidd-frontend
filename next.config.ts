@@ -39,7 +39,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'geolocation=(), microphone=(), camera=(), payment=(self)',
+            value: 'geolocation=(self), microphone=(), camera=(), payment=(self)',
           },
           {
             key: 'Strict-Transport-Security',
@@ -49,12 +49,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://accounts.google.com https://apis.google.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://accounts.google.com https://apis.google.com https://maps.googleapis.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
               "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https://*.magaluobjects.com https://*.googleusercontent.com",
-              "frame-src https://js.stripe.com https://accounts.google.com",
-              "connect-src 'self' https://api.stripe.com https://accounts.google.com https://oauth2.googleapis.com https://www.googleapis.com",
+              "img-src 'self' data: blob: https://*.magaluobjects.com https://*.googleusercontent.com https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com https://*.gstatic.com",
+              "frame-src https://js.stripe.com https://accounts.google.com https://www.google.com",
+              "connect-src 'self' https://api.stripe.com https://accounts.google.com https://oauth2.googleapis.com https://www.googleapis.com https://maps.googleapis.com",
               "object-src 'none'",
               "base-uri 'self'",
               "form-action 'self'",
