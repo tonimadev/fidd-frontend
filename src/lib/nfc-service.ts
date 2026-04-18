@@ -80,7 +80,6 @@ export class NfcService {
           }
         };
 
-        // @ts-expect-error - onreadingerror não tipado
         reader.onreadingerror = () => {
           reject(new Error('NFC_READ_ERROR'));
         };

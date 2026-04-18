@@ -2,19 +2,16 @@
 
 import { useState } from 'react';
 import { NfcService } from '@/lib/nfc-service';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Smartphone, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
 import { redemptionService } from '@/lib/redemption-service';
-import { useToast } from '@/hooks/use-toast';
 import { RedemptionResponse } from '@/types/redemption';
 
 export function NfcRedeemer() {
   const [status, setStatus] = useState<'idle' | 'scanning' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [redemptionData, setRedemptionData] = useState<RedemptionResponse | null>(null);
-  const { toast } = useToast();
 
   const handleStartScan = async () => {
     setStatus('scanning');
@@ -29,10 +26,6 @@ export function NfcRedeemer() {
       if (result.success) {
         setRedemptionData(result);
         setStatus('success');
-        toast({
-          title: "Resgate concluído!",
-          description: `Prêmio entregue para ${result.customerName}`,
-        });
       } else {
         throw new Error(result.message || 'Erro ao processar resgate');
       }
@@ -99,17 +92,23 @@ export function NfcRedeemer() {
 
         {status === 'success' && redemptionData && (
           <div className="space-y-4">
-            <Alert className="bg-green-50 border-green-200">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
-              <AlertTitle className="text-green-800 font-bold">Resgate Realizado!</AlertTitle>
-              <AlertDescription className="text-green-700 mt-2 space-y-1">
-                <p><strong>Cliente:</strong> {redemptionData.customerName}</p>
-                <p><strong>Campanha:</strong> {redemptionData.campaignName}</p>
-                <p className="text-xs mt-2 text-green-600">
-                  Resgatado em: {redemptionData.redeemedAt ? new Date(redemptionData.redeemedAt).toLocaleString() : 'Agora'}
-                </p>
-              </AlertDescription>
-            </Alert>
+            <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 relative animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="flex items-start gap-3">
+                <div className="bg-green-100 p-2 rounded-lg">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-green-800 text-sm">Resgate Realizado!</h4>
+                  <div className="text-xs text-green-700 mt-1 space-y-1">
+                    <p><strong>Cliente:</strong> {redemptionData.customerName}</p>
+                    <p><strong>Campanha:</strong> {redemptionData.campaignName}</p>
+                    <p className="text-[10px] mt-2 text-green-600/80">
+                      Resgatado em: {redemptionData.redeemedAt ? new Date(redemptionData.redeemedAt).toLocaleString() : 'Agora'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <Button onClick={reset} variant="outline" className="w-full border-green-200 text-green-700 hover:bg-green-100">
               Realizar Novo Resgate
             </Button>
@@ -118,13 +117,19 @@ export function NfcRedeemer() {
 
         {status === 'error' && (
           <div className="space-y-4">
-            <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
-              <AlertCircle className="h-5 w-5 text-red-600" />
-              <AlertTitle className="font-bold">Erro no Resgate</AlertTitle>
-              <AlertDescription className="mt-1">
-                {errorMessage}
-              </AlertDescription>
-            </Alert>
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 relative animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="flex items-start gap-3">
+                <div className="bg-red-100 p-2 rounded-lg">
+                  <AlertCircle className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-red-800 text-sm">Erro no Resgate</h4>
+                  <p className="text-xs text-red-700 mt-1">
+                    {errorMessage}
+                  </p>
+                </div>
+              </div>
+            </div>
             <div className="flex gap-2">
               <Button onClick={handleStartScan} className="flex-1">
                 Tentar Novamente

@@ -25,7 +25,7 @@ export function NfcIssuer() {
   const loadCampaigns = async () => {
     try {
       const data = await campaignService.listCampaigns();
-      const active = data.filter(c => c.isActive && !c.isDeleted);
+      const active = data.filter(c => c.isActive);
       setCampaigns(active);
       if (active.length > 0) {
         setSelectedCampaignId(active[0].id.toString());
