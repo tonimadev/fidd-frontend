@@ -17,6 +17,8 @@ import { Sidebar } from '@/components/dashboard/Sidebar';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { HelpCenter } from '@/components/dashboard/HelpCenter';
+import { accountService } from '@/lib/account-service';
+import { MapPin } from 'lucide-react';
 import { RedemptionForm } from '@/components/dashboard/RedemptionForm';
 import { CustomersList } from '@/components/dashboard/CustomersList';
 import { DeletionBanner } from '@/components/dashboard/DeletionBanner';
@@ -35,6 +37,8 @@ function DashboardContent() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [initialHelpTutorialId, setInitialHelpTutorialId] = useState<string | null>(null);
+  const [hasAddress, setHasAddress] = useState<boolean>(true);
+  const [isCheckingAddress, setIsCheckingAddress] = useState(true);
 
   const openHelp = (tutorialId: string | null = null) => {
     setInitialHelpTutorialId(tutorialId);
@@ -58,6 +62,22 @@ function DashboardContent() {
       refreshUser();
     }
   }, [subscriptionStatus, refreshUser]);
+
+  // Verificar se o lojista tem endereço configurado
+  useEffect(() => {
+    const checkAddress = async () => {
+      try {
+        const profile = await accountService.getProfile();
+        setHasAddress(!!profile.address);
+      } catch (error) {
+        console.error('Erro ao verificar endereço:', error);
+      } finally {
+        setIsCheckingAddress(false);
+      }
+    };
+    
+    checkAddress();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -101,6 +121,26 @@ function DashboardContent() {
       case 'home':
         return (
           <div className="space-y-8">
+            {!isCheckingAddress && !hasAddress && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-3">
+                  <div className="bg-amber-100 p-2 rounded-full text-amber-600">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-amber-900">Endereço não configurado</h3>
+                    <p className="text-sm text-amber-700">Você ainda não definiu um endereço. Permita que seus clientes te encontrem facilmente.</p>
+                  </div>
+                </div>
+                <Button 
+                  onClick={() => handleTabChange('settings')}
+                  variant="outline" 
+                  className="whitespace-nowrap border-amber-300 text-amber-800 hover:bg-amber-100"
+                >
+                  Configurar endereço
+                </Button>
+              </div>
+            )}
             <div>
               <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
               <p className="text-muted-foreground">
