@@ -293,7 +293,7 @@ export default function CardDetailPage() {
             
             {isCompleted && !isRedeemed && !isExpired && (
               <Button 
-                onClick={handleRedeem}
+                onClick={() => handleRedeem()}
                 disabled={isRedeeming}
                 className="w-full h-16 rounded-[1.5rem] text-lg font-black uppercase tracking-[0.1em] shadow-xl shadow-primary/30 active:scale-95 transition-all"
               >

@@ -14,12 +14,15 @@ export interface MobileCardResponse {
   id: number;
   campaignName: string;
   storeName: string;
+  storeId: number;
   currentPoints: number;
   pointsRequired: number;
   progress: number;
   status: string;
   canRedeem: boolean;
   campaignDescription?: string;
+  imageUrl?: string;
+  highlightColor?: string;
   expirationDate?: string;
   redeemedAt?: string;
   rewards: CampaignReward[];

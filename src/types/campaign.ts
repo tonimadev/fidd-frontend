@@ -2,6 +2,12 @@
  * Tipos relacionados a campanhas
  */
 
+export interface Reward {
+  id?: number;
+  name: string;
+  pointsRequired: number;
+}
+
 export interface Campaign {
   id: number;
   name: string;
@@ -11,6 +17,7 @@ export interface Campaign {
   storeId: number;
   description?: string;
   benefitType?: string;
+  rewards?: Reward[];
 }
 
 export interface CreateCampaignRequest {
@@ -18,6 +25,8 @@ export interface CreateCampaignRequest {
   pointsRequired: number;
   expirationDate: string; // YYYY-MM-DD
   description?: string;
+  isActive?: boolean;
+  rewards?: Reward[];
 }
 
 export interface UpdateCampaignRequest {
@@ -27,5 +36,6 @@ export interface UpdateCampaignRequest {
   isActive: boolean;
   description?: string;
   benefitType?: string;
+  rewards?: Reward[];
 }
 

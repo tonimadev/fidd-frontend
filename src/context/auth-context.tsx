@@ -130,6 +130,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await authService.login({ email, password });
 
       const userData = {
+        id: response.id,
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
@@ -164,6 +165,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await authService.googleLogin(idToken);
 
       const userData = {
+        id: response.id,
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
@@ -199,6 +201,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await authService.register({ tradeName, taxId, email, password, taxIdType });
 
       const userData = {
+        id: response.id,
         storeId: response.storeId,
         tradeName: response.tradeName,
         email: response.email,
