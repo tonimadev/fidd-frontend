@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { automationService, WinBackConfig, WinBackLog } from '@/lib/automation-service';
 import { ProUpgradeGate } from './ProUpgradeGate';
+import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 import axios from 'axios';
 
 export const AutomationsDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [config, setConfig] = useState<WinBackConfig | null>(null);
   const [history, setHistory] = useState<WinBackLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,8 +58,10 @@ export const AutomationsDashboard: React.FC = () => {
   };
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando automações...</div>;
+  
+  const isPro = isUserPro(user);
 
-  if (error === 'PRO_ONLY' || (config && !config.isPro)) {
+  if (error === 'PRO_ONLY' || !isPro) {
     return (
       <ProUpgradeGate 
         title="Automações de Marketing PRO"

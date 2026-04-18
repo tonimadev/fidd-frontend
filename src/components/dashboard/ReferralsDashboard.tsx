@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { apiClient } from '@/lib/api-client';
 import { ProUpgradeGate } from './ProUpgradeGate';
+import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 import { Users, UserPlus, TrendingUp } from 'lucide-react';
 import axios from 'axios';
 
@@ -13,6 +15,7 @@ interface ReferralStats {
 }
 
 export const ReferralsDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [stats, setStats] = useState<ReferralStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,8 +40,10 @@ export const ReferralsDashboard: React.FC = () => {
   }, []);
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando estatísticas...</div>;
+  
+  const isPro = isUserPro(user);
 
-  if (error === 'PRO_ONLY' || (stats && !stats.isPro)) {
+  if (error === 'PRO_ONLY' || !isPro) {
     return (
       <ProUpgradeGate 
         title="Motor de Indicação PRO"

@@ -9,6 +9,7 @@ import { ProUpgradeGate } from './ProUpgradeGate';
 import { History, Users, Award, TrendingUp, Edit3, Save } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 
 interface CampaignHistory {
   id: number;
@@ -67,8 +68,10 @@ export const CampaignHistory: React.FC = () => {
   };
 
   if (loading) return <div className="p-8 text-center text-muted-foreground">Carregando histórico...</div>;
+  
+  const isPro = isUserPro(user);
 
-  if (error === 'PRO_ONLY' || user?.plan !== 'Pro') {
+  if (error === 'PRO_ONLY' || !isPro) {
     return (
       <ProUpgradeGate 
         title="Análise de ROI e Histórico PRO"

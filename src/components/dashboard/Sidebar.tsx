@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 import { Button } from '@/components/ui/Button';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import Image from 'next/image';
@@ -117,6 +118,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ] : [];
 
   const allMenuItems = [...menuItems, ...adminMenuItems];
+  const proTabs: DashboardTab[] = ['insights', 'public-page', 'automations', 'referrals', 'history'];
+
+  const isPro = isUserPro(user);
 
   return (
     <aside className={`
@@ -162,12 +166,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === item.id
-                ? 'bg-primary text-primary-foreground'
+                ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-            }`}
+            } ${proTabs.includes(item.id) && !isPro ? 'opacity-70 border border-dashed border-primary/20 bg-primary/5' : ''}`}
           >
             {item.icon}
-            {item.label}
+            <span className="flex-1 text-left">{item.label}</span>
+            {proTabs.includes(item.id) && !isPro && (
+              <span className="text-[9px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-black uppercase tracking-tighter shadow-sm">
+                Pro
+              </span>
+            )}
           </button>
         ))}
         

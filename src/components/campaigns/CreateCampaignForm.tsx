@@ -16,6 +16,7 @@ import { TextArea } from '@/components/ui/TextArea';
 import { UpgradeModal } from '@/components/ui/UpgradeModal';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 import { Trash2, Plus } from 'lucide-react';
 
 interface CreateCampaignFormProps {
@@ -59,7 +60,7 @@ export const CreateCampaignForm: React.FC<CreateCampaignFormProps> = ({ onSucces
   };
 
   const addReward = () => {
-    if (user?.plan !== 'Pro') {
+    if (!isUserPro(user)) {
       setShowUpgradeModal(true);
       return;
     }

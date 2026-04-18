@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Copy, ExternalLink, Globe, Layout, Smartphone } from 'lucide-react';
@@ -9,7 +10,7 @@ export const PublicPageManager: React.FC = () => {
   const { user } = useAuth();
   const [copied, setCopied] = useState(false);
 
-  const isPro = user?.plan === 'PRO' || user?.role === 'ADMIN';
+  const isPro = isUserPro(user);
 
   if (!isPro) {
     return (

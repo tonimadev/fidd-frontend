@@ -17,6 +17,7 @@ import { Card } from '@/components/ui/Card';
 import { CheckCircle2, Ticket, AlertCircle } from 'lucide-react';
 import { triggerConfetti } from '@/lib/confetti';
 import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
 
 export const RedemptionForm: React.FC = () => {
   const { user } = useAuth();
@@ -50,7 +51,7 @@ export const RedemptionForm: React.FC = () => {
       });
 
       setSuccessData(response);
-      if (user?.plan === 'Pro') {
+      if (isUserPro(user)) {
         triggerConfetti();
       }
       reset();

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { StoreInsights } from '@/types/dashboard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { Button } from '@/components/ui/Button';
-import { useRouter } from 'next/navigation';
 import { 
   TrendingUp, 
   Users, 
@@ -18,14 +17,17 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import { apiClient } from '@/lib/api-client';
+import { useAuth } from '@/context/auth-context';
+import { isUserPro } from '@/lib/auth-utils';
+import { ProUpgradeGate } from './ProUpgradeGate';
 
 export const InsightsDashboard: React.FC = () => {
+  const { user } = useAuth();
   const [data, setData] = useState<StoreInsights | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [period, setPeriod] = useState('30'); // days
-  const router = useRouter();
-
+  
   const fetchInsights = useCallback(async () => {
     try {
       setLoading(true);
@@ -56,25 +58,20 @@ export const InsightsDashboard: React.FC = () => {
   if (loading) {
     return <div className="flex justify-center items-center h-64 text-muted-foreground">Carregando insights...</div>;
   }
+  
+  const isPro = isUserPro(user);
 
-  if (error === 'PRO_ONLY') {
+  if (error === 'PRO_ONLY' || !isPro) {
     return (
-      <Card className="border-dashed border-2 p-12 flex flex-col items-center justify-center text-center space-y-6">
-        <div className="bg-primary/10 p-4 rounded-full text-primary">
+      <ProUpgradeGate 
+        title="Insights Estratégicos PRO"
+        description="Aumente o faturamento do seu negócio com dados detalhados e insights estratégicos do seu programa de fidelidade."
+        icon={
           <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
-        </div>
-        <div className="max-w-md">
-          <CardTitle className="text-2xl mb-2 text-foreground">Funcionalidade Exclusiva PRO</CardTitle>
-          <CardDescription className="text-lg">
-            Aumente o faturamento do seu negócio com dados detalhados e insights estratégicos do seu programa de fidelidade.
-          </CardDescription>
-        </div>
-        <Button onClick={() => router.push('/dashboard?tab=subscriptions')}>
-          Ver Planos PRO
-        </Button>
-      </Card>
+        }
+      />
     );
   }
 

@@ -125,11 +125,14 @@ export const SubscriptionPlans = () => {
   };
 
   const isCurrentPlan = (planId: string) => {
-    if (!user?.plan) return planId === 'fidd_price_free'; // Default para FREE se não informado
+    if (!user?.plan) return planId === 'fidd_price_free';
 
     const userPlan = user.plan.toUpperCase();
-    if (userPlan === 'PRO') return planId === 'fidd_price_pro';
-    if (userPlan === 'LITE') return planId === 'fidd_price_lite';
+    
+    // Suporte para nomes variados do plano PRO
+    if (userPlan.includes('PRO')) return planId === 'fidd_price_pro';
+    if (userPlan.includes('LITE')) return planId === 'fidd_price_lite';
+    
     return planId === 'fidd_price_free';
   };
 
