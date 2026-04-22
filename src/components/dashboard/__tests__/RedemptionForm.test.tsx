@@ -15,6 +15,19 @@ jest.mock('@/context/auth-context', () => ({
   }),
 }));
 
+// Mock confetti to avoid canvas context errors in jsdom
+jest.mock('@/lib/confetti', () => ({
+  triggerConfetti: jest.fn(),
+}));
+
+jest.mock('canvas-confetti', () => jest.fn());
+
+// Mock CelebrationOverlay to avoid confetti side-effects
+jest.mock('@/components/ui/CelebrationOverlay', () => ({
+  CelebrationOverlay: ({ isVisible, title }: { isVisible: boolean; title?: string }) =>
+    isVisible ? <div data-testid="celebration-overlay">{title}</div> : null,
+}));
+
 describe('RedemptionForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();

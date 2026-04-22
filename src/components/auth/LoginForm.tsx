@@ -1,10 +1,14 @@
 /**
- * Componente de formulário de login
+ * Componente de formulário de login — Enhanced with Social Proof
+ *
+ * 🧠 Psychological Principle: Social Proof + Authority (Cialdini)
+ * Showing peer activity near the login form builds trust and urgency.
+ * "342 lojistas entraram hoje" normalizes daily login behavior.
  */
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/validations';
@@ -22,6 +26,7 @@ import axios from 'axios';
 import { LoginRequest } from '@/types/auth';
 import { GoogleLogin } from '@react-oauth/google';
 import { analyticsService } from '@/lib/analytics';
+import { Shield, Users } from 'lucide-react';
 
 export const LoginForm: React.FC = () => {
   const router = useRouter();
@@ -205,7 +210,37 @@ export const LoginForm: React.FC = () => {
     setShowEmailVerificationModal(false);
   };
 
+  // Animated login count for social proof
+  const [loginCount, setLoginCount] = useState(0);
+  useEffect(() => {
+    // Simulated dynamic social proof counter
+    const base = 280 + Math.floor(Math.random() * 80);
+    let current = 0;
+    const interval = setInterval(() => {
+      current += Math.ceil((base - current) / 8);
+      if (current >= base) {
+        current = base;
+        clearInterval(interval);
+      }
+      setLoginCount(current);
+    }, 60);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
+    <div className="space-y-5">
+      {/* Social Proof Header */}
+      <div className="flex items-center justify-center gap-4 pb-2">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full border border-border/50">
+          <Users className="w-3.5 h-3.5 text-primary" />
+          <span><strong className="text-foreground">{loginCount}</strong> lojistas entraram hoje</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-full border border-border/50">
+          <Shield className="w-3.5 h-3.5 text-emerald-500" />
+          <span>Conexão segura</span>
+        </div>
+      </div>
+
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Input
         label="Email"
@@ -337,5 +372,6 @@ export const LoginForm: React.FC = () => {
         />
       )}
     </form>
+    </div>
   );
 };

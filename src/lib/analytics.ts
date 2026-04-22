@@ -43,6 +43,18 @@ export type AnalyticsEvents = {
   // Dashboard e Navegação
   page_view: { path: string; title?: string };
   dashboard_metric_clicked: { metric_name: string };
+
+  // CRO — Onboarding
+  onboarding_completed: undefined;
+  onboarding_step_clicked: { step: string };
+
+  // CRO — Upgrade & PRO Gate
+  pro_gate_viewed: { feature: string };
+  pro_gate_cta_clicked: { feature: string };
+  upgrade_modal_cta_clicked: { title: string };
+
+  // CRO — Celebrações
+  celebration_shown: { type: string };
 };
 
 class AnalyticsService {

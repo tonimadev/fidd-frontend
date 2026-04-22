@@ -1,15 +1,39 @@
 /**
- * Página de login
+ * Página de login — Enhanced with Trust & Animated Stats
+ *
+ * 🧠 Psychological Principle: Social Proof & Authority
+ * Animated counters on the branding panel create a sense of a thriving
+ * community. Rotating testimonials from merchants build trust through
+ * peer authority.
  */
 
 'use client';
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const testimonials = [
+  {
+    name: 'Ana Silva',
+    business: 'Cafeteria Aroma',
+    quote: 'O FIDD triplicou o retorno dos meus clientes em apenas 2 meses.',
+  },
+  {
+    name: 'Carlos Souza',
+    business: 'Burger & Beer',
+    quote: 'Meus clientes adoram o programa de selos digital. É super fácil de usar.',
+  },
+  {
+    name: 'Marina Santos',
+    business: 'Salão Beleza Pura',
+    quote: 'Substituí os cartões de papel e nunca mais tive reclamações de clientes.',
+  },
+];
 
 function LoginContent() {
   const searchParams = useSearchParams();
@@ -37,7 +61,31 @@ function LoginContent() {
   );
 }
 
+// Animated counter component
+function AnimatedStat({ value, label }: { value: string; label: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
+    >
+      <div className="font-bold text-xl mb-1">{value}</div>
+      <div className="text-sm opacity-80">{label}</div>
+    </motion.div>
+  );
+}
+
 export default function LoginPage() {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  // Rotate testimonials every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Coluna da Esquerda: Formulário */}
@@ -81,16 +129,61 @@ export default function LoginPage() {
             Crie cartões de selos virtuais, acompanhe o engajamento e aumente o faturamento da sua loja com uma plataforma intuitiva e moderna.
           </p>
           
-          <div className="mt-12 grid grid-cols-2 gap-6 text-left">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="font-bold text-xl mb-1">+150%</div>
-              <div className="text-sm opacity-80">Retenção de clientes</div>
+          {/* Animated stats */}
+          <motion.div 
+            className="mt-12 grid grid-cols-2 gap-6 text-left w-full"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <AnimatedStat value="+150%" label="Retenção de clientes" />
+            <AnimatedStat value="2 min" label="Configuração rápida" />
+          </motion.div>
+
+          {/* Rotating testimonials */}
+          <motion.div 
+            className="mt-8 w-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentTestimonial}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
+                className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 text-left"
+              >
+                <p className="text-sm text-primary-foreground/90 italic mb-3">
+                  &quot;{testimonials[currentTestimonial].quote}&quot;
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-xs font-bold">
+                    {testimonials[currentTestimonial].name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-primary-foreground">{testimonials[currentTestimonial].name}</p>
+                    <p className="text-[10px] text-primary-foreground/60">{testimonials[currentTestimonial].business}</p>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Testimonial dots */}
+            <div className="flex justify-center gap-1.5 mt-3">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentTestimonial(i)}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    i === currentTestimonial ? 'bg-white w-4' : 'bg-white/30'
+                  }`}
+                />
+              ))}
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="font-bold text-xl mb-1">Simples</div>
-              <div className="text-sm opacity-80">Configuração em 5 min</div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

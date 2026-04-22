@@ -1,5 +1,10 @@
 /**
- * Componente para exibir planos de assinatura
+ * Componente para exibir planos de assinatura — Enhanced with Decoy Effect
+ *
+ * 🧠 Psychological Principle: Decoy Effect + Zero Risk Bias
+ * The Decoy Effect: By positioning Lite as a clearly inferior option next to Pro,
+ * users see Pro as the obvious "best value." The annual savings ("Economize R$120/ano")
+ * frames the cost as loss avoidance. The 30-day guarantee eliminates perceived risk.
  */
 
 'use client';
@@ -12,6 +17,8 @@ import { Button } from '@/components/ui/Button';
 import { getStripePlans, StripePlan } from '@/lib/stripe-actions';
 import { redirectToCheckout } from '@/lib/navigation';
 import { analyticsService } from '@/lib/analytics';
+import { motion } from 'framer-motion';
+import { Crown, Shield, Check, Sparkles, Star } from 'lucide-react';
 
 export const SubscriptionPlans = () => {
   const { user } = useAuth();
@@ -19,6 +26,7 @@ export const SubscriptionPlans = () => {
   const [fetchingPlans, setFetchingPlans] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [plans, setPlans] = useState<StripePlan[]>([]);
+  const [billingPeriod, setBillingPeriod] = useState<'month' | 'year'>('month');
 
   useEffect(() => {
     async function loadPlans() {
@@ -138,11 +146,54 @@ export const SubscriptionPlans = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Planos de Assinatura</h2>
-        <p className="text-muted-foreground max-w-lg mx-auto">
+      <div className="text-center space-y-3">
+        <motion.h2 
+          className="text-3xl font-bold tracking-tight"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          Planos de Assinatura
+        </motion.h2>
+        <motion.p 
+          className="text-muted-foreground max-w-lg mx-auto"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
           Escolha o plano ideal para o tamanho do seu negócio.
-        </p>
+        </motion.p>
+
+        {/* Billing toggle */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="inline-flex items-center gap-3 p-1 bg-muted rounded-xl border border-border"
+        >
+          <button
+            onClick={() => setBillingPeriod('month')}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+              billingPeriod === 'month'
+                ? 'bg-primary text-white shadow-md'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Mensal
+          </button>
+          <button
+            onClick={() => setBillingPeriod('year')}
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition-all relative ${
+              billingPeriod === 'year'
+                ? 'bg-primary text-white shadow-md'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Anual
+            <span className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase">
+              -20%
+            </span>
+          </button>
+        </motion.div>
       </div>
       
       {error && (
@@ -158,83 +209,141 @@ export const SubscriptionPlans = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan) => {
+          {plans.map((plan, index) => {
             const isPro = plan.id === 'fidd_price_pro';
             const isActive = isCurrentPlan(plan.id);
+            const displayAmount = billingPeriod === 'year' ? plan.amount * 0.8 : plan.amount;
+            const annualSavings = plan.amount * 12 * 0.2;
 
             return (
-              <Card 
+              <motion.div
                 key={plan.id}
-                className={`flex flex-col relative overflow-hidden transition-all ${
-                  isPro 
-                    ? 'border-primary shadow-xl scale-105 z-10' 
-                    : 'group hover:border-muted-foreground/20'
-                } ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + index * 0.15 }}
               >
-                {isPro && (
-                  <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">
-                    Popular
-                  </div>
-                )}
-
-                {isActive && (
-                  <div className="absolute top-0 left-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-br-xl">
-                    Atual
-                  </div>
-                )}
-                
-                <CardHeader className="pb-8">
-                  <CardTitle>{plan.name}</CardTitle>
-                  <CardDescription>{plan.description}</CardDescription>
-                  <div className={`mt-4 flex items-baseline ${isPro ? 'text-primary' : ''}`}>
-                    <span className="text-4xl font-black text-foreground">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: plan.currency }).format(plan.amount)}
-                    </span>
-                    <span className="text-muted-foreground ml-1">/{plan.interval === 'month' ? 'mês' : plan.interval}</span>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="flex-1">
-                  <ul className="space-y-3 text-sm">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-3">
-                        <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                
-                <CardFooter>
-                  {isActive ? (
-                    <Button variant="secondary" className="w-full" disabled>
-                      Plano Atual
-                    </Button>
-                  ) : (
-                    <Button 
-                      className="w-full shadow-lg shadow-primary/20" 
-                      onClick={() => handleSubscribe(plan)}
-                      isLoading={loading === plan.id}
-                      variant={plan.amount === 0 ? 'outline' : 'primary'}
-                    >
-                      {plan.amount === 0 ? 'Migrar para Gratuito' : `Assinar ${plan.name}`}
-                    </Button>
+                <Card 
+                  className={`flex flex-col relative overflow-hidden transition-all ${
+                    isPro 
+                      ? 'border-2 border-amber-400 shadow-xl scale-105 z-10 border-pro-shimmer' 
+                      : 'group hover:border-muted-foreground/20'
+                  } ${isActive ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                >
+                  {isPro && (
+                    <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white py-2 text-center text-xs font-black uppercase tracking-widest flex items-center justify-center gap-1.5">
+                      <Star className="w-3 h-3 fill-current" />
+                      Mais Popular
+                      <Star className="w-3 h-3 fill-current" />
+                    </div>
                   )}
-                </CardFooter>
-              </Card>
+
+                  {isActive && (
+                    <div className="absolute top-0 left-0 bg-emerald-500 text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-br-xl z-10">
+                      Atual
+                    </div>
+                  )}
+                  
+                  <CardHeader className="pb-8">
+                    <div className="flex items-center gap-2">
+                      {isPro && <Crown className="w-5 h-5 text-amber-500" />}
+                      <CardTitle>{plan.name}</CardTitle>
+                    </div>
+                    <CardDescription>{plan.description}</CardDescription>
+                    <div className={`mt-4 flex items-baseline ${isPro ? 'text-amber-600' : ''}`}>
+                      <span className="text-4xl font-black text-foreground">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: plan.currency }).format(displayAmount)}
+                      </span>
+                      <span className="text-muted-foreground ml-1">/{billingPeriod === 'month' ? 'mês' : 'mês'}</span>
+                    </div>
+                    {billingPeriod === 'year' && plan.amount > 0 && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-sm line-through text-muted-foreground">
+                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: plan.currency }).format(plan.amount)}
+                        </span>
+                        <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                          Economize {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: plan.currency }).format(annualSavings)}/ano
+                        </span>
+                      </div>
+                    )}
+                  </CardHeader>
+                  
+                  <CardContent className="flex-1">
+                    <ul className="space-y-3 text-sm">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-center gap-3">
+                          <Check className={`w-4 h-4 shrink-0 ${isPro ? 'text-amber-500' : 'text-primary'}`} />
+                          <span className="text-foreground">{feature}</span>
+                        </li>
+                      ))}
+                      {/* Show what's missing on Free plan (Loss Visualization) */}
+                      {plan.id === 'fidd_price_free' && (
+                        <>
+                          <li className="flex items-center gap-3 opacity-40">
+                            <span className="w-4 h-4 shrink-0 text-red-400 flex items-center justify-center text-xs">✕</span>
+                            <span className="line-through">Insights & Métricas PRO</span>
+                          </li>
+                          <li className="flex items-center gap-3 opacity-40">
+                            <span className="w-4 h-4 shrink-0 text-red-400 flex items-center justify-center text-xs">✕</span>
+                            <span className="line-through">Automação de Marketing</span>
+                          </li>
+                          <li className="flex items-center gap-3 opacity-40">
+                            <span className="w-4 h-4 shrink-0 text-red-400 flex items-center justify-center text-xs">✕</span>
+                            <span className="line-through">Motor de Indicações</span>
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </CardContent>
+                  
+                  <CardFooter className="flex flex-col gap-2">
+                    {isActive ? (
+                      <Button variant="secondary" className="w-full" disabled>
+                        Plano Atual
+                      </Button>
+                    ) : (
+                      <Button 
+                        className={`w-full ${
+                          isPro 
+                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-200/50 dark:shadow-amber-900/30 font-bold'
+                            : plan.amount === 0 
+                              ? '' 
+                              : 'shadow-lg shadow-primary/20'
+                        }`}
+                        onClick={() => handleSubscribe(plan)}
+                        isLoading={loading === plan.id}
+                        variant={plan.amount === 0 ? 'outline' : 'primary'}
+                      >
+                        {isPro && <Sparkles className="w-4 h-4 mr-1" />}
+                        {plan.amount === 0 ? 'Migrar para Gratuito' : `Assinar ${plan.name}`}
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </motion.div>
             );
           })}
         </div>
       )}
-      
-      <p className="text-center text-xs text-muted-foreground pt-4 flex items-center justify-center gap-2">
-        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-        </svg>
-        Pagamentos seguros via Stripe. Cancele quando quiser.
-      </p>
+
+      {/* Trust badges */}
+      <div className="flex flex-col items-center gap-3 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <Shield className="w-3.5 h-3.5 text-emerald-500" />
+            Garantia de 30 dias
+          </span>
+          <span className="flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+            </svg>
+            Pagamentos seguros via Stripe
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Check className="w-3.5 h-3.5 text-emerald-500" />
+            Cancele quando quiser
+          </span>
+        </div>
+      </div>
     </div>
   );
 };

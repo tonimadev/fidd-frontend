@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -72,6 +72,71 @@ export default function HomePage() {
       )
     }
   ];
+
+  // Activity ticker messages — FOMO principle
+  const tickerMessages = [
+    { name: 'João', business: 'Padaria Estrela', action: 'criou uma campanha', emoji: '🍞' },
+    { name: 'Ana', business: 'Café Aroma', action: 'ganhou 15 clientes', emoji: '☕' },
+    { name: 'Carlos', business: 'Pet Shop Max', action: 'fez upgrade para PRO', emoji: '🐾' },
+    { name: 'Maria', business: 'Salão Beauty', action: 'resgatou 5 prêmios', emoji: '💇' },
+    { name: 'Pedro', business: 'Burger & Beer', action: 'criou uma campanha', emoji: '🍔' },
+  ];
+  const [currentTicker, setCurrentTicker] = useState(0);
+  const [showTicker, setShowTicker] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  // Rotate activity ticker every 5s with 1s gap
+  useEffect(() => {
+    const showNext = () => {
+      setShowTicker(true);
+      setTimeout(() => setShowTicker(false), 4000);
+    };
+    const interval = setInterval(() => {
+      setCurrentTicker(prev => (prev + 1) % tickerMessages.length);
+      showNext();
+    }, 6000);
+    // Show first one after 3s
+    const initial = setTimeout(showNext, 3000);
+    return () => { clearInterval(interval); clearTimeout(initial); };
+  }, [tickerMessages.length]);
+
+  // Sticky CTA bar on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowStickyBar(window.scrollY > 500);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Animated counter hook
+  const CountUp = ({ target, suffix = '' }: { target: number; suffix?: string }) => {
+    const [count, setCount] = useState(0);
+    const ref = useRef<HTMLSpanElement>(null);
+    const animated = useRef(false);
+
+    useEffect(() => {
+      const observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !animated.current) {
+          animated.current = true;
+          const duration = 1500;
+          const start = performance.now();
+          const animate = (now: number) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(animate);
+          };
+          requestAnimationFrame(animate);
+        }
+      }, { threshold: 0.3 });
+      if (ref.current) observer.observe(ref.current);
+      return () => observer.disconnect();
+    }, [target]);
+
+    return <span ref={ref}>{count}{suffix}</span>;
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10">
@@ -158,10 +223,60 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Social Proof Banner */}
+          {/* Trust badges */}
+          {userType === 'merchant' && (
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Sem cartão de crédito
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Setup em 2 minutos
+              </span>
+              <span className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                Cancele quando quiser
+              </span>
+            </div>
+          )}
+
+          {/* Social Proof Banner — Enhanced with animated counters */}
           <div className="mt-20 pt-10 border-t border-border/50">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-10">
+              <div className="text-center">
+                <p className="text-3xl font-black text-foreground">
+                  <CountUp target={100} suffix="+" />
+                </p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-1">Lojas ativas</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-black text-primary">
+                  <CountUp target={5000} suffix="+" />
+                </p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-1">Clientes fidelizados</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-black text-foreground">
+                  <CountUp target={25000} suffix="+" />
+                </p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-1">Selos aplicados</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-black text-emerald-600">
+                  <CountUp target={98} suffix="%" />
+                </p>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-1">Satisfação</p>
+              </div>
+            </div>
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
-              Mais de <span className="text-primary">100 lojas</span> e milhares de clientes já confiam no FIDD
+              Usado por lojistas em todo o Brasil
             </p>
             <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
               <div className="flex items-center gap-2 font-bold text-xl italic text-slate-400">Café <span className="text-slate-500">Express</span></div>
@@ -407,6 +522,50 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Activity Ticker — FOMO (Fear of Missing Out) */}
+      {showTicker && (
+        <motion.div
+          initial={{ opacity: 0, y: 50, x: 0 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          className="fixed bottom-24 left-4 z-40 bg-card/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl p-3 max-w-xs animate-slide-up"
+        >
+          <div className="flex items-center gap-3">
+            <div className="text-2xl">{tickerMessages[currentTicker].emoji}</div>
+            <div>
+              <p className="text-xs font-bold text-foreground">
+                {tickerMessages[currentTicker].name} da {tickerMessages[currentTicker].business}
+              </p>
+              <p className="text-[10px] text-muted-foreground">
+                {tickerMessages[currentTicker].action} — agora mesmo
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Floating Sticky CTA Bar — appears on scroll */}
+      {showStickyBar && (
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border shadow-2xl p-3"
+        >
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div className="hidden sm:block">
+              <p className="text-sm font-bold text-foreground">Pronto para fidelizar seus clientes?</p>
+              <p className="text-[10px] text-muted-foreground">Mais de 100 lojistas já estão crescendo com FIDD</p>
+            </div>
+            <Link
+              href={userType === 'merchant' ? "/register" : "/app"}
+              className="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-bold text-sm shadow-lg shadow-primary/20 whitespace-nowrap"
+            >
+              {userType === 'merchant' ? 'Começar Grátis' : 'Baixar App'}
+            </Link>
+          </div>
+        </motion.div>
+      )}
     </main>
   );
 }

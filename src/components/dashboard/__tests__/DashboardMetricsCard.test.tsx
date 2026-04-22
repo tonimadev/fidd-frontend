@@ -21,6 +21,23 @@ jest.mock('@/lib/dashboard-service', () => ({
   },
 }));
 
+// Mock requestAnimationFrame so animated counters resolve immediately
+beforeEach(() => {
+  let time = 0;
+  jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+    // Call with a timestamp far enough in the future that animation completes in one frame
+    time += 5000;
+    cb(time);
+    return time;
+  });
+  jest.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
+});
+
+afterEach(() => {
+  (window.requestAnimationFrame as unknown as jest.SpyInstance).mockRestore();
+  (window.cancelAnimationFrame as unknown as jest.SpyInstance).mockRestore();
+});
+
 describe('DashboardMetricsCard', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -97,3 +114,4 @@ describe('DashboardMetricsCard', () => {
     expect(retryButton).toBeInTheDocument();
   });
 });
+

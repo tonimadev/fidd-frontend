@@ -1,21 +1,103 @@
 /**
- * Componente de métricas do dashboard
+ * Componente de métricas do dashboard — Enhanced with CRO principles
+ * 
+ * 🧠 Psychological Principle: Loss Aversion (Kahneman & Tversky)
+ * People feel losses ~2x more intensely than equivalent gains. By framing
+ * declining metrics as "lost customers" instead of neutral numbers, we
+ * create urgency that drives merchant action.
  */
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DashboardMetrics } from '@/types/dashboard';
 import { dashboardService } from '@/lib/dashboard-service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { analyticsService } from '@/lib/analytics';
+import { motion } from 'framer-motion';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+
+// Animated counter hook for engaging number reveals
+function useAnimatedCounter(target: number, duration = 1000): number {
+  const [count, setCount] = useState(0);
+  const startTime = useRef<number | null>(null);
+  const animFrame = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (target === 0) { setCount(0); return; }
+    startTime.current = null;
+
+    const animate = (timestamp: number) => {
+      if (startTime.current === null) startTime.current = timestamp;
+      const elapsed = timestamp - startTime.current;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * target));
+      if (progress < 1) animFrame.current = requestAnimationFrame(animate);
+    };
+
+    animFrame.current = requestAnimationFrame(animate);
+    return () => { if (animFrame.current) cancelAnimationFrame(animFrame.current); };
+  }, [target, duration]);
+
+  return count;
+}
+
+// Business Health Score calculation
+function calculateHealthScore(metrics: DashboardMetrics): { score: number; label: string; color: string } {
+  let score = 0;
+  // Active campaigns (20 pts)
+  if (metrics.activeCampaigns > 0) score += 20;
+  // Customer base (20 pts)
+  if (metrics.totalCustomers >= 10) score += 20;
+  else if (metrics.totalCustomers >= 5) score += 10;
+  else if (metrics.totalCustomers > 0) score += 5;
+  // Engagement rate (20 pts)
+  if (metrics.engagementRate >= 50) score += 20;
+  else if (metrics.engagementRate >= 25) score += 15;
+  else if (metrics.engagementRate > 0) score += 5;
+  // Conversion rate (20 pts)
+  if (metrics.conversionRate >= 30) score += 20;
+  else if (metrics.conversionRate >= 15) score += 15;
+  else if (metrics.conversionRate > 0) score += 5;
+  // Points distributed (20 pts)
+  if (metrics.pointsDistributed >= 100) score += 20;
+  else if (metrics.pointsDistributed >= 50) score += 15;
+  else if (metrics.pointsDistributed > 0) score += 5;
+
+  if (score >= 80) return { score, label: 'Excelente', color: 'text-emerald-600' };
+  if (score >= 60) return { score, label: 'Bom', color: 'text-blue-600' };
+  if (score >= 40) return { score, label: 'Regular', color: 'text-amber-600' };
+  return { score, label: 'Precisa de Atenção', color: 'text-red-600' };
+}
+
+// Trend indicator component
+const TrendBadge: React.FC<{ value: number; suffix?: string }> = ({ value, suffix = '%' }) => {
+  if (value === 0) return (
+    <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded-full">
+      <Minus className="w-3 h-3" /> Estável
+    </span>
+  );
+  const isPositive = value > 0;
+  return (
+    <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+      isPositive 
+        ? 'text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/40'
+        : 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-950/40'
+    }`}>
+      {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+      {isPositive ? '+' : ''}{value.toFixed(1)}{suffix}
+    </span>
+  );
+};
 
 export const DashboardMetricsCard: React.FC = () => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const isLoaded = React.useRef(false);
+  const isLoaded = useRef(false);
   useEffect(() => {
     if (!isLoaded.current) {
       loadMetrics();
@@ -36,6 +118,10 @@ export const DashboardMetricsCard: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  // Animated values
+  const animatedCustomers = useAnimatedCounter(metrics?.totalCustomers ?? 0, 1200);
+  const animatedPoints = useAnimatedCounter(metrics?.pointsDistributed ?? 0, 1500);
 
   if (isLoading) {
     return (
@@ -79,20 +165,27 @@ export const DashboardMetricsCard: React.FC = () => {
 
   if (!metrics) return null;
 
+  const health = calculateHealthScore(metrics);
+
   const metricCards = [
     {
       title: 'Campanhas Ativas',
       value: metrics.activeCampaigns || 0,
-      description: 'Campanhas em andamento',
+      displayValue: String(metrics.activeCampaigns || 0),
+      description: metrics.activeCampaigns === 0 
+        ? '⚠️ Você não tem campanhas ativas — clientes podem estar indo para a concorrência'
+        : 'Campanhas em andamento',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-primary">
           <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
         </svg>
       ),
+      needsAttention: metrics.activeCampaigns === 0,
     },
     {
       title: 'Total de Clientes',
       value: metrics.totalCustomers || 0,
+      displayValue: String(animatedCustomers),
       description: 'Clientes fidelizados',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-emerald-500">
@@ -105,7 +198,8 @@ export const DashboardMetricsCard: React.FC = () => {
     },
     {
       title: 'Pontos Distribuídos',
-      value: (metrics.pointsDistributed || 0).toLocaleString(),
+      value: metrics.pointsDistributed || 0,
+      displayValue: animatedPoints.toLocaleString(),
       description: 'Acúmulo total',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-amber-500">
@@ -117,17 +211,22 @@ export const DashboardMetricsCard: React.FC = () => {
     },
     {
       title: 'Taxa de Engajamento',
-      value: `${(metrics.engagementRate || 0).toFixed(1)}%`,
-      description: 'Últimos 30 dias',
+      value: metrics.engagementRate || 0,
+      displayValue: `${(metrics.engagementRate || 0).toFixed(1)}%`,
+      description: metrics.engagementRate < 20 
+        ? '⚠️ Engajamento baixo — seus clientes precisam de mais incentivos'
+        : 'Últimos 30 dias',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-indigo-500">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
         </svg>
       ),
+      needsAttention: metrics.engagementRate < 20,
     },
     {
       title: 'Taxa de Conversão',
-      value: `${(metrics.conversionRate || 0).toFixed(1)}%`,
+      value: metrics.conversionRate || 0,
+      displayValue: `${(metrics.conversionRate || 0).toFixed(1)}%`,
       description: 'Iniciados vs. Resgatados',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-emerald-600">
@@ -140,7 +239,10 @@ export const DashboardMetricsCard: React.FC = () => {
     {
       title: 'Cartões Expirados',
       value: metrics.expirationVolume || 0,
-      description: 'Volume total expirado',
+      displayValue: String(metrics.expirationVolume || 0),
+      description: metrics.expirationVolume > 0
+        ? `⚠️ ${metrics.expirationVolume} clientes perderam o cartão — considere estender prazos`
+        : 'Nenhum cartão expirado',
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 text-red-500">
           <circle cx="12" cy="12" r="10" />
@@ -148,6 +250,7 @@ export const DashboardMetricsCard: React.FC = () => {
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
       ),
+      needsAttention: (metrics.expirationVolume || 0) > 0,
     },
   ];
 
@@ -157,26 +260,89 @@ export const DashboardMetricsCard: React.FC = () => {
 
   return (
     <div className="space-y-4 mb-8">
+      {/* Business Health Score */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        <Card className="border-muted/60 overflow-hidden bg-gradient-to-r from-card via-card to-primary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-4">
+              <div className="relative w-16 h-16 shrink-0">
+                <svg className="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" strokeWidth="3" className="text-muted/30" />
+                  <motion.circle
+                    cx="18" cy="18" r="14" fill="none"
+                    stroke="currentColor" strokeWidth="3" strokeLinecap="round"
+                    className={health.color}
+                    strokeDasharray={`${(health.score / 100) * 88} 88`}
+                    initial={{ strokeDasharray: '0 88' }}
+                    animate={{ strokeDasharray: `${(health.score / 100) * 88} 88` }}
+                    transition={{ duration: 1.2, ease: 'easeOut' }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className={`text-sm font-black ${health.color}`}>{health.score}</span>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-foreground">Saúde do Negócio</h3>
+                  <span className={`text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                    health.score >= 80 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' :
+                    health.score >= 60 ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400' :
+                    health.score >= 40 ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400' :
+                    'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400'
+                  }`}>
+                    {health.label}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {health.score >= 80 
+                    ? 'Seu programa de fidelidade está performando muito bem!'
+                    : health.score >= 60 
+                      ? 'Bom progresso! Algumas áreas podem melhorar.'
+                      : 'Atenção: seu programa precisa de ajustes para gerar resultados.'
+                  }
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {metricCards.map((card, i) => (
-          <Card 
-            key={i} 
-            className="transition-all hover:shadow-md border-muted/60 cursor-pointer"
-            onClick={() => analyticsService.track('dashboard_metric_clicked', { metric_name: card.title })}
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.07, duration: 0.4 }}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {card.title}
-              </CardTitle>
-              {card.icon}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tracking-tight">{card.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {card.description}
-              </p>
-            </CardContent>
-          </Card>
+            <Card 
+              className={`transition-all hover:shadow-md border-muted/60 cursor-pointer group ${
+                card.needsAttention ? 'animate-pulse-attention ring-1 ring-amber-200 dark:ring-amber-800/50' : ''
+              }`}
+              onClick={() => analyticsService.track('dashboard_metric_clicked', { metric_name: card.title })}
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {card.title}
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <TrendBadge value={0} />
+                  {card.icon}
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold tracking-tight animate-count-up">{card.displayValue}</div>
+                <p className={`text-xs mt-1 ${card.needsAttention ? 'text-amber-600 dark:text-amber-400 font-medium' : 'text-muted-foreground'}`}>
+                  {card.description}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ))}
       </div>
 
@@ -206,7 +372,7 @@ export const DashboardMetricsCard: React.FC = () => {
                   </span>
                 </div>
                 <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                  <div 
+                  <motion.div
                     className={`h-full transition-all duration-500 ${
                       usagePercentage > 90 
                         ? 'bg-red-500' 
@@ -214,9 +380,16 @@ export const DashboardMetricsCard: React.FC = () => {
                           ? 'bg-amber-500' 
                           : 'bg-primary'
                     }`}
-                    style={{ width: `${usagePercentage}%` }}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${usagePercentage}%` }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
                   />
                 </div>
+                {usagePercentage > 80 && (
+                  <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                    ⚠️ Seu limite está quase no fim. Faça upgrade para não perder clientes.
+                  </p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -225,4 +398,3 @@ export const DashboardMetricsCard: React.FC = () => {
     </div>
   );
 };
-

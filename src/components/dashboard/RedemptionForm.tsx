@@ -1,5 +1,10 @@
 /**
- * Componente de formulário para resgate de prêmios
+ * Componente de formulário para resgate de prêmios — Enhanced with CRO
+ *
+ * 🧠 Psychological Principle: Peak-End Rule (Kahneman)
+ * People judge experiences by their emotional peak and how they end.
+ * A celebration at the redemption moment creates a memorable peak
+ * that reinforces both merchant and customer satisfaction.
  */
 
 'use client';
@@ -14,16 +19,16 @@ import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
-import { CheckCircle2, Ticket, AlertCircle } from 'lucide-react';
+import { Ticket, AlertCircle, Share2, PartyPopper } from 'lucide-react';
 import { triggerConfetti } from '@/lib/confetti';
-import { useAuth } from '@/context/auth-context';
-import { isUserPro } from '@/lib/auth-utils';
+import { CelebrationOverlay } from '@/components/ui/CelebrationOverlay';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const RedemptionForm: React.FC = () => {
-  const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('');
   const [successData, setSuccessData] = useState<RedemptionResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const {
     register,
@@ -51,9 +56,8 @@ export const RedemptionForm: React.FC = () => {
       });
 
       setSuccessData(response);
-      if (isUserPro(user)) {
-        triggerConfetti();
-      }
+      setShowCelebration(true);
+      triggerConfetti();
       reset();
     } catch (error) {
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao validar código. Tente novamente.'));
@@ -115,49 +119,110 @@ export const RedemptionForm: React.FC = () => {
         </form>
       </Card>
 
-      {successData && (
-        <Card className="p-8 border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 animate-in fade-in slide-in-from-bottom-6 rounded-3xl shadow-2xl">
-          <div className="flex flex-col items-center text-center space-y-6">
-            <div className="h-20 w-20 rounded-full bg-emerald-500/20 flex items-center justify-center border-4 border-emerald-500/30">
-              <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" strokeWidth={3} />
-            </div>
-            
-            <div className="space-y-2">
-              <h3 className="text-2xl font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight">
-                {successData.message || 'Resgate Realizado!'}
-              </h3>
-              <p className="text-emerald-700/80 dark:text-emerald-400/80 font-bold text-sm">
-                Entrega do prêmio físico liberada com sucesso!
-              </p>
-            </div>
+      {/* Celebration Overlay */}
+      <CelebrationOverlay
+        type="redemption"
+        isVisible={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        title="Prêmio Resgatado! 🎁"
+        subtitle={successData ? `${successData.customerName} acabou de resgatar "${successData.campaignName}"` : undefined}
+      />
 
-            <div className="w-full py-6 px-4 bg-background/50 rounded-2xl border border-emerald-500/20 space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px]">Cliente</span>
-                <span className="text-foreground font-black text-lg">{successData.customerName}</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px]">Prêmio</span>
-                <span className="text-primary font-black text-lg">{successData.campaignName}</span>
-              </div>
-              <div className="flex justify-between items-center pt-2 border-t border-emerald-500/10">
-                <span className="text-muted-foreground font-medium text-[10px] uppercase">Data/Hora</span>
-                <span className="text-foreground font-medium text-[11px] opacity-70">
-                  {new Date(successData.redeemedAt || '').toLocaleString('pt-BR')}
-                </span>
-              </div>
-            </div>
+      <AnimatePresence>
+        {successData && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <Card className="p-8 border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-3xl shadow-2xl overflow-hidden relative">
+              {/* Shimmer overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer pointer-events-none" />
+              
+              <div className="flex flex-col items-center text-center space-y-6 relative z-10">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: 'spring', stiffness: 400, damping: 10 }}
+                  className="h-20 w-20 rounded-full bg-emerald-500/20 flex items-center justify-center border-4 border-emerald-500/30"
+                >
+                  <PartyPopper className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+                </motion.div>
+                
+                <div className="space-y-2">
+                  <motion.h3
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-2xl font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-tight"
+                  >
+                    {successData.message || 'Resgate Realizado!'}
+                  </motion.h3>
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-emerald-700/80 dark:text-emerald-400/80 font-bold text-sm"
+                  >
+                    Entrega do prêmio físico liberada com sucesso!
+                  </motion.p>
+                </div>
 
-            <Button 
-              variant="outline" 
-              className="w-full h-12 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 font-bold uppercase tracking-widest"
-              onClick={() => setSuccessData(null)}
-            >
-              Novo Resgate
-            </Button>
-          </div>
-        </Card>
-      )}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="w-full py-6 px-4 bg-background/50 rounded-2xl border border-emerald-500/20 space-y-4"
+                >
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px]">Cliente</span>
+                    <span className="text-foreground font-black text-lg">{successData.customerName}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground font-bold uppercase tracking-wider text-[10px]">Prêmio</span>
+                    <span className="text-primary font-black text-lg">{successData.campaignName}</span>
+                  </div>
+                  <div className="flex justify-between items-center pt-2 border-t border-emerald-500/10">
+                    <span className="text-muted-foreground font-medium text-[10px] uppercase">Data/Hora</span>
+                    <span className="text-foreground font-medium text-[11px] opacity-70">
+                      {new Date(successData.redeemedAt || '').toLocaleString('pt-BR')}
+                    </span>
+                  </div>
+                </motion.div>
+
+                {/* WhatsApp Share Button */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="w-full"
+                >
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(
+                      `🎉 Parabéns! Seu prêmio "${successData.campaignName}" foi resgatado com sucesso! Obrigado por ser nosso cliente fiel! 💛`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 font-bold text-sm transition-all border border-[#25D366]/20"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Enviar Parabéns via WhatsApp
+                  </a>
+                </motion.div>
+
+                <Button 
+                  variant="outline" 
+                  className="w-full h-12 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 font-bold uppercase tracking-widest"
+                  onClick={() => setSuccessData(null)}
+                >
+                  Novo Resgate
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

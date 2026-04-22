@@ -32,6 +32,8 @@ import { RoiSimulator } from '@/components/RoiSimulator';
 import { NfcIssuer } from '@/components/dashboard/NfcIssuer';
 import { NfcRedeemer } from '@/components/dashboard/NfcRedeemer';
 import { DashboardTab } from '@/types/dashboard';
+import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
+import { CelebrationOverlay, CelebrationType } from '@/components/ui/CelebrationOverlay';
 
 function DashboardContent() {
   const { logout, refreshUser } = useAuth();
@@ -44,6 +46,7 @@ function DashboardContent() {
   const [initialHelpTutorialId, setInitialHelpTutorialId] = useState<string | null>(null);
   const [hasAddress, setHasAddress] = useState<boolean>(true);
   const [isCheckingAddress, setIsCheckingAddress] = useState(true);
+  const [celebration, setCelebration] = useState<{ type: CelebrationType; title?: string; subtitle?: string } | null>(null);
 
   const openHelp = (tutorialId: string | null = null) => {
     setInitialHelpTutorialId(tutorialId);
@@ -131,21 +134,24 @@ function DashboardContent() {
       case 'home':
         return (
           <div className="space-y-8">
+            {/* Onboarding Checklist — Zeigarnik Effect */}
+            <OnboardingChecklist onNavigate={handleTabChange} />
+
             {!isCheckingAddress && !hasAddress && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-slide-up">
                 <div className="flex items-center gap-3">
-                  <div className="bg-amber-100 p-2 rounded-full text-amber-600">
+                  <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-full text-amber-600">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-amber-900">Endereço não configurado</h3>
-                    <p className="text-sm text-amber-700">Você ainda não definiu um endereço. Permita que seus clientes te encontrem facilmente.</p>
+                    <h3 className="font-semibold text-amber-900 dark:text-amber-200">Endereço não configurado</h3>
+                    <p className="text-sm text-amber-700 dark:text-amber-400">Seus clientes não conseguem encontrar sua loja no mapa. Configure agora.</p>
                   </div>
                 </div>
                 <Button 
                   onClick={() => handleTabChange('settings')}
                   variant="outline" 
-                  className="whitespace-nowrap border-amber-300 text-amber-800 hover:bg-amber-100"
+                  className="whitespace-nowrap border-amber-300 text-amber-800 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300"
                 >
                   Configurar endereço
                 </Button>
@@ -390,6 +396,17 @@ function DashboardContent() {
         activeTab={activeTab}
         initialTutorialId={initialHelpTutorialId}
       />
+
+      {/* Celebration Overlay — Variable Ratio Reinforcement */}
+      {celebration && (
+        <CelebrationOverlay
+          type={celebration.type}
+          isVisible={true}
+          onClose={() => setCelebration(null)}
+          title={celebration.title}
+          subtitle={celebration.subtitle}
+        />
+      )}
     </div>
   );
 }
