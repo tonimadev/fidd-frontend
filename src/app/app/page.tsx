@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/Button';
 import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
 import { Suspense } from 'react';
+import { ProximityCheckin } from '@/components/mobile/ProximityCheckin';
 
 function DashboardContent() {
   const { user } = useMobileAuth();
@@ -109,6 +110,15 @@ function DashboardContent() {
 
     fetchData();
   }, []);
+
+  const refreshCards = async () => {
+    try {
+      const cardsData = await mobileCardService.getCards();
+      setCards(cardsData);
+    } catch (err) {
+      console.error('Erro ao atualizar cartões:', err);
+    }
+  };
 
   const activeCards = cards.filter(c => c.status === 'IN_PROGRESS' || c.status === 'COMPLETED');
   const historyCards = cards.filter(c => c.status === 'REDEEMED' || c.status === 'EXPIRED');
@@ -254,6 +264,9 @@ function DashboardContent() {
       <section className="pb-4">
         <DownloadButtons />
       </section>
+
+      {/* Proximity Check-in — auto appears when near a store */}
+      <ProximityCheckin stores={stores} onStampCollected={refreshCards} />
     </div>
   );
 }

@@ -34,6 +34,7 @@ import { NfcRedeemer } from '@/components/dashboard/NfcRedeemer';
 import { DashboardTab } from '@/types/dashboard';
 import { OnboardingChecklist } from '@/components/dashboard/OnboardingChecklist';
 import { CelebrationOverlay, CelebrationType } from '@/components/ui/CelebrationOverlay';
+import { QuickStampPanel } from '@/components/dashboard/QuickStampPanel';
 
 function DashboardContent() {
   const { logout, refreshUser } = useAuth();
@@ -128,6 +129,8 @@ function DashboardContent() {
     router.push('/dashboard?tab=nfc');
     setActiveTab('nfc');
   };
+
+
 
   const renderContent = () => {
     switch (activeTab) {
@@ -261,6 +264,9 @@ function DashboardContent() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Quick Stamp Panel on Home — Most important feature */}
+            <QuickStampPanel />
           </div>
         );
       case 'insights':
@@ -302,6 +308,20 @@ function DashboardContent() {
               </p>
             </div>
             <NfcIssuer />
+          </div>
+        );
+      case 'quick-stamp':
+        return (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight">Selo Rápido</h2>
+              <p className="text-muted-foreground">
+                Aplique selos usando o método mais conveniente: PIN, QR Code, Manual ou NFC.
+              </p>
+            </div>
+            <div className="max-w-lg">
+              <QuickStampPanel />
+            </div>
           </div>
         );
       case 'settings':

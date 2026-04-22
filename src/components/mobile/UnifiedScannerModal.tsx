@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { X, AlertCircle, QrCode, Ticket, Loader2, Camera, Keyboard, CheckCircle2 } from 'lucide-react';
+import { X, AlertCircle, QrCode, Ticket, Loader2, Camera, Keyboard, CheckCircle2, Zap } from 'lucide-react';
 import { triggerSuccessConfetti } from '@/lib/confetti';
 import { playStampSound } from '@/lib/sounds';
 
@@ -24,6 +24,7 @@ import { Input } from '@/components/ui/Input';
 import { mobileCardService } from '@/lib/mobile-card-service';
 import { getFriendlyErrorMessage } from '@/lib/error-handler';
 import { QrScanner } from './QrScanner';
+import { SessionPairingClient } from './SessionPairingClient';
 
 interface UnifiedScannerModalProps {
   isOpen: boolean;
@@ -41,7 +42,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
   const [token, setToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [mode, setMode] = useState<'CAMERA' | 'MANUAL'>('CAMERA');
+  const [mode, setMode] = useState<'CAMERA' | 'MANUAL' | 'PIN'>('CAMERA');
   const [successData, setSuccessData] = useState<{ 
     message: string; 
     type: 'INVITATION' | 'PUNCH';
@@ -159,6 +160,13 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
                 >
                   <Keyboard size={20} />
                 </button>
+                <button
+                  onClick={() => setMode('PIN')}
+                  className={`p-2 rounded-xl transition-all ${mode === 'PIN' ? 'bg-white shadow-sm text-primary' : 'text-slate-400'}`}
+                  title="Conexão Rápida por PIN"
+                >
+                  <Zap size={20} />
+                </button>
               </div>
             )}
           </div>
@@ -180,7 +188,7 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
                     </div>
                   )}
                 </div>
-              ) : (
+              ) : mode === 'MANUAL' ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="relative">
                     <Input
@@ -205,7 +213,14 @@ export const UnifiedScannerModal: React.FC<UnifiedScannerModalProps> = ({
                     Validar Agora
                   </Button>
                 </form>
-              )}
+              ) : mode === 'PIN' ? (
+                <SessionPairingClient
+                  onClose={onClose}
+                  onStampReceived={() => {
+                    if (onSuccess) onSuccess();
+                  }}
+                />
+              ) : null}
 
               {error && (
                 <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-sm font-bold animate-in shake-in">
