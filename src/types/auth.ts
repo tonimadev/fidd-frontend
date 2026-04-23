@@ -54,11 +54,14 @@ export interface LoginRequest {
 
 export interface ForgotPasswordRequest {
   email: string;
+  userType: 'STORE' | 'CUSTOMER';
 }
 
 export interface ResetPasswordRequest {
+  email: string;
   token: string;
   newPassword: string;
+  userType: 'STORE' | 'CUSTOMER';
 }
 
 export interface RegisterRequest {

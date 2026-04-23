@@ -33,7 +33,7 @@ export const ForgotPasswordForm: React.FC = () => {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
-      await authService.forgotPassword(data);
+      await authService.forgotPassword({ ...data, userType: 'STORE' });
       setIsSuccess(true);
     } catch (error) {
       setErrorMessage(getFriendlyErrorMessage(error, 'Erro ao processar solicitação. Tente novamente mais tarde.'));

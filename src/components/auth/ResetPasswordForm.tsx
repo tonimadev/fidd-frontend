@@ -43,8 +43,10 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
       setIsSubmitting(true);
       setErrorMessage('');
       await authService.resetPassword({
+        email: data.email,
         token: data.token,
         newPassword: data.newPassword,
+        userType: 'STORE',
       });
       setIsSuccess(true);
       
@@ -91,12 +93,21 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ token }) =
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2 text-center mb-6">
         <p className="text-sm text-muted-foreground">
-          Digite e confirme sua nova senha abaixo.
+          Confirme seu e-mail e digite sua nova senha abaixo.
         </p>
       </div>
 
       {/* Campo oculto para o token para que o Zod possa validar */}
       <input type="hidden" {...register('token')} />
+
+      <Input
+        label="Email"
+        type="email"
+        placeholder="seu@email.com"
+        error={errors.email?.message}
+        maxLength={255}
+        {...register('email')}
+      />
 
       <Input
         label="Nova Senha"

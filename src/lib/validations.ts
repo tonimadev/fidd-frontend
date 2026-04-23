@@ -23,6 +23,7 @@ export const forgotPasswordSchema = z.object({
 });
 
 export const resetPasswordSchema = z.object({
+  email: z.string().trim().email('Email inválido').max(255, 'Email muito longo'),
   token: z.string().uuid('Token inválido'),
   newPassword: z.string()
     .min(8, 'Senha deve ter pelo menos 8 caracteres')
