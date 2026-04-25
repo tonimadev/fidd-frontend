@@ -33,14 +33,24 @@ describe('customerService', () => {
         },
       ];
 
-      (apiClient.get as jest.Mock).mockResolvedValue({
+      const mockResponse = {
         data: mockCustomers,
+        totalElements: 2,
+        totalPages: 1,
+        currentPage: 0,
+        hasNextPage: false
+      };
+
+      (apiClient.get as jest.Mock).mockResolvedValue({
+        data: mockResponse,
       });
 
-      const result = await customerService.listCustomers();
+      const result = await customerService.listCustomers(0, 10);
 
-      expect(result).toEqual(mockCustomers);
-      expect(apiClient.get).toHaveBeenCalledWith('/api/web/v1/customers');
+      expect(result).toEqual(mockResponse);
+      expect(apiClient.get).toHaveBeenCalledWith('/api/web/v1/customers', {
+        params: { page: 0, size: 10 }
+      });
     });
 
     it('deve lançar erro ao falhar na requisição', async () => {

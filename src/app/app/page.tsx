@@ -20,6 +20,7 @@ import { useSearchParams } from 'next/navigation';
 import { apiClient } from '@/lib/api-client';
 import { Suspense } from 'react';
 import { ProximityCheckin } from '@/components/mobile/ProximityCheckin';
+import { TransactionHistoryFeed } from '@/components/mobile/TransactionHistoryFeed';
 
 function DashboardContent() {
   const { user } = useMobileAuth();
@@ -121,7 +122,6 @@ function DashboardContent() {
   };
 
   const activeCards = cards.filter(c => c.status === 'IN_PROGRESS' || c.status === 'COMPLETED');
-  const historyCards = cards.filter(c => c.status === 'REDEEMED' || c.status === 'EXPIRED');
 
   return (
     <div className="px-6 py-6 space-y-8">
@@ -249,16 +249,10 @@ function DashboardContent() {
       </section>
 
       {/* History Section */}
-      {historyCards.length > 0 && (
-        <section className="pb-8">
-          <h3 className="text-sm font-black tracking-widest uppercase text-slate-400 mb-4">Histórico</h3>
-          <div className="space-y-4 opacity-60 grayscale">
-            {historyCards.map(card => (
-              <MobileCard key={card.id} card={card} />
-            ))}
-          </div>
-        </section>
-      )}
+      <section className="pb-8">
+        <h3 className="text-xl font-black tracking-tight uppercase italic text-slate-800 mb-4">Histórico Recente</h3>
+        <TransactionHistoryFeed summary={true} />
+      </section>
 
       {/* Download App Section */}
       <section className="pb-4">

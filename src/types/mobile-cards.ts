@@ -58,3 +58,11 @@ export interface MobileInvitationRedeemResponse {
   pointsRequired: number;
   message: string;
 }
+
+export interface PunchHistoryResponse {
+  id: number;
+  storeName: string;
+  campaignName: string;
+  method: string;
+  createdAt: string;
+}

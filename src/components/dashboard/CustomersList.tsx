@@ -18,17 +18,26 @@ export const CustomersList: React.FC = () => {
   const [showOnlyActive, setShowOnlyActive] = useState(true);
   const [showManualPunch, setShowManualPunch] = useState(false);
   const [selectedIdentifier, setSelectedIdentifier] = useState('');
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const pageSize = 9;
 
   useEffect(() => {
-    loadCustomers();
-  }, []);
+    loadCustomers(currentPage);
+  }, [currentPage]);
 
-  const loadCustomers = async () => {
+  const loadCustomers = async (pageIndex: number = 0) => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await customerService.listCustomers();
-      setCustomers(data);
+      const response = await customerService.listCustomers(pageIndex, pageSize);
+      setCustomers(response.data);
+      setCurrentPage(response.currentPage);
+      setTotalPages(response.totalPages);
+      setTotalElements(response.totalElements);
     } catch (err) {
       setError('Não foi possível carregar a lista de clientes.');
       console.error(err);
@@ -119,7 +128,7 @@ export const CustomersList: React.FC = () => {
         <Card className="border-red-100 bg-red-50">
           <CardContent className="pt-6">
             <p className="text-red-700 text-sm">{error}</p>
-            <Button size="sm" variant="outline" className="mt-4 border-red-200" onClick={loadCustomers}>
+            <Button size="sm" variant="outline" className="mt-4 border-red-200" onClick={() => loadCustomers(currentPage)}>
               Tentar Novamente
             </Button>
           </CardContent>
@@ -146,84 +155,112 @@ export const CustomersList: React.FC = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredCustomers.map((customer) => (
-            <Card key={customer.id} className="hover:shadow-md transition-shadow border-muted/60 overflow-hidden group">
-              <CardHeader className="pb-2 space-y-0">
-                <div className="flex justify-between items-start">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                    {customer.name.charAt(0).toUpperCase()}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredCustomers.map((customer) => (
+              <Card key={customer.id} className="hover:shadow-md transition-shadow border-muted/60 overflow-hidden group">
+                <CardHeader className="pb-2 space-y-0">
+                  <div className="flex justify-between items-start">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                      {customer.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      customer.activeCards > 0 
+                        ? 'bg-emerald-100 text-emerald-700' 
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {customer.activeCards > 0 ? 'ATIVO' : 'INATIVO'}
+                    </div>
                   </div>
-                  <div className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    customer.activeCards > 0 
-                      ? 'bg-emerald-100 text-emerald-700' 
-                      : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {customer.activeCards > 0 ? 'ATIVO' : 'INATIVO'}
+                  <CardTitle className="text-base mt-3 truncate">{customer.name}</CardTitle>
+                  <CardDescription className="text-xs truncate">{customer.email}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-2 gap-4 border-t border-muted/30 pt-4">
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground">Cartões Ativos</p>
+                      <p className="text-lg font-bold text-foreground">{customer.activeCards}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground">Total de Cartões</p>
+                      <p className="text-lg font-bold text-foreground">{customer.totalCards}</p>
+                    </div>
                   </div>
-                </div>
-                <CardTitle className="text-base mt-3 truncate">{customer.name}</CardTitle>
-                <CardDescription className="text-xs truncate">{customer.email}</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-4">
-                <div className="grid grid-cols-2 gap-4 border-t border-muted/30 pt-4">
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Cartões Ativos</p>
-                    <p className="text-lg font-bold text-foreground">{customer.activeCards}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Total de Cartões</p>
-                    <p className="text-lg font-bold text-foreground">{customer.totalCards}</p>
-                  </div>
-                </div>
 
-                {customer.ongoingCards && customer.ongoingCards.length > 0 && (
-                  <div className="mt-4 space-y-3">
-                    <p className="text-[10px] uppercase font-bold text-muted-foreground">Progresso dos Cartões</p>
-                    {customer.ongoingCards
-                      .map(card => (
-                        <div key={card.id} className="space-y-1">
-                          <div className="flex justify-between text-[10px]">
-                            <span className="font-medium truncate max-w-[120px]">{card.campaignName}</span>
-                            <span className="font-bold">{card.currentPoints}/{card.pointsRequired}</span>
+                  {customer.ongoingCards && customer.ongoingCards.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      <p className="text-[10px] uppercase font-bold text-muted-foreground">Progresso dos Cartões</p>
+                      {customer.ongoingCards
+                        .map(card => (
+                          <div key={card.id} className="space-y-1">
+                            <div className="flex justify-between text-[10px]">
+                              <span className="font-medium truncate max-w-[120px]">{card.campaignName}</span>
+                              <span className="font-bold">{card.currentPoints}/{card.pointsRequired}</span>
+                            </div>
+                            <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                              <div 
+                                className="h-full transition-all duration-500" 
+                                style={{ 
+                                  width: `${(card.currentPoints / card.pointsRequired) * 100}%`,
+                                  backgroundColor: card.highlightColor || 'var(--primary)'
+                                }}
+                              />
+                            </div>
                           </div>
-                          <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
-                            <div 
-                              className="h-full transition-all duration-500" 
-                              style={{ 
-                                width: `${(card.currentPoints / card.pointsRequired) * 100}%`,
-                                backgroundColor: card.highlightColor || 'var(--primary)'
-                              }}
-                            />
-                          </div>
-                        </div>
-                    ))}
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Última atividade: {new Date(customer.lastActivity).toLocaleDateString('pt-BR')}
                   </div>
-                )}
-                <div className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Última atividade: {new Date(customer.lastActivity).toLocaleDateString('pt-BR')}
-                </div>
-                
-                <div className="mt-6">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-xs font-bold border-primary/30 text-primary hover:bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300"
-                    onClick={() => {
-                      setSelectedIdentifier(customer.email);
-                      setShowManualPunch(true);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }}
-                  >
-                    Carimbar Agora
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  
+                  <div className="mt-6">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full text-xs font-bold border-primary/30 text-primary hover:bg-primary/5 group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all duration-300"
+                      onClick={() => {
+                        setSelectedIdentifier(customer.email);
+                        setShowManualPunch(true);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                    >
+                      Carimbar Agora
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-muted pt-4">
+              <p className="text-sm text-muted-foreground">
+                Página <span className="font-medium">{currentPage + 1}</span> de <span className="font-medium">{totalPages}</span> ({totalElements} clientes)
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                  disabled={currentPage === 0 || isLoading}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  disabled={currentPage >= totalPages - 1 || isLoading}
+                >
+                  Próxima
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

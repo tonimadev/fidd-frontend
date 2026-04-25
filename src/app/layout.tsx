@@ -77,6 +77,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { QueryProvider } from "@/context/query-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -91,11 +93,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <GoogleAuthProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </GoogleAuthProvider>
+          <QueryProvider>
+            <GoogleAuthProvider>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
+            </GoogleAuthProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

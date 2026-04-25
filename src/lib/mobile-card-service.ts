@@ -3,12 +3,14 @@
  */
 
 import { apiClient } from './api-client';
+import { CursorResponse } from '@/types/pagination';
 import { 
   MobileCardResponse, 
   PunchCollectRequest, 
   PunchCollectResponse, 
   MobileRedemptionResponse,
-  MobileInvitationRedeemResponse
+  MobileInvitationRedeemResponse,
+  PunchHistoryResponse
 } from '@/types/mobile-cards';
 
 const BASE_URL = '/api/mobile/v1';
@@ -57,6 +59,16 @@ export const mobileCardService = {
     const response = await apiClient.post<MobileInvitationRedeemResponse>(`${BASE_URL}/invitations/redeem`, {
       inviteToken,
       isQrCode
+    });
+    return response.data;
+  },
+
+  /**
+   * Obtém histórico de carimbos
+   */
+  async getHistory(cursor?: string | null, limit: number = 10): Promise<CursorResponse<PunchHistoryResponse>> {
+    const response = await apiClient.get<CursorResponse<PunchHistoryResponse>>(`${BASE_URL}/punches/history`, {
+      params: { cursor, limit }
     });
     return response.data;
   }
