@@ -9,6 +9,7 @@ const roboto = Roboto({
 import { AuthProvider } from "@/context/auth-context";
 import { GoogleAuthProvider } from "@/context/google-auth-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { BrowserCapabilityModal } from "@/components/ui/BrowserCapabilityModal";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -96,6 +97,7 @@ export default function RootLayout({
           <QueryProvider>
             <GoogleAuthProvider>
               <AuthProvider>
+                <BrowserCapabilityModal />
                 {children}
               </AuthProvider>
             </GoogleAuthProvider>

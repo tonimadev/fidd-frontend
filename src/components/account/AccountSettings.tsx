@@ -17,6 +17,7 @@ import { TextArea } from '@/components/ui/TextArea';
 import { Button } from '@/components/ui/Button';
 import { SecurityConfirmationModal } from './SecurityConfirmationModal';
 import { ImageCropperModal } from './ImageCropperModal';
+import { StreakSettings } from '@/components/dashboard/StreakSettings';
 import Image from 'next/image';
 
 export const AccountSettings: React.FC = () => {
@@ -337,6 +338,9 @@ export const AccountSettings: React.FC = () => {
 
       {/* Seção de Localização */}
       <AddressSettings />
+
+      {/* Seção de Streak (Visitas Consecutivas) */}
+      <StreakSettings />
 
       {/* Seção de Chaves de API */}
       <ApiKeysSettings />
