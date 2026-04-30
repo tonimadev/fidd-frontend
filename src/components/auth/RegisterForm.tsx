@@ -172,7 +172,7 @@ export const RegisterForm: React.FC = () => {
   };
 
   const getDocumentMaxLength = (): number => {
-    return taxIdType === 'CNPJ' ? 14 : 11;
+    return taxIdType === 'CNPJ' ? 18 : 14;
   };
 
   return (
@@ -199,6 +199,10 @@ export const RegisterForm: React.FC = () => {
               type="radio"
               value="CNPJ"
               className="w-4 h-4 accent-primary border-input bg-background text-primary focus:ring-primary"
+              onChange={(e) => {
+                register('taxIdType').onChange(e);
+                setValue('taxId', '');
+              }}
             />
             <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">CNPJ (Loja/Empresa)</span>
           </label>
@@ -208,6 +212,10 @@ export const RegisterForm: React.FC = () => {
               type="radio"
               value="CPF"
               className="w-4 h-4 accent-primary border-input bg-background text-primary focus:ring-primary"
+              onChange={(e) => {
+                register('taxIdType').onChange(e);
+                setValue('taxId', '');
+              }}
             />
             <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">CPF (Pessoa Física)</span>
           </label>
@@ -226,10 +234,29 @@ export const RegisterForm: React.FC = () => {
           maxLength={getDocumentMaxLength()}
           error={errors.taxId?.message}
           {...register('taxId')}
+          onChange={(e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (taxIdType === 'CNPJ') {
+              value = value
+                .replace(/^(\d{2})(\d)/, '$1.$2')
+                .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                .replace(/\.(\d{3})(\d)/, '.$1/$2')
+                .replace(/(\d{4})(\d)/, '$1-$2')
+                .slice(0, 18);
+            } else {
+              value = value
+                .replace(/^(\d{3})(\d)/, '$1.$2')
+                .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+                .replace(/\.(\d{3})(\d)/, '.$1-$2')
+                .slice(0, 14);
+            }
+            e.target.value = value;
+            setValue('taxId', value, { shouldValidate: true });
+          }}
         />
         {taxId && !errors.taxId && (
           <p className="text-[10px] text-muted-foreground text-right px-1">
-            {taxId.length}/{getDocumentMaxLength()} dígitos
+            {taxId.replace(/\D/g, '').length}/{taxIdType === 'CNPJ' ? 14 : 11} dígitos
           </p>
         )}
       </div>
