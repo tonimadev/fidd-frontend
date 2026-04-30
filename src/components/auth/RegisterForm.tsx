@@ -42,6 +42,7 @@ export const RegisterForm: React.FC = () => {
     formState: { errors },
     reset,
     watch,
+    setValue,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: 'onBlur',
