@@ -134,33 +134,31 @@ export const QrScanner: React.FC<QrScannerProps> = ({ onResult, onError }) => {
     };
   }, [handleScanResult, onError]);
 
-  if (isStarting) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Iniciando câmera...</p>
-      </div>
-    );
-  }
-
-  if (cameraError) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 gap-4 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500">
-          <CameraOff size={32} />
-        </div>
-        <div className="text-center px-6">
-          <p className="text-slate-800 font-bold">{cameraError}</p>
-          <p className="text-slate-500 text-xs mt-1">Certifique-se que o site tem permissão para usar a câmera.</p>
-        </div>
-      </div>
-    );
-  }
+  // Removido os early returns de isStarting e cameraError
+  // para garantir que a div id={regionId} sempre seja renderizada
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-black aspect-square max-w-[300px] mx-auto border-4 border-slate-100 shadow-inner">
-      <div id={regionId} className="w-full h-full"></div>
+      {/* O container da câmera precisa estar sempre no DOM */}
+      <div id={regionId} className={`w-full h-full ${isStarting || cameraError ? 'hidden' : 'block'}`}></div>
       
+      {isStarting && !cameraError && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10 gap-4">
+          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <p className="text-slate-400 text-xs font-black uppercase tracking-widest">Iniciando câmera...</p>
+        </div>
+      )}
+
+      {cameraError && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50 z-10 p-6 text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-500 mb-4">
+            <CameraOff size={32} />
+          </div>
+          <p className="text-slate-800 font-bold">{cameraError}</p>
+          <p className="text-slate-500 text-xs mt-1">Certifique-se que o site tem permissão para usar a câmera.</p>
+        </div>
+      )}
+
       {/* Green flash overlay on detection */}
       {showFlash && (
         <div className="absolute inset-0 bg-emerald-500/30 z-20 pointer-events-none animate-in fade-in duration-150">
